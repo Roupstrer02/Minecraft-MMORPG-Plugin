@@ -1,0 +1,10 @@
+name: FirstPluginThree
+version: '${project.version}'
+main: me.roupen.firstpluginthree.FirstPluginThree
+api-version: 1.19
+commands:
+  profile:
+    description: Your description
+    usage: /<command>
+    permission: FirstPluginThree.profile
+    permission-message: Sorry! You don't have permission to execute that command.
