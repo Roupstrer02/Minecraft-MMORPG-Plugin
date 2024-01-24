@@ -1,43 +1,98 @@
 package me.roupen.firstpluginthree;
 
+import me.roupen.firstpluginthree.PlayerInteractions.EquipmentWorkbench;
+import me.roupen.firstpluginthree.PlayerInteractions.*;
+import me.roupen.firstpluginthree.PlayerInteractions.RuneForge;
 import me.roupen.firstpluginthree.commandkit.profileCMD;
 import me.roupen.firstpluginthree.constantrunnables.actionbardisplay;
-import me.roupen.firstpluginthree.customgui.GuiUtility;
+import me.roupen.firstpluginthree.constantrunnables.weatherforecast;
+import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
 
+import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
+import me.roupen.firstpluginthree.playerequipment.Rune;
+import me.roupen.firstpluginthree.utility.MobUtility;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
+import me.roupen.firstpluginthree.weather.WeatherForecast;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.Listener;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
+import java.util.*;
+
+import static org.bukkit.Bukkit.*;
 
 public final class FirstPluginThree extends JavaPlugin implements Listener {
+
+    BukkitTask playeractionbar;
+    BukkitTask Weather_Forecast;
+    private static FirstPluginThree myPlugin;
+    private void savePlayerStats(Player player) {
+        PlayerStats stats = PlayerUtility.getPlayerStats(player);
+        File f = new File(PlayerUtility.getFolderPath(player) + "/general.yml");
+        FileConfiguration cfg = YamlConfiguration.loadConfiguration(f);
+
+        cfg.set("stats.Vitality", stats.getVitality());
+        cfg.set("stats.Resilience", stats.getResilience());
+        cfg.set("stats.Intelligence", stats.getIntelligence());
+
+        cfg.set("stats.Strength", stats.getStrength());
+        cfg.set("stats.Dexterity", stats.getDexterity());
+        cfg.set("stats.Wisdom", stats.getWisdom());
+
+        cfg.set("stats.Experience", stats.getExperience());
+        cfg.set("stats.Level", stats.getLevel());
+        cfg.set("stats.SkillPoints", stats.getSkillPoints());
+
+        try {
+            cfg.save(f);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        PlayerUtility.setPlayerStats(player, null);
+    }
+
+    public static FirstPluginThree getMyPlugin()
+    {
+        return myPlugin;
+    }
 
     @Override
     public void onEnable() {
         // Plugin startup logic
         getServer().getPluginManager().registerEvents(this, this);
         this.getCommand("profile").setExecutor(new profileCMD());
+        myPlugin = this;
+
+        BukkitTask Weather_Forecast = new weatherforecast().runTaskTimer(this, 0, 20);
+        BukkitTask playeractionbar = new actionbardisplay().runTaskTimer(this, 0L, 5);
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event){
+        //Handles giving all mob's stats back to them
+
+        //Handles giving back the player their stats
         PlayerStats stats = new PlayerStats();
         File f =new File(PlayerUtility.getFolderPath(event.getPlayer()) + "/general.yml");
 
@@ -56,6 +111,9 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
             stats.setLevel(cfg.getInt("stats.Level"));
             stats.setSkillPoints(cfg.getInt("stats.SkillPoints"));
 
+            stats.setActiveCurrentHealth(cfg.getDouble("stats.CurrentHealth"));
+            stats.setActiveCurrentMana(cfg.getDouble("stats.CurrentMana"));
+            stats.setActiveCurrentStamina(cfg.getDouble("stats.CurrentStamina"));
 
         }
         else //player's file does not exist
@@ -71,39 +129,26 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
             stats.setExperience(0);
             stats.setLevel(1);
             stats.setSkillPoints(0);
+
+            stats.setActiveMaxHealth(100 + (stats.getVitality() - 1) * 5);
+            stats.setActiveCurrentHealth(stats.getActiveMaxHealth());
+
+            stats.setActiveMaxMana(20 + (stats.getIntelligence() - 1) * 8);
+            stats.setActiveCurrentMana(stats.getActiveMaxMana());
         }
 
         stats.setActiveMaxHealth(100 + (stats.getVitality() - 1) * 5);
-        stats.setActiveCurrentHealth(stats.getActiveMaxHealth()); //To be changed to avoid combat logging exploit (full refill)
         stats.setActiveDefense(stats.getResilience() * 5);
         stats.setActiveMaxMana(20 + (stats.getIntelligence() - 1) * 8);
-        stats.setActiveCurrentMana(stats.getActiveMaxMana()); //To be changed to avoid combat logging exploit (full refill)
+
+        stats.setPlayer(event.getPlayer());
 
         PlayerUtility.setPlayerStats(event.getPlayer(), stats);
-        BukkitTask task = new actionbardisplay(event.getPlayer()).runTaskTimer(this, 20, 10);
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event){
-        //ONLY WORKS IF PLAYER QUITS WILLINGLY, GETTING KICKED DOES **NOT** SAVE PROGRESS -----> FIND THE OTHER EVENT FOR KICKING/SERVER CLOSING ON PLAYER TO SAVE PROGRESS
-        PlayerStats stats = PlayerUtility.getPlayerStats(event.getPlayer());
-        File f = new File(PlayerUtility.getFolderPath(event.getPlayer()) + "/general.yml");
-        FileConfiguration cfg = YamlConfiguration.loadConfiguration(f);
-        cfg.set("stats.Vitality", stats.getVitality());
-        cfg.set("stats.Resilience", stats.getResilience());
-        cfg.set("stats.Intelligence", stats.getIntelligence());
-
-        cfg.set("stats.Strength", stats.getStrength());
-        cfg.set("stats.Dexterity", stats.getDexterity());
-        cfg.set("stats.Wisdom", stats.getWisdom());
-
-        cfg.set("stats.Experience", stats.getExperience());
-        cfg.set("stats.Level", stats.getLevel());
-        cfg.set("stats.SkillPoints", stats.getSkillPoints());
-
-
-        try { cfg.save(f); } catch (IOException e){ e.printStackTrace(); }
-        PlayerUtility.setPlayerStats(event.getPlayer(), null);
+        PlayerUtility.SavePlayerStats(event.getPlayer());
     }
 
     @EventHandler
@@ -116,7 +161,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
             Player player = (Player) k;
 
             PlayerStats stats = PlayerUtility.getPlayerStats(player);
-            stats.gainExperience(5000, player);
+
 
         }
 
@@ -124,7 +169,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
     //menu inventory for player
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event)
-    {
+        {
         //trigger abilities based on itemStack held in main hand
 
         //player who clicked
@@ -133,72 +178,208 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         //list of items I look for
         ItemStack compass = new ItemStack(Material.COMPASS, 1);
 
+        RuneForge.Interact(event);
+
         //effects triggered
         if ((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) && player.getInventory().getItemInMainHand().equals(compass)) {
-            //use abilities
+            //testing purposes
+        }
+    }
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event)
+    {
+        String invtitle = event.getView().title().toString();
+
+        if (event.getInventory().getHolder()==null) {
+            if ((event.getClickedInventory()).getHolder() == null && invtitle.contains("content=\"Rune Forge\""))
+                {RuneForge.ClickMenu(event);}
+            else if ((event.getClickedInventory()).getHolder() == null && (invtitle.contains("content=\"Player Stats\"") || invtitle.contains("content=\"Stat Improvements\"")))
+                {ProfileMenu.ClickMenu(event);}
+    //      else if ((event.getClickedInventory()).getHolder() == null && invtitle.contains("content=\"Equipment Workbench\""))
+    //          {EquipmentWorkbench.ClickMenu(event);}
+        }
+    }
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent event)
+    {
+        RuneForge.EarlyExit(event);
+    }
+    @EventHandler
+    public void onEntitySpawn(EntitySpawnEvent event)
+    {
+        Entity entity = event.getEntity();
+        if (!(entity instanceof Player) && !(entity instanceof Item) && !(entity instanceof Arrow) && !(entity instanceof ThrownPotion))
+        {
+            Entity mob = event.getEntity();
+            MobStats stats = new MobStats(mob, WeatherForecast.getWeather(event));
+            MobUtility.setMobStats(mob, stats);
+            event.getEntity().setCustomNameVisible(true);
+            event.getEntity().customName(stats.generateName());
         }
     }
 
     @EventHandler
-    public void onInventoryClick(InventoryClickEvent event)
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event)
     {
-        Player player = (Player) event.getWhoClicked();
-        PlayerStats stats = PlayerUtility.getPlayerStats(player);
+        //ALL DAMAGE LOGIC FOR PLAYERS TO MOBS AND VICE VERSA HAPPENS HERE
+        if (event.getDamager() instanceof Player && !(event.getEntity() instanceof Player))
+        {
+            Player player = (Player) event.getDamager();
+            PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
 
-        String invtitle = event.getView().title().toString();
+            LivingEntity mob = (LivingEntity) event.getEntity();
+            MobStats mobstats = MobUtility.getMobStats(mob);
 
-        if (event.getInventory().getHolder()==null) {
-
-            //when the player clicks in the "Player stats" menu
-            if (Objects.requireNonNull(event.getCurrentItem()).getType() == Material.DIAMOND && invtitle.contains("content=\"Player Stats\"")) //has to be a better way to discern what menu I'm in (can't find a way to get the name of the inventory)
+            if (mobstats.damage(playerstats, playerstats.getMultihit()))
             {
+                //damage animation
+                mob.damage(0);
+            }
+            if (mobstats.getHealth() <= 0)
+            {
+                //"kills" the mob once 0 health is hit and awards EXP and drops
+                mob.setHealth(0);
+                playerstats.gainExperience(5000, player);
+                player.getInventory().addItem(PlayerEquipment.EquipmentToItem(PlayerEquipment.GenerateRandomEquipment(mob)));
+                event.getEntity().customName(Component.text("+" + 5000 + "XP" + " - " + player.getName()));
+            }
+            else
+            {
+                event.getEntity().customName(mobstats.generateName());
+            }
 
-                player.closeInventory();
-                GuiUtility.CreateUpgradeGui(player);
+        }
+        else if (!(event.getDamager() instanceof Player) && event.getEntity() instanceof Player)
+        {
+
+            Player player = (Player) event.getEntity();
+            PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
+
+            if (event.getDamager() instanceof Arrow)
+            {
+                MobStats shooterstats = MobUtility.getMobStats((LivingEntity) ((Arrow) event.getDamager()).getShooter());
+                player.sendMessage("ranged hit");
+
+                playerstats.damage(shooterstats);
+
+                event.getDamager().remove();
 
             }
-            //when the player clicks in the "Stat Improvements" menu
-            else if (invtitle.contains("content=\"Stat Improvements\""))
+            else
             {
-                if (stats.getSkillPoints() > 0) {
-                    if (event.getCurrentItem().getType() == Material.RED_STAINED_GLASS_PANE) {
-                        stats.addVitality(1);
-                        stats.addSkillPoints(-1);
-                        GuiUtility.CreateUpgradeGui(player);
-                    }
-                    if (event.getCurrentItem().getType() == Material.GREEN_STAINED_GLASS_PANE) {
-                        stats.addResilience(1);
-                        stats.addSkillPoints(-1);
-                        GuiUtility.CreateUpgradeGui(player);
-                    }
-                    if (event.getCurrentItem().getType() == Material.BLUE_STAINED_GLASS_PANE) {
-                        stats.addIntelligence(1);
-                        stats.addSkillPoints(-1);
-                        GuiUtility.CreateUpgradeGui(player);
-                    }
-                    if (event.getCurrentItem().getType() == Material.ORANGE_STAINED_GLASS_PANE) {
-                        stats.addStrength(1);
-                        stats.addSkillPoints(-1);
-                        GuiUtility.CreateUpgradeGui(player);
-                    }
-                    if (event.getCurrentItem().getType() == Material.CYAN_STAINED_GLASS_PANE) {
-                        stats.addWisdom(1);
-                        stats.addSkillPoints(-1);
-                        GuiUtility.CreateUpgradeGui(player);
-                    }
-                    if (event.getCurrentItem().getType() == Material.YELLOW_STAINED_GLASS_PANE) {
-                        stats.addDexterity(1);
-                        stats.addSkillPoints(-1);
-                        GuiUtility.CreateUpgradeGui(player);
-                    }
-                }
+                LivingEntity mob = (LivingEntity) event.getDamager();
+                MobStats mobstats = MobUtility.getMobStats(mob);
+
+                player.sendMessage("melee hit");
+
+                playerstats.damage(mobstats);
             }
+
+            //Makes the health bar match the player's health stat
+            if (playerstats.getActiveCurrentHealth() > 0) {
+                player.setHealth(20 * playerstats.getActiveCurrentHealth() / playerstats.getActiveMaxHealth());
+                player.damage(0);
+            } else {
+                player.setHealth(0);
+                playerstats.setActiveCurrentHealth(playerstats.getActiveMaxHealth());
+            }
+        }
+        else if (event.getDamager() instanceof Arrow && (((Arrow) event.getDamager()).getShooter() instanceof Player))
+        {
+            LivingEntity mob = (LivingEntity) event.getEntity();
+            MobStats mobstats = MobUtility.getMobStats(mob);
+
+            Player player = (Player) ((Arrow) event.getDamager()).getShooter();
+            PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
+
+            if (mobstats.ranged_damage(playerstats, playerstats.getMultihit(), event.getDamager().getVelocity().length()))
+            {
+                //damage animation
+                mob.damage(0);
+                event.getDamager().remove();
+                event.getEntity().customName(mobstats.generateName());
+
+            }else{
+                player.getInventory().addItem(new ItemStack(Material.ARROW, 1));
+            }
+
+            if (mobstats.getHealth() <= 0)
+            {
+                //"kills" the mob once 0 health is hit and awards EXP
+                mob.setHealth(0);
+                playerstats.gainExperience(5000, player);
+                player.getInventory().addItem(PlayerEquipment.EquipmentToItem(PlayerEquipment.GenerateRandomEquipment(mob)));
+                event.getEntity().customName(Component.text("+" + 5000 + "XP" + " - " + player.getName()));
+            }
+        }
+
+        //Damage between mobs cannot happen
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntityShootBow(EntityShootBowEvent event)
+    {
+        if (event.getEntity() instanceof Player)
+        {
+            Player player = (Player) event.getEntity();
+            PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
+            float force = event.getForce();
+            if (force < 0.53) {
+                force = 0.5f;
+            }
+            else if (force < 0.81) {
+                force = 0.75f;
+            }
+            else {
+                force = 1.0f;
+            }
+            if ((force * playerstats.getStaminaCost()) <= playerstats.getActiveCurrentStamina())
+            {
+                playerstats.useStamina(force * playerstats.getStaminaCost());
+            }else{
+                event.setCancelled(true);
+            }
+        }
+    }
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event)
+    {
+        if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.FALL)
+        {
+            Player player = (Player) event.getEntity();
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 60, (int) (Math.min((event.getDamage() / 4), 6))));
+            player.playSound(player.getLocation(), Sound.BLOCK_BAMBOO_BREAK, 1,1);
             event.setCancelled(true);
+        }
+        else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.LAVA) {
+            Player player = (Player) event.getEntity();
+            PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
+            playerstats.setActiveCurrentHealth( (int) (playerstats.getActiveCurrentHealth() * 0.9));
+            event.setCancelled(true);
+        }
+        else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.FIRE) {
+            Player player = (Player) event.getEntity();
+            PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
+            playerstats.setActiveCurrentHealth( (int) (playerstats.getActiveCurrentHealth() * 0.95));
+            event.setCancelled(true);
+        }
+
+        if (event.getCause() != EntityDamageEvent.DamageCause.CUSTOM && !(event.getEntity() instanceof Player))
+        {
+            event.setCancelled(true);
+
         }
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        List<Player> players = (List<Player>) getOnlinePlayers();
+
+        for (int i = 0; i < players.size(); i++)
+        {
+            PlayerUtility.SavePlayerStats(players.get(i));
+        }
     }
 }

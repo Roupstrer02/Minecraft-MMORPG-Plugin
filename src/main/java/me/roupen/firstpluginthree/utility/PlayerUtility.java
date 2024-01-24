@@ -2,8 +2,12 @@ package me.roupen.firstpluginthree.utility;
 
 import me.roupen.firstpluginthree.data.PlayerStats;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 public class PlayerUtility {
@@ -25,9 +29,30 @@ public class PlayerUtility {
         playerStatsMap.put(uuid, stats);
     }
 
-    public static void UpdatePlayerStats()
+    public static void SavePlayerStats(Player player)
     {
+        PlayerStats stats = PlayerUtility.getPlayerStats(player);
+        File f = new File(PlayerUtility.getFolderPath(player) + "/general.yml");
+        FileConfiguration cfg = YamlConfiguration.loadConfiguration(f);
+        cfg.set("stats.Vitality", stats.getVitality());
+        cfg.set("stats.Resilience", stats.getResilience());
+        cfg.set("stats.Intelligence", stats.getIntelligence());
 
+        cfg.set("stats.Strength", stats.getStrength());
+        cfg.set("stats.Dexterity", stats.getDexterity());
+        cfg.set("stats.Wisdom", stats.getWisdom());
+
+        cfg.set("stats.Experience", stats.getExperience());
+        cfg.set("stats.Level", stats.getLevel());
+        cfg.set("stats.SkillPoints", stats.getSkillPoints());
+
+        cfg.set("stats.CurrentHealth", stats.getActiveCurrentHealth());
+        cfg.set("stats.CurrentMana", stats.getActiveCurrentMana());
+        cfg.set("stats.CurrentStamina", stats.getActiveCurrentStamina());
+
+
+        try { cfg.save(f); } catch (IOException e){ e.printStackTrace(); }
+        PlayerUtility.setPlayerStats(player, null);
     }
 
     public static void printPlayerStats(Player p)
