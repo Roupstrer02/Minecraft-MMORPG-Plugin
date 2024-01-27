@@ -1,6 +1,5 @@
 package me.roupen.firstpluginthree;
 
-import me.roupen.firstpluginthree.PlayerInteractions.EquipmentWorkbench;
 import me.roupen.firstpluginthree.PlayerInteractions.*;
 import me.roupen.firstpluginthree.PlayerInteractions.RuneForge;
 import me.roupen.firstpluginthree.commandkit.profileCMD;
@@ -9,8 +8,8 @@ import me.roupen.firstpluginthree.constantrunnables.weatherforecast;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
 
+import me.roupen.firstpluginthree.magic.Fireball;
 import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
-import me.roupen.firstpluginthree.playerequipment.Rune;
 import me.roupen.firstpluginthree.utility.MobUtility;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
 import me.roupen.firstpluginthree.weather.WeatherForecast;
@@ -86,6 +85,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
 
         BukkitTask Weather_Forecast = new weatherforecast().runTaskTimer(this, 0, 20);
         BukkitTask playeractionbar = new actionbardisplay().runTaskTimer(this, 0L, 5);
+        BukkitTask fireball = new Fireball().runTaskTimer(this, 0L, 5);
     }
 
     @EventHandler
