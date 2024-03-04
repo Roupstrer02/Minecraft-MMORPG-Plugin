@@ -3,23 +3,20 @@ package me.roupen.firstpluginthree.magic;
 import me.roupen.firstpluginthree.constantrunnables.spellcasting;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
-import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
 import me.roupen.firstpluginthree.utility.MobUtility;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
 import me.roupen.firstpluginthree.wands.wand;
-import org.bukkit.boss.BossBar;
-import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
-import org.bukkit.entity.*;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.util.Vector;
+import org.bukkit.boss.BossBar;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 
-public class Fireball extends spellcasting{
+public class FlameDash extends spellcasting {
 
     //Progress dictates what stage of the spell has been reached
     private int progress = 0;
@@ -28,33 +25,25 @@ public class Fireball extends spellcasting{
     private PlayerStats stats;
     private World world;
     private Location loc;
-    private Location FireballLoc;
     private Collection<LivingEntity> Targets;
+    private HashSet<LivingEntity> SavedTargets = new HashSet<LivingEntity>();
+    private LivingEntity[] ArrayOfTargets;
     private BossBar ChannelTime;
-    private boolean SpellHit = false;
 
     //Need a variable that holds the wand in order to easily apply the modifiers onto the spell (without coupling code)
 
-    public Fireball(Player caster)
+    public FlameDash(Player caster)
     {
         this.origin = caster;
         this.stats = PlayerUtility.getPlayerStats(this.origin);
         this.world = origin.getWorld();
-
-        setSpellName("Fireball");
+        this.loc = origin.getLocation();
+        setSpellName("Flame Dash");
         setCastingWand(wand.ItemToWand(caster.getInventory().getItemInOffHand()));
     }
-
-    public int getProgress() {
-        return progress;
-    }
-    public void setProgress(int progress) {
-        this.progress = progress;
-    }
-    public void incrementProgress() {this.progress = getProgress() + 1;}
     public void cast() {
 
-        if (getProgress() == 0) //ikwym
+        if (getProgress() == 0)
         {
             //If the player has the mana for the spell
             if (stats.getActiveCurrentMana() >= ManaCostCalc(stats))
@@ -63,17 +52,13 @@ public class Fireball extends spellcasting{
                 //spend the mana for the spell
                 stats.spendMana(ManaCostCalc(stats));
 
-                //set starting point of fireball
-                loc = origin.getLocation().add(0,1.5,0).add(origin.getLocation().getDirection().multiply(0.5));
-                FireballLoc = loc;
-
                 //creates BossBar for player's cooldown timer and shows it to player
                 ChannelTime = Bukkit.createBossBar(this.spellName, BarColor.RED, BarStyle.SOLID);
                 ChannelTime.addPlayer(stats.getPlayer());
                 ChannelTime.setVisible(true);
 
                 //makes sound
-                stats.getPlayer().getWorld().playSound(loc, Sound.ENTITY_BLAZE_SHOOT, 1, 0);
+                stats.getPlayer().getWorld().playSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 1, 0);
             }
 
             //If the player doesn't have the mana for the spell
@@ -82,38 +67,38 @@ public class Fireball extends spellcasting{
                 this.cancel();
             }
         }
-        else if ((getProgress() < 100) && (!this.SpellHit))
+        else if ((getProgress() < 60))
         {
+            loc = origin.getLocation();
 
-            world.spawnParticle(Particle.FLAME, FireballLoc, 5, 0.1, 0.1, 0.1, 0, null, true);
-            FireballLoc = FireballLoc.add(FireballLoc.getDirection().multiply(1.5));
+            //make this a circle particle effect instead
+            world.spawnParticle(Particle.SMALL_FLAME, loc, 50, 2.5, 0.05, 2.5, 0.01, null, false);
+
+            Targets = world.getNearbyLivingEntities(loc, 2.5);
+
+            SavedTargets.addAll(Targets);
+
+            ArrayOfTargets = SavedTargets.toArray(new LivingEntity[SavedTargets.size()]);
+            for (LivingEntity tempTarget : ArrayOfTargets) {
+                if (!(tempTarget instanceof Player))
+                    world.spawnParticle(Particle.SMALL_FLAME, tempTarget.getLocation().add(0, 2.5, 0), 5, 0, 0, 0, 0.05, null, true);
+            }
+
+
         }
-        if (getProgress() >= 100)
+        if (getProgress() >= 60)
         {
-            this.cancel();
-        }
-
-        if (!(this.SpellHit) && (FireballLoc != null) && (FireballLoc.getBlock().getType() != Material.AIR || ((FireballLoc.getNearbyLivingEntities(0.2).size() > 0) && !(FireballLoc.getNearbyLivingEntities(0.2).iterator().next() instanceof Player)))) //Once the fireball hits the ground, or a target
-        {//EXPLOOOOOOOOSION
-            SpellHit = true;
-
-            MobStats mobstats;
-            Location animationLoc = FireballLoc;
-            ParticleSphere(animationLoc, SpellAOE());
-
-            Targets = world.getNearbyLivingEntities(FireballLoc, SpellAOE());
-
-            stats.getPlayer().getWorld().playSound(FireballLoc, Sound.ENTITY_GENERIC_EXPLODE, 1, 0);
-
-            for (LivingEntity target : Targets)
+            for (LivingEntity target : ArrayOfTargets)
             {
                 if (!(target instanceof Player))
                 {
-                    mobstats = MobUtility.getMobStats(target);
-                    mobstats.spell_damage(FireballDmgCalc(mobstats));
+                    MobStats mobstats = MobUtility.getMobStats(target);
+                    mobstats.spell_damage(FlameDashDamageCalc(mobstats));
                     target.damage(0);
-                    if (mobstats.getHealth() <= 0) {
+                    world.spawnParticle(Particle.SMALL_FLAME, target.getLocation().add(0,1,0), 200, 1, 1, 1, 0, null, true);
 
+                    if (mobstats.getHealth() <= 0) {
+                        //Maybe Make a "Mob Death" function
                         if (!target.isDead()) {
                             mobstats.KillReward(stats);
                         }
@@ -122,8 +107,11 @@ public class Fireball extends spellcasting{
                         target.customName(mobstats.generateName());
                     }
                 }
+
             }
+            this.cancel();
         }
+
         incrementProgress();
 
         if (!this.isCancelled() && (getProgress() < 40))
@@ -138,22 +126,23 @@ public class Fireball extends spellcasting{
         }
     }
 
-    public double FireballDmgCalc(MobStats mobstats)
-    {
+    public int getProgress() {
+        return progress;
+    }
+    public void incrementProgress() {this.progress = getProgress() + 1;}
+
+    public double FlameDashDamageCalc(MobStats mobstats) {
         return 5 * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
     }
 
-    public double CasterSpellDamage() {
-        return stats.getWisdom() * getCastingWand().getOffenseSpellPowerModifier();
-    }
-
-    public double SpellAOE() {
-        return 2 * getCastingWand().getUtilitySpellPowerModifier();
-    }
-
-    public double ManaCostCalc(PlayerStats playerstats)
+    public double CasterSpellDamage()
     {
-        return 40.0 * getCastingWand().getSpellCostModifier();
+        return stats.getWisdom() * CastingWand.getOffenseSpellPowerModifier();
+    }
+
+
+    public double ManaCostCalc(PlayerStats stats) {
+        return 10;
     }
 
     @Override

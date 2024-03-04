@@ -4,6 +4,7 @@ import me.roupen.firstpluginthree.PlayerInteractions.*;
 import me.roupen.firstpluginthree.PlayerInteractions.RuneForge;
 import me.roupen.firstpluginthree.commandkit.profileCMD;
 import me.roupen.firstpluginthree.constantrunnables.actionbardisplay;
+import me.roupen.firstpluginthree.constantrunnables.spellcasting;
 import me.roupen.firstpluginthree.constantrunnables.weatherforecast;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
@@ -12,6 +13,7 @@ import me.roupen.firstpluginthree.magic.Fireball;
 import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
 import me.roupen.firstpluginthree.utility.MobUtility;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
+import me.roupen.firstpluginthree.wands.wand;
 import me.roupen.firstpluginthree.weather.WeatherForecast;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -85,7 +87,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
 
         BukkitTask Weather_Forecast = new weatherforecast().runTaskTimer(this, 0, 20);
         BukkitTask playeractionbar = new actionbardisplay().runTaskTimer(this, 0L, 5);
-        BukkitTask fireball = new Fireball().runTaskTimer(this, 0L, 5);
+
     }
 
     @EventHandler
@@ -162,10 +164,17 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
 
             PlayerStats stats = PlayerUtility.getPlayerStats(player);
 
-
         }
 
     }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        PlayerStats stats = PlayerUtility.getPlayerStats(event.getPlayer());
+        stats.respawnStatReset();
+
+    }
+
     //menu inventory for player
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event)
@@ -174,15 +183,30 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
 
         //player who clicked
         Player player = event.getPlayer();
-
+        PlayerStats stats = PlayerUtility.getPlayerStats(player);
         //list of items I look for
-        ItemStack compass = new ItemStack(Material.COMPASS, 1);
+        ItemStack stick = new ItemStack(Material.STICK, 1);
 
         RuneForge.Interact(event);
+        wand.Interact(event);
+        WandCrafting.Interact(event);
 
         //effects triggered
-        if ((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) && player.getInventory().getItemInMainHand().equals(compass)) {
+        if (!(stats.isCastingSpell()) && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) && wand.IsWand(player.getInventory().getItemInOffHand())) {
             //testing purposes
+            stats.setCastingSpell(true);
+            if (player.isSneaking()) {
+                spellcasting.cast(player, "Fireball");
+            }
+            else if (!player.isOnGround()) {
+                spellcasting.cast(player, "Flame Booster");
+            }
+            else if (player.isSprinting()) {
+                spellcasting.cast(player, "Flame Dash");
+            }
+            else {
+                spellcasting.cast(player, "Fireball");
+            }
         }
     }
     @EventHandler
@@ -208,7 +232,10 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
     public void onEntitySpawn(EntitySpawnEvent event)
     {
         Entity entity = event.getEntity();
-        if (!(entity instanceof Player) && !(entity instanceof Item) && !(entity instanceof Arrow) && !(entity instanceof ThrownPotion))
+        if (!((entity instanceof Player) || (entity instanceof Item) ||
+                (entity instanceof Arrow) || (entity instanceof ThrownPotion) ||
+                (entity instanceof Egg) || (entity instanceof EnderPearl) ||
+                (entity instanceof Snowball)))
         {
             Entity mob = event.getEntity();
             MobStats stats = new MobStats(mob, WeatherForecast.getWeather(event));
@@ -222,6 +249,8 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event)
     {
         //ALL DAMAGE LOGIC FOR PLAYERS TO MOBS AND VICE VERSA HAPPENS HERE
+
+        //if player melee attacks the mob
         if (event.getDamager() instanceof Player && !(event.getEntity() instanceof Player))
         {
             Player player = (Player) event.getDamager();
@@ -239,9 +268,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
             {
                 //"kills" the mob once 0 health is hit and awards EXP and drops
                 mob.setHealth(0);
-                playerstats.gainExperience(5000, player);
-                player.getInventory().addItem(PlayerEquipment.EquipmentToItem(PlayerEquipment.GenerateRandomEquipment(mob)));
-                event.getEntity().customName(Component.text("+" + 5000 + "XP" + " - " + player.getName()));
+                mobstats.KillReward(playerstats);
             }
             else
             {
@@ -249,28 +276,34 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
             }
 
         }
+        //if mob hits player
         else if (!(event.getDamager() instanceof Player) && event.getEntity() instanceof Player)
         {
 
             Player player = (Player) event.getEntity();
             PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
 
+            //if the damage source is an arrow/ranged attack (skeletons & pillagers)
             if (event.getDamager() instanceof Arrow)
             {
                 MobStats shooterstats = MobUtility.getMobStats((LivingEntity) ((Arrow) event.getDamager()).getShooter());
-                player.sendMessage("ranged hit");
 
                 playerstats.damage(shooterstats);
 
                 event.getDamager().remove();
 
             }
+            //if the damage source is a thrown potion (witches)
+            else if (event.getDamager() instanceof ThrownPotion) {
+                MobStats shooterstats = MobUtility.getMobStats((LivingEntity) ((ThrownPotion) event.getDamager()).getShooter());
+
+                playerstats.damage(shooterstats);
+            }
+            //standard melee attack + creeper explosions
             else
             {
                 LivingEntity mob = (LivingEntity) event.getDamager();
                 MobStats mobstats = MobUtility.getMobStats(mob);
-
-                player.sendMessage("melee hit");
 
                 playerstats.damage(mobstats);
             }
@@ -282,8 +315,10 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
             } else {
                 player.setHealth(0);
                 playerstats.setActiveCurrentHealth(playerstats.getActiveMaxHealth());
+                playerstats.setActiveCurrentMana(playerstats.getActiveMaxMana());
             }
         }
+        //if player shoots an arrow
         else if (event.getDamager() instanceof Arrow && (((Arrow) event.getDamager()).getShooter() instanceof Player))
         {
             LivingEntity mob = (LivingEntity) event.getEntity();
@@ -307,9 +342,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
             {
                 //"kills" the mob once 0 health is hit and awards EXP
                 mob.setHealth(0);
-                playerstats.gainExperience(5000, player);
-                player.getInventory().addItem(PlayerEquipment.EquipmentToItem(PlayerEquipment.GenerateRandomEquipment(mob)));
-                event.getEntity().customName(Component.text("+" + 5000 + "XP" + " - " + player.getName()));
+                mobstats.KillReward(playerstats);
             }
         }
 
@@ -345,30 +378,39 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event)
     {
-        if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.FALL)
-        {
-            Player player = (Player) event.getEntity();
-            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 60, (int) (Math.min((event.getDamage() / 4), 6))));
-            player.playSound(player.getLocation(), Sound.BLOCK_BAMBOO_BREAK, 1,1);
-            event.setCancelled(true);
-        }
-        else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.LAVA) {
-            Player player = (Player) event.getEntity();
-            PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
-            playerstats.setActiveCurrentHealth( (int) (playerstats.getActiveCurrentHealth() * 0.9));
-            event.setCancelled(true);
-        }
-        else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.FIRE) {
-            Player player = (Player) event.getEntity();
-            PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
-            playerstats.setActiveCurrentHealth( (int) (playerstats.getActiveCurrentHealth() * 0.95));
-            event.setCancelled(true);
-        }
-
-        if (event.getCause() != EntityDamageEvent.DamageCause.CUSTOM && !(event.getEntity() instanceof Player))
-        {
-            event.setCancelled(true);
-
+        if (!(event.getEntity() instanceof Item)) {
+            if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.FALL) {
+                Player player = (Player) event.getEntity();
+                player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 60, (int) (Math.min((event.getDamage() / 4), 6))));
+                player.playSound(player.getLocation(), Sound.BLOCK_BAMBOO_BREAK, 1, 1);
+                event.setCancelled(true);
+            } else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.LAVA) {
+                Player player = (Player) event.getEntity();
+                PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
+                //damages player by 1% current health true damage per damage tick
+                playerstats.setActiveCurrentHealth(playerstats.getActiveCurrentHealth() - ((int) (playerstats.getActiveMaxHealth() * 0.01)));
+                event.setCancelled(true);
+            } else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.FIRE) {
+                Player player = (Player) event.getEntity();
+                PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
+                //damages player by 5% current health true damage per damage tick
+                playerstats.setActiveCurrentHealth((int) (playerstats.getActiveCurrentHealth() * 0.95));
+                event.setCancelled(true);
+            } else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK) {
+                Player player = (Player) event.getEntity();
+                PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
+                //damages player by 5% current health true damage per damage tick
+                playerstats.setActiveCurrentHealth((int) (playerstats.getActiveCurrentHealth() * 0.95));
+                event.setCancelled(true);
+            } else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.POISON) {
+                Player player = (Player) event.getEntity();
+                PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
+                //damages player by 2% max health true damage per damage tick
+                playerstats.setActiveCurrentHealth((int) (playerstats.getActiveCurrentHealth() - (0.02 * playerstats.getActiveMaxHealth())));
+                event.setCancelled(true);
+            } else if (event.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
+                event.setCancelled(true);
+            }
         }
     }
 
@@ -381,5 +423,6 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         {
             PlayerUtility.SavePlayerStats(players.get(i));
         }
+        playeractionbar.cancel();
     }
 }

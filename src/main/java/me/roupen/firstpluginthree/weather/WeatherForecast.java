@@ -65,7 +65,7 @@ public class WeatherForecast {
             "The Moon is Red! The frenzy has begun! There's little time left!"
     };
 
-    public static void Cycle() {
+    public static void Cycle() { //I lost my byke
         File f = new File(getFolderPath() + "/WeatherForecast.yml");
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(f);
         ArrayList<String> weather = new ArrayList<>(cfg.getKeys(false));
@@ -102,7 +102,7 @@ public class WeatherForecast {
 
         for (int i = 0; i < AllBiomesList.size(); i++) {
             if (Arrays.asList(AllBiomesList.get(i)).contains(biomeName)) {
-                return (int) cfg.get(weather.get(i));
+                return ((int) cfg.get(weather.get(i))) + 1;
             }
         }
 
@@ -123,7 +123,7 @@ public class WeatherForecast {
 
         for (int i = 0; i < AllBiomesList.size(); i++) {
             if (Arrays.asList(AllBiomesList.get(i)).contains(biomeName)) {
-                return (int) cfg.get(weather.get(i));
+                return ((int) cfg.get(weather.get(i))) + 1;
             }
         }
 
@@ -133,10 +133,10 @@ public class WeatherForecast {
     }
 
     public static void DisplayForecast() {
+        Cycle();
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
         File f = new File(getFolderPath() + "/WeatherForecast.yml");
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(f);
-        ArrayList<String> weather = new ArrayList<>(cfg.getKeys(false));
 
         for (Player player : players)
         {

@@ -36,7 +36,7 @@ public class ProfileMenu {
         //when the player clicks in the "Stat Improvements" menu
         else if (invtitle.contains("content=\"Stat Improvements\""))
         {
-            if (event.getCurrentItem().getType() == Material.GRAY_DYE)
+            if ((event.getCurrentItem() != null) && (event.getCurrentItem().getType() == Material.GRAY_DYE))
             {GuiUtility.CreateProfileGui(player);}
 
             if (stats.getSkillPoints() > 0) {
@@ -45,30 +45,33 @@ public class ProfileMenu {
                     stats.addSkillPoints(-1);
                     GuiUtility.CreateUpgradeGui(player);
                 }
-                if (event.getCurrentItem().getType() == Material.GREEN_STAINED_GLASS_PANE) {
+                else if (event.getCurrentItem().getType() == Material.GREEN_STAINED_GLASS_PANE) {
                     stats.addResilience(1);
                     stats.addSkillPoints(-1);
                     GuiUtility.CreateUpgradeGui(player);
                 }
-                if (event.getCurrentItem().getType() == Material.BLUE_STAINED_GLASS_PANE) {
+                else if (event.getCurrentItem().getType() == Material.BLUE_STAINED_GLASS_PANE) {
                     stats.addIntelligence(1);
                     stats.addSkillPoints(-1);
                     GuiUtility.CreateUpgradeGui(player);
                 }
-                if (event.getCurrentItem().getType() == Material.ORANGE_STAINED_GLASS_PANE) {
+                else if (event.getCurrentItem().getType() == Material.ORANGE_STAINED_GLASS_PANE) {
                     stats.addStrength(1);
                     stats.addSkillPoints(-1);
                     GuiUtility.CreateUpgradeGui(player);
                 }
-                if (event.getCurrentItem().getType() == Material.CYAN_STAINED_GLASS_PANE) {
+                else if (event.getCurrentItem().getType() == Material.CYAN_STAINED_GLASS_PANE) {
                     stats.addWisdom(1);
                     stats.addSkillPoints(-1);
                     GuiUtility.CreateUpgradeGui(player);
                 }
-                if (event.getCurrentItem().getType() == Material.YELLOW_STAINED_GLASS_PANE) {
+                else if (event.getCurrentItem().getType() == Material.YELLOW_STAINED_GLASS_PANE) {
                     stats.addDexterity(1);
                     stats.addSkillPoints(-1);
                     GuiUtility.CreateUpgradeGui(player);
+                }
+                else {
+
                 }
                 PlayerUtility.setPlayerStats(player, stats);
             }

@@ -1,14 +1,19 @@
 package me.roupen.firstpluginthree.data;
 
+import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Color;
 import org.bukkit.Effect;
+import org.bukkit.Particle;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 
 import java.text.DecimalFormat;
+import java.util.Random;
 
 public class MobStats {
 
@@ -19,10 +24,13 @@ public class MobStats {
     private int Level;
     private Entity Mob;
 
+    private Particle.DustOptions dust = new Particle.DustOptions(
+            Color.fromRGB((int) (0.9 * 255), (int) (0.1 * 255), (int) (0.1 * 255)), 1);
+
 //===========================================================================================================================
 // Mob spawning level and stat initialization:
-// Mob level is initialized according to the "weather" of the biome it spawned in
-// Variations in the stats attributed according to level are decided by the type of the mob (zombie, skeleton, creeper, spider, etc...)
+// Mob level is initialized according to the "weather" of the biome it spawns in
+// Variations in the stats attributed according to level are decided by the type of the mob (zombie, skeleton, creeper, spider, etc...) [To be Implemented...]
 //===========================================================================================================================
     public MobStats(Entity mob, int weather)
     {
@@ -88,7 +96,7 @@ public class MobStats {
             playerstats.useStamina(playerstats.getStaminaCost());
 
             if (Math.random() < remainingmultihit) {
-                playerstats.getPlayer().getWorld().playEffect(playerstats.getPlayer().getLocation(), Effect.BLAZE_SHOOT, 1, 0);
+                playerstats.getPlayer().getWorld().spawnParticle(Particle.REDSTONE, getMob().getLocation().add(0,1,0), 10, 0.25, 0.5, 0.25, 0, dust, false);
                 return damage(playerstats, remainingmultihit - 1.0);
             }
             else {
@@ -122,6 +130,20 @@ public class MobStats {
                 return true;
             }
 
+    }
+
+    public void KillReward(PlayerStats stats) {
+        Random random = new Random();
+        int EXPtoGive = 5 + (2 * getLevel()) + ((int) (random.nextFloat() * getLevel()));
+        stats.gainExperience(EXPtoGive);
+        stats.getPlayer().getInventory().addItem(PlayerEquipment.EquipmentToItem(PlayerEquipment.GenerateRandomEquipment((LivingEntity) getMob())));
+        getMob().customName(Component.text("+" + EXPtoGive + "XP" + " - " + stats.getPlayer().getName()));
+    }
+
+    public void spell_damage(double amount)
+    {
+        setHealth(this.Health - amount);
+        getMob().customName(generateName());
     }
 
     public Component generateName() {

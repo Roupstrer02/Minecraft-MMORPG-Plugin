@@ -2,9 +2,11 @@ package me.roupen.firstpluginthree.data;
 
 
 import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -38,7 +40,7 @@ public class PlayerStats {
 
     //Total Stats (in-game)
 
-    private Player player;
+    private Player player; //you are a player, I am a developer, we are not the same.
 
     private double ActiveCurrentHealth;
     private double ActiveMaxHealth;
@@ -61,6 +63,9 @@ public class PlayerStats {
 
     //equipment related stats and values
     private PlayerEquipment equipment = new PlayerEquipment(0, Material.AIR, "");
+
+    //Spellcasting related variables
+    private boolean castingSpell = false;
 
     //getter and setter and adder functions for all statistics
     public double getStaminaCost() {
@@ -174,7 +179,12 @@ public class PlayerStats {
     public void setPlayer(Player player) {
         this.player = player;
     }
-
+    public boolean isCastingSpell() {
+        return castingSpell;
+    }
+    public void setCastingSpell(boolean castingSpell) {
+        this.castingSpell = castingSpell;
+    }
     public void AddEquipmentStats(PlayerEquipment e) {
         equipment.setDamage(equipment.getDamage() + e.getDamage());
         equipment.setDefense(equipment.getDefense() + e.getDefense());
@@ -255,6 +265,9 @@ public class PlayerStats {
         //this function will have an equipment parameter as input
         setActiveCurrentStamina(getActiveCurrentStamina() - amount);
     }
+    public void spendMana(double amount) {
+        setActiveCurrentMana(getActiveCurrentMana() - amount);
+    }
     public void useMana(double amount){
         setActiveCurrentMana(getActiveCurrentMana() - amount);
     }
@@ -270,7 +283,7 @@ public class PlayerStats {
     public void setExperience(int experience) {
         Experience = experience;
     }
-    public void gainExperience(int exp, Player p) {
+    public void gainExperience(int exp) {
         //value subject to change
         int Levelcap = (int) (1000 + (this.Level * 150) + (Math.floor((this.Level / 10)) * 200) + (Math.floor((this.Level / 25)) * 500));
         this.Experience += exp;
@@ -284,7 +297,7 @@ public class PlayerStats {
                 Levelcap = (int) (1000 + (this.Level * 150) + (Math.floor((this.Level / 10)) * 200) + (Math.floor((this.Level / 25)) * 500));
                 this.SkillPoints += 1;
             }
-            p.chat("You Leveled up to level " + this.Level + "!");
+            getPlayer().chat("You Leveled up to level " + this.Level + "!");
         }
     }
 
@@ -358,10 +371,23 @@ public class PlayerStats {
         ActiveCurrentHealth -= mobstats.getAttack() - (mobstats.getAttack() * (getActiveDefense() / (getActiveDefense() + 100)));
 
     }
+
+    public void respawnStatReset() {
+        setActiveCurrentHealth(getActiveMaxHealth());
+        setActiveCurrentStamina(getActiveMaxStamina());
+        setActiveCurrentMana(getActiveMaxMana());
+    }
+
     public void heal(double amount) {
         ActiveCurrentHealth += amount;
         //if more than max, set to max
     }
+
+    public void KillReward(LivingEntity mob)
+    {
+
+    }
+
 
     public String toString()
     {

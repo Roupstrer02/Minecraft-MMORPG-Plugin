@@ -17,14 +17,14 @@ import java.util.Collection;
 import java.util.Random;
 
 public class actionbardisplay extends BukkitRunnable {
-
+    //style
     private final Style styleHealth;
     private final Style styleStamina;
     private final Style styleMana;
 
     private PlayerStats stats;
 
-    public actionbardisplay()
+    public actionbardisplay()//brad?
     {
 
         this.styleHealth = Style.style(NamedTextColor.RED, TextDecoration.BOLD);
@@ -66,6 +66,10 @@ public class actionbardisplay extends BukkitRunnable {
                 {
                     stats.setActiveCurrentHealth(0);
                     player.setHealth(0);
+                }
+                else
+                {
+                    player.setHealth(Math.min(20, 20 * (stats.getActiveCurrentHealth() / stats.getActiveMaxHealth())));
                 }
 
                 player.sendActionBar(Component.text()
