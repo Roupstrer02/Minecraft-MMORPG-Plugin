@@ -72,9 +72,9 @@ public class FlameDash extends spellcasting {
             loc = origin.getLocation();
 
             //make this a circle particle effect instead
-            world.spawnParticle(Particle.SMALL_FLAME, loc, 50, 2.5, 0.05, 2.5, 0.01, null, false);
+            ParticleCircle(loc.add(0,0.2,0), SpellAOE());
 
-            Targets = world.getNearbyLivingEntities(loc, 2.5);
+            Targets = world.getNearbyLivingEntities(loc, SpellAOE());
 
             SavedTargets.addAll(Targets);
 
@@ -139,10 +139,12 @@ public class FlameDash extends spellcasting {
     {
         return stats.getWisdom() * CastingWand.getOffenseSpellPowerModifier();
     }
-
+    public double SpellAOE() {
+        return 2.5 * getCastingWand().getUtilitySpellPowerModifier();
+    }
 
     public double ManaCostCalc(PlayerStats stats) {
-        return 10;
+        return 40.0 * getCastingWand().getSpellCostModifier();
     }
 
     @Override

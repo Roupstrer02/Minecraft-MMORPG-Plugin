@@ -63,9 +63,30 @@ public class FlameBooster extends spellcasting {
                 stats.getPlayer().getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1, 0);
 
                 //effect of spell
+                MobStats mobstats;
                 loc = origin.getLocation();
                 origin.setVelocity(origin.getVelocity().setY(1 * getCastingWand().getUtilitySpellPowerModifier()));
                 Targets = world.getNearbyLivingEntities(loc, SpellAOE());
+                world.spawnParticle(Particle.EXPLOSION_HUGE, origin.getLocation(), 1);
+
+                for (LivingEntity target : Targets)
+                {
+                    if (!(target instanceof Player))
+                    {
+                        mobstats = MobUtility.getMobStats(target);
+                        mobstats.spell_damage(FlameBoosterDamageCalc(mobstats));
+                        target.damage(0);
+                        if (mobstats.getHealth() <= 0) {
+
+                            if (!target.isDead()) {
+                                mobstats.KillReward(stats);
+                            }
+                            target.setHealth(0);
+                        }else{
+                            target.customName(mobstats.generateName());
+                        }
+                    }
+                }
             }
 
             //If the player doesn't have the mana for the spell
@@ -74,7 +95,7 @@ public class FlameBooster extends spellcasting {
                 this.cancel();
             }
         }
-        else if ((progress > 0) && (progress < 50)) {
+        else if ((progress > 0) && (progress < 25)) {
             loc = origin.getLocation().add(0,1,0);
             double theta = (Math.PI * (0.25 * (progress % 8)));
             double x = 0.5 * Math.cos(theta);

@@ -9,7 +9,6 @@ import me.roupen.firstpluginthree.magic.SteamRocketPack;
 import me.roupen.firstpluginthree.wands.wand;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -60,6 +59,30 @@ public class spellcasting extends BukkitRunnable {
                 loc.subtract(x, y, z);
             }
         }
+    }
+    protected void ParticleRing(Location loc, double radius) {
+        for(double theta = 0; theta <= 2 * Math.PI; theta += Math.PI / (radius * 10)) {
+            double x = radius * Math.cos(theta);
+            double z = radius * Math.sin(theta);
+
+            loc.add(x, 0, z);
+            loc.getWorld().spawnParticle(Particle.FLAME, loc, 1, 0F, 0F, 0F, 0.001);
+            loc.subtract(x, 0, z);
+        }
+
+    }
+    protected void ParticleCircle(Location loc, double radius) {
+
+        for(double theta = 0; theta <= 2 * Math.PI; theta += Math.PI / (radius * 5)) {
+            double x = radius * Math.cos(theta);
+            double z = radius * Math.sin(theta);
+
+            loc.add(x, 0, z);
+            loc.getWorld().spawnParticle(Particle.FLAME, loc, 1, 0F, 0F, 0F, 0.001);
+            loc.subtract(x, 0, z);
+        }
+        loc.getWorld().spawnParticle(Particle.FLAME, loc, (int) (5 * radius), (float) radius / 2, 0F, (float) radius / 2, 0.001);
+
     }
 
     protected wand getCastingWand() {return this.CastingWand;}

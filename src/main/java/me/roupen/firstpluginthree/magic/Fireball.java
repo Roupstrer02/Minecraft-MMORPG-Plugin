@@ -3,20 +3,14 @@ package me.roupen.firstpluginthree.magic;
 import me.roupen.firstpluginthree.constantrunnables.spellcasting;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
-import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
 import me.roupen.firstpluginthree.utility.MobUtility;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
 import me.roupen.firstpluginthree.wands.wand;
 import org.bukkit.boss.BossBar;
-import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.*;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.util.Vector;
-
-import java.util.Arrays;
 import java.util.Collection;
 
 public class Fireball extends spellcasting{
@@ -24,9 +18,9 @@ public class Fireball extends spellcasting{
     //Progress dictates what stage of the spell has been reached
     private int progress = 0;
 
-    private Player origin;
-    private PlayerStats stats;
-    private World world;
+    private final Player origin;
+    private final PlayerStats stats;
+    private final World world;
     private Location loc;
     private Location FireballLoc;
     private Collection<LivingEntity> Targets;
@@ -40,6 +34,7 @@ public class Fireball extends spellcasting{
         this.origin = caster;
         this.stats = PlayerUtility.getPlayerStats(this.origin);
         this.world = origin.getWorld();
+        this.loc = origin.getLocation();
 
         setSpellName("Fireball");
         setCastingWand(wand.ItemToWand(caster.getInventory().getItemInOffHand()));
@@ -64,7 +59,7 @@ public class Fireball extends spellcasting{
                 stats.spendMana(ManaCostCalc(stats));
 
                 //set starting point of fireball
-                loc = origin.getLocation().add(0,1.5,0).add(origin.getLocation().getDirection().multiply(0.5));
+                loc = loc.add(0,1.5,0).add(origin.getLocation().getDirection().multiply(0.5));
                 FireballLoc = loc;
 
                 //creates BossBar for player's cooldown timer and shows it to player
@@ -74,6 +69,7 @@ public class Fireball extends spellcasting{
 
                 //makes sound
                 stats.getPlayer().getWorld().playSound(loc, Sound.ENTITY_BLAZE_SHOOT, 1, 0);
+
             }
 
             //If the player doesn't have the mana for the spell
