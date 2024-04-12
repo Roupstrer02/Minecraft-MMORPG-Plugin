@@ -27,8 +27,6 @@ public class Fireball extends spellcasting{
     private BossBar ChannelTime;
     private boolean SpellHit = false;
 
-    //Need a variable that holds the wand in order to easily apply the modifiers onto the spell (without coupling code)
-
     public Fireball(Player caster)
     {
         this.origin = caster;

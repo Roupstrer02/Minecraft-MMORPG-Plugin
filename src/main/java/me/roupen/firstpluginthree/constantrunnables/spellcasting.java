@@ -2,10 +2,7 @@ package me.roupen.firstpluginthree.constantrunnables;
 
 //i wish i could import roupen irl D: -Armen
 import me.roupen.firstpluginthree.FirstPluginThree;
-import me.roupen.firstpluginthree.magic.Fireball;
-import me.roupen.firstpluginthree.magic.FlameBooster;
-import me.roupen.firstpluginthree.magic.FlameDash;
-import me.roupen.firstpluginthree.magic.SteamRocketPack;
+import me.roupen.firstpluginthree.magic.*;
 import me.roupen.firstpluginthree.wands.wand;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -15,7 +12,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 public class spellcasting extends BukkitRunnable {
 
-    //all spells run every tick
+    //all spells run every tick (20/s)
     protected String spellName;
     protected wand CastingWand;
 
@@ -35,8 +32,13 @@ public class spellcasting extends BukkitRunnable {
                 break;
             case "Steam Rocket Pack":
                 BukkitTask SteamRocketPack = new SteamRocketPack(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
+                break;
             case "Flame Booster":
                 BukkitTask FlameBooster = new FlameBooster(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
+                break;
+            case "Meteor Fall":
+                BukkitTask MeteorFall = new MeteorFall(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
+                break;
             default:
         }
     }

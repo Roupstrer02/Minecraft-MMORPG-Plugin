@@ -16,6 +16,7 @@ import me.roupen.firstpluginthree.utility.PlayerUtility;
 import me.roupen.firstpluginthree.wands.wand;
 import me.roupen.firstpluginthree.weather.WeatherForecast;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -191,12 +192,16 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         wand.Interact(event);
         WandCrafting.Interact(event);
 
+        if (player.getInventory().getItemInOffHand().equals(new ItemStack(Material.COMPASS))) {
+            player.performCommand("mm mobs spawn SkeletalKnight");
+        }
+
         //effects triggered
         if (!(stats.isCastingSpell()) && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) && wand.IsWand(player.getInventory().getItemInOffHand())) {
             //testing purposes
             stats.setCastingSpell(true);
             if (player.isSneaking()) {
-                spellcasting.cast(player, "Fireball");
+                spellcasting.cast(player, "Meteor Fall");
             }
             else if (!player.isOnGround()) {
                 spellcasting.cast(player, "Flame Booster");
@@ -319,7 +324,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
             }
         }
         //if player shoots an arrow
-        else if (event.getDamager() instanceof Arrow && (((Arrow) event.getDamager()).getShooter() instanceof Player))
+        else if (event.getDamager() instanceof Arrow && (((Arrow) event.getDamager()).getShooter() instanceof Player) && !(event.getEntity() instanceof Player))
         {
             LivingEntity mob = (LivingEntity) event.getEntity();
             MobStats mobstats = MobUtility.getMobStats(mob);
