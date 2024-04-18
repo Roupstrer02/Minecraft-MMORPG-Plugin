@@ -2,13 +2,13 @@ package me.roupen.firstpluginthree;
 
 import me.roupen.firstpluginthree.PlayerInteractions.*;
 import me.roupen.firstpluginthree.PlayerInteractions.RuneForge;
+import me.roupen.firstpluginthree.artisan.CookingRecipes;
 import me.roupen.firstpluginthree.commandkit.profileCMD;
 import me.roupen.firstpluginthree.constantrunnables.actionbardisplay;
 import me.roupen.firstpluginthree.constantrunnables.spellcasting;
 import me.roupen.firstpluginthree.constantrunnables.weatherforecast;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
-
 import me.roupen.firstpluginthree.magic.Fireball;
 import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
 import me.roupen.firstpluginthree.utility.MobUtility;
@@ -48,36 +48,12 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
     BukkitTask playeractionbar;
     BukkitTask Weather_Forecast;
     private static FirstPluginThree myPlugin;
-    private void savePlayerStats(Player player) {
-        PlayerStats stats = PlayerUtility.getPlayerStats(player);
-        File f = new File(PlayerUtility.getFolderPath(player) + "/general.yml");
-        FileConfiguration cfg = YamlConfiguration.loadConfiguration(f);
-
-        cfg.set("stats.Vitality", stats.getVitality());
-        cfg.set("stats.Resilience", stats.getResilience());
-        cfg.set("stats.Intelligence", stats.getIntelligence());
-
-        cfg.set("stats.Strength", stats.getStrength());
-        cfg.set("stats.Dexterity", stats.getDexterity());
-        cfg.set("stats.Wisdom", stats.getWisdom());
-
-        cfg.set("stats.Experience", stats.getExperience());
-        cfg.set("stats.Level", stats.getLevel());
-        cfg.set("stats.SkillPoints", stats.getSkillPoints());
-
-        try {
-            cfg.save(f);
-        } catch (IOException e){
-            e.printStackTrace();
-        }
-
-        PlayerUtility.setPlayerStats(player, null);
-    }
-
     public static FirstPluginThree getMyPlugin()
     {
         return myPlugin;
     }
+    private static CookingRecipes cookingrecipes;
+    public static CookingRecipes getCookingrecipes() {return cookingrecipes;}
 
     @Override
     public void onEnable() {
@@ -88,6 +64,8 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
 
         BukkitTask Weather_Forecast = new weatherforecast().runTaskTimer(this, 0, 20);
         BukkitTask playeractionbar = new actionbardisplay().runTaskTimer(this, 0L, 5);
+        cookingrecipes = new CookingRecipes();
+        cookingrecipes.initRecipes();
 
     }
 
@@ -107,8 +85,10 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
             stats.setIntelligence(cfg.getInt("stats.Intelligence"));
 
             stats.setStrength(cfg.getInt("stats.Strength"));
-            stats.setDexterity(cfg.getInt("stats.Strength"));
-            stats.setWisdom(cfg.getInt("stats.Strength"));
+            stats.setDexterity(cfg.getInt("stats.Dexterity"));
+            stats.setWisdom(cfg.getInt("stats.Wisdom"));
+
+            stats.setArtisan(cfg.getInt("stats.Artisan"));
 
             stats.setExperience(cfg.getInt("stats.Experience"));
             stats.setLevel(cfg.getInt("stats.Level"));
@@ -191,6 +171,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         RuneForge.Interact(event);
         wand.Interact(event);
         WandCrafting.Interact(event);
+        ArtisanRestrictions.Interact(event);
 
         if (player.getInventory().getItemInOffHand().equals(new ItemStack(Material.COMPASS))) {
             player.performCommand("mm mobs spawn SkeletalKnight");
@@ -227,6 +208,9 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
     //      else if ((event.getClickedInventory()).getHolder() == null && invtitle.contains("content=\"Equipment Workbench\""))
     //          {EquipmentWorkbench.ClickMenu(event);}
         }
+
+        ArtisanRestrictions.ClickMenu(event);
+
     }
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event)
@@ -253,106 +237,111 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event)
     {
-        //ALL DAMAGE LOGIC FOR PLAYERS TO MOBS AND VICE VERSA HAPPENS HERE
+        if (event.getEntity() instanceof LivingEntity) {
+            //ALL DAMAGE LOGIC FOR PLAYERS TO MOBS AND VICE VERSA HAPPENS HERE
 
-        //if player melee attacks the mob
-        if (event.getDamager() instanceof Player && !(event.getEntity() instanceof Player))
-        {
-            Player player = (Player) event.getDamager();
-            PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
-
-            LivingEntity mob = (LivingEntity) event.getEntity();
-            MobStats mobstats = MobUtility.getMobStats(mob);
-
-            if (mobstats.damage(playerstats, playerstats.getMultihit()))
+            //if player melee attacks the mob
+            if (event.getDamager() instanceof Player && !(event.getEntity() instanceof Player))
             {
-                //damage animation
-                mob.damage(0);
-            }
-            if (mobstats.getHealth() <= 0)
-            {
-                //"kills" the mob once 0 health is hit and awards EXP and drops
-                mob.setHealth(0);
-                mobstats.KillReward(playerstats);
-            }
-            else
-            {
-                event.getEntity().customName(mobstats.generateName());
-            }
+                Player player = (Player) event.getDamager();
+                PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
 
-        }
-        //if mob hits player
-        else if (!(event.getDamager() instanceof Player) && event.getEntity() instanceof Player)
-        {
-
-            Player player = (Player) event.getEntity();
-            PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
-
-            //if the damage source is an arrow/ranged attack (skeletons & pillagers)
-            if (event.getDamager() instanceof Arrow)
-            {
-                MobStats shooterstats = MobUtility.getMobStats((LivingEntity) ((Arrow) event.getDamager()).getShooter());
-
-                playerstats.damage(shooterstats);
-
-                event.getDamager().remove();
-
-            }
-            //if the damage source is a thrown potion (witches)
-            else if (event.getDamager() instanceof ThrownPotion) {
-                MobStats shooterstats = MobUtility.getMobStats((LivingEntity) ((ThrownPotion) event.getDamager()).getShooter());
-
-                playerstats.damage(shooterstats);
-            }
-            //standard melee attack + creeper explosions
-            else
-            {
-                LivingEntity mob = (LivingEntity) event.getDamager();
+                LivingEntity mob = (LivingEntity) event.getEntity();
                 MobStats mobstats = MobUtility.getMobStats(mob);
 
-                playerstats.damage(mobstats);
-            }
+                if (mobstats.damage(playerstats, playerstats.getMultihit()))
+                {
+                    //damage animation
+                    mob.damage(0);
+                }
+                if (mobstats.getHealth() <= 0)
+                {
+                    //"kills" the mob once 0 health is hit and awards EXP and drops
+                    mob.setHealth(0);
+                    mobstats.KillReward(playerstats);
+                }
+                else
+                {
+                    event.getEntity().customName(mobstats.generateName());
+                }
 
-            //Makes the health bar match the player's health stat
-            if (playerstats.getActiveCurrentHealth() > 0) {
-                player.setHealth(20 * playerstats.getActiveCurrentHealth() / playerstats.getActiveMaxHealth());
-                player.damage(0);
-            } else {
-                player.setHealth(0);
-                playerstats.setActiveCurrentHealth(playerstats.getActiveMaxHealth());
-                playerstats.setActiveCurrentMana(playerstats.getActiveMaxMana());
             }
+            //if mob hits player
+            else if (!(event.getDamager() instanceof Player) && event.getEntity() instanceof Player)
+            {
+
+                Player player = (Player) event.getEntity();
+                PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
+
+                //if the damage source is an arrow/ranged attack (skeletons & pillagers)
+                if (event.getDamager() instanceof Arrow)
+                {
+                    MobStats shooterstats = MobUtility.getMobStats((LivingEntity) ((Arrow) event.getDamager()).getShooter());
+
+                    playerstats.damage(shooterstats);
+
+                    event.getDamager().remove();
+
+                }
+                //if the damage source is a thrown potion (witches)
+                else if (event.getDamager() instanceof ThrownPotion) {
+                    MobStats shooterstats = MobUtility.getMobStats((LivingEntity) ((ThrownPotion) event.getDamager()).getShooter());
+
+                    playerstats.damage(shooterstats);
+                }
+                //standard melee attack + creeper explosions
+                else
+                {
+                    LivingEntity mob = (LivingEntity) event.getDamager();
+                    MobStats mobstats = MobUtility.getMobStats(mob);
+
+                    playerstats.damage(mobstats);
+                }
+
+                //Makes the health bar match the player's health stat
+                if (playerstats.getActiveCurrentHealth() > 0) {
+                    player.setHealth(20 * playerstats.getActiveCurrentHealth() / playerstats.getActiveMaxHealth());
+                    player.damage(0);
+                } else {
+                    player.setHealth(0);
+                    playerstats.setActiveCurrentHealth(playerstats.getActiveMaxHealth());
+                    playerstats.setActiveCurrentMana(playerstats.getActiveMaxMana());
+                }
+            }
+            //if player shoots an arrow
+            else if (event.getDamager() instanceof Arrow && (((Arrow) event.getDamager()).getShooter() instanceof Player) && !(event.getEntity() instanceof Player))
+            {
+                LivingEntity mob = (LivingEntity) event.getEntity();
+                MobStats mobstats = MobUtility.getMobStats(mob);
+
+                Player player = (Player) ((Arrow) event.getDamager()).getShooter();
+                PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
+
+                if (mobstats.ranged_damage(playerstats, playerstats.getMultihit(), event.getDamager().getVelocity().length()))
+                {
+                    //damage animation
+                    mob.damage(0);
+                    event.getDamager().remove();
+                    event.getEntity().customName(mobstats.generateName());
+
+                }else{
+                    player.getInventory().addItem(new ItemStack(Material.ARROW, 1));
+                }
+
+                if (mobstats.getHealth() <= 0)
+                {
+                    //"kills" the mob once 0 health is hit and awards EXP
+                    mob.setHealth(0);
+                    mobstats.KillReward(playerstats);
+                }
+            }
+            //Damage between mobs cannot happen
+            event.setCancelled(true);
         }
-        //if player shoots an arrow
-        else if (event.getDamager() instanceof Arrow && (((Arrow) event.getDamager()).getShooter() instanceof Player) && !(event.getEntity() instanceof Player))
+        else
         {
-            LivingEntity mob = (LivingEntity) event.getEntity();
-            MobStats mobstats = MobUtility.getMobStats(mob);
-
-            Player player = (Player) ((Arrow) event.getDamager()).getShooter();
-            PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
-
-            if (mobstats.ranged_damage(playerstats, playerstats.getMultihit(), event.getDamager().getVelocity().length()))
-            {
-                //damage animation
-                mob.damage(0);
-                event.getDamager().remove();
-                event.getEntity().customName(mobstats.generateName());
-
-            }else{
-                player.getInventory().addItem(new ItemStack(Material.ARROW, 1));
-            }
-
-            if (mobstats.getHealth() <= 0)
-            {
-                //"kills" the mob once 0 health is hit and awards EXP
-                mob.setHealth(0);
-                mobstats.KillReward(playerstats);
-            }
+            event.setCancelled(false);
         }
-
-        //Damage between mobs cannot happen
-        event.setCancelled(true);
     }
 
     @EventHandler

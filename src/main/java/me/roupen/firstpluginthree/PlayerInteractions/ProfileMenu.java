@@ -70,6 +70,11 @@ public class ProfileMenu {
                     stats.addSkillPoints(-1);
                     GuiUtility.CreateUpgradeGui(player);
                 }
+                else if (event.getCurrentItem().getType() == Material.LIME_STAINED_GLASS_PANE) {
+                    stats.addArtisan(1);
+                    stats.addSkillPoints(-1);
+                    GuiUtility.CreateUpgradeGui(player);
+                }
                 else {
 
                 }

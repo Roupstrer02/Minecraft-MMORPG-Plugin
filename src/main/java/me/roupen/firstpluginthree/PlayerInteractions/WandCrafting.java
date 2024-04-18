@@ -19,9 +19,6 @@ import java.util.Arrays;
 
 public class WandCrafting {
 
-
-
-
     public static void Interact(PlayerInteractEvent event)
     {
         Player player = event.getPlayer();
@@ -189,7 +186,7 @@ public class WandCrafting {
                     case PRISMARINE_SHARD:
                         break;
                     case GLOWSTONE:
-                        NewWand.setSpellCostModifier(NewWand.getSpellCostModifier() - ( 0.12  * (NewWand.getTier() * 0.5)));
+                        NewWand.setSpellCostModifier(NewWand.getSpellCostModifier() - (0.05  * (NewWand.getTier() * 0.5)));
                         NewWand.setUtilitySpellPowerModifier(NewWand.getUtilitySpellPowerModifier() + (0.10 * (NewWand.getTier() * 0.5)));
                         break;
                     case BLAZE_POWDER:

@@ -32,6 +32,8 @@ public class PlayerStats {
 
     //Increases mana pool and number of active spells at once (every few points)
     private int Wisdom;
+    //Determines the player's ability to craft and create things from different fields (cooking, alchemy, etc...)
+    private int Artisan;
     private int Experience;
     private int Level;
 
@@ -68,6 +70,7 @@ public class PlayerStats {
     private boolean castingSpell = false;
 
     //getter and setter and adder functions for all statistics
+
     public double getStaminaCost() {
         return StaminaCost;
     }
@@ -131,6 +134,13 @@ public class PlayerStats {
     public void setResilience(int defense) {
         Resilience = defense;
     }
+    public int getArtisan() {
+        return Artisan;
+    }
+    public void setArtisan(int artisan) {
+        Artisan = artisan;
+    }
+    public void addArtisan(int addedartisan) {Artisan += addedartisan;}
     public double getMovementSpeed() {
         return MovementSpeed;
     }

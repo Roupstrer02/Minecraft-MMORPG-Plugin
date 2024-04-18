@@ -43,7 +43,7 @@ public class WeatherForecast {
     public static final String[] ForestBiomeGroup = {"FOREST", "BIRCH_FOREST", "DARK_FOREST", "WINDSWEPT_FOREST", "FLOWER_FOREST", "OLD_GROWTH_BIRCH_FOREST"};
     public static final String[] TundraBiomeGroup = {"TAIGA", "SNOWY_TAIGA", "OLD_GROWTH_PINE_TAIGA", "OLD_GROWTH_SPRUCE_TAIGA", "FROZEN_RIVER", "SNOWY_PLAINS", "ICE_SPIKES", "SNOWY_BEACH", "FROZEN_PEAKS", "SNOWY_SLOPES", "GROVE", "JAGGED_PEAKS"};
     public static final String[] SwampBiomeGroup = {"SWAMP", "MANGROVE_SWAMP"};
-    public static final String[] OceanBiomeGroup = {"FROZEN_OCEAN", "WARM_OCEAN", "LUKEWARM_OCEAN", "COLD_OCEAN", "DEEP_LUKEWARM_OCEAN", "DEEP_COLD_OCEAN", "DEEP_FROZEN_OCEAN", "DEEP_OCEAN"};
+    public static final String[] OceanBiomeGroup = {"OCEAN", "FROZEN_OCEAN", "WARM_OCEAN", "LUKEWARM_OCEAN", "COLD_OCEAN", "DEEP_LUKEWARM_OCEAN", "DEEP_COLD_OCEAN", "DEEP_FROZEN_OCEAN", "DEEP_OCEAN"};
     public static final String[] JungleBiomeGroup = {"JUNGLE", "SPARSE_JUNGLE", "BAMBOO_JUNGLE"};
     public static final String[] CavesBiomeGroup = {"DRIPSTONE_CAVES", "LUSH_CAVES", "DEEP_DARK"};
     public static final String[] SavannaBiomeGroup = {"SAVANNA", "SAVANNA_PLATEAU", "BADLANDS", "WOODED_BADLANDS", "ERODED_BADLANDS"};

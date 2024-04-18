@@ -83,6 +83,7 @@ public class GuiUtility {
         gui.addGuiItem(Material.ORANGE_STAINED_GLASS_PANE, "Strength: ", 29, 0, Integer.toString(stats.getStrength()));
         gui.addGuiItem(Material.CYAN_STAINED_GLASS_PANE, "Wisdom: ", 33, 0, Integer.toString(stats.getWisdom()));
         gui.addGuiItem(Material.YELLOW_STAINED_GLASS_PANE, "Dexterity: ", 40, 0, Integer.toString(stats.getDexterity()));
+        gui.addGuiItem(Material.LIME_STAINED_GLASS_PANE, "Artisan: ", 36, 0, Integer.toString(stats.getArtisan()));
         gui.addGuiItem(Material.GRAY_STAINED_GLASS_PANE, "Level: ", 22, 0, Integer.toString(stats.getLevel()));
         gui.addGuiItem(Material.DIAMOND, "Unused Skill points: ", 0, 0, Integer.toString(stats.getSkillPoints()));
 
@@ -101,6 +102,7 @@ public class GuiUtility {
         upgradegui.addGuiItem(Material.ORANGE_STAINED_GLASS_PANE, "Strength: ", 28, 0, Integer.toString(stats.getStrength()));
         upgradegui.addGuiItem(Material.CYAN_STAINED_GLASS_PANE, "Wisdom: ", 31, 0, Integer.toString(stats.getWisdom()));
         upgradegui.addGuiItem(Material.YELLOW_STAINED_GLASS_PANE, "Dexterity: ", 34, 0, Integer.toString(stats.getDexterity()));
+        upgradegui.addGuiItem(Material.LIME_STAINED_GLASS_PANE, "Artisan: ", 36, 0, Integer.toString(stats.getArtisan()));
         upgradegui.addGuiItem(Material.DIAMOND, "Unused Skill points: ", 0, 0, Integer.toString(stats.getSkillPoints()));
 
         upgradegui.openInventory(player);

@@ -42,6 +42,8 @@ public class PlayerUtility {
         cfg.set("stats.Dexterity", stats.getDexterity());
         cfg.set("stats.Wisdom", stats.getWisdom());
 
+        cfg.set("stats.Artisan", stats.getArtisan());
+
         cfg.set("stats.Experience", stats.getExperience());
         cfg.set("stats.Level", stats.getLevel());
         cfg.set("stats.SkillPoints", stats.getSkillPoints());
