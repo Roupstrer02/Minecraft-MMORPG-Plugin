@@ -9,14 +9,10 @@ import me.roupen.firstpluginthree.constantrunnables.spellcasting;
 import me.roupen.firstpluginthree.constantrunnables.weatherforecast;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
-import me.roupen.firstpluginthree.magic.Fireball;
-import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
 import me.roupen.firstpluginthree.utility.MobUtility;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
 import me.roupen.firstpluginthree.wands.wand;
 import me.roupen.firstpluginthree.weather.WeatherForecast;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -38,7 +34,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 import static org.bukkit.Bukkit.*;
@@ -53,6 +48,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         return myPlugin;
     }
     private static CookingRecipes cookingrecipes;
+
     public static CookingRecipes getCookingrecipes() {return cookingrecipes;}
 
     @Override
@@ -68,7 +64,6 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         cookingrecipes.initRecipes();
 
     }
-
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event){
         //Handles giving all mob's stats back to them
@@ -128,12 +123,10 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
 
         PlayerUtility.setPlayerStats(event.getPlayer(), stats);
     }
-
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event){
         PlayerUtility.SavePlayerStats(event.getPlayer());
     }
-
     @EventHandler
     public void onEntityKill(EntityDeathEvent event){
         LivingEntity e = event.getEntity();
@@ -148,7 +141,6 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         }
 
     }
-
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         PlayerStats stats = PlayerUtility.getPlayerStats(event.getPlayer());
@@ -156,7 +148,6 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
 
     }
 
-    //menu inventory for player
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event)
         {
@@ -233,7 +224,6 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
             event.getEntity().customName(stats.generateName());
         }
     }
-
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event)
     {
@@ -343,7 +333,6 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
             event.setCancelled(false);
         }
     }
-
     @EventHandler
     public void onEntityShootBow(EntityShootBowEvent event)
     {
@@ -372,42 +361,52 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event)
     {
+        //All following logic applies to Non-Items
         if (!(event.getEntity() instanceof Item)) {
             if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.FALL) {
                 Player player = (Player) event.getEntity();
                 player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 60, (int) (Math.min((event.getDamage() / 4), 6))));
                 player.playSound(player.getLocation(), Sound.BLOCK_BAMBOO_BREAK, 1, 1);
                 event.setCancelled(true);
+
+                //If player is IN lava
             } else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.LAVA) {
                 Player player = (Player) event.getEntity();
                 PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
                 //damages player by 1% current health true damage per damage tick
                 playerstats.setActiveCurrentHealth(playerstats.getActiveCurrentHealth() - ((int) (playerstats.getActiveMaxHealth() * 0.01)));
                 event.setCancelled(true);
+
+                //If player is IN fire
             } else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.FIRE) {
                 Player player = (Player) event.getEntity();
                 PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
                 //damages player by 5% current health true damage per damage tick
                 playerstats.setActiveCurrentHealth((int) (playerstats.getActiveCurrentHealth() * 0.95));
                 event.setCancelled(true);
+
+                //If player is on fire
             } else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK) {
                 Player player = (Player) event.getEntity();
                 PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
                 //damages player by 5% current health true damage per damage tick
                 playerstats.setActiveCurrentHealth((int) (playerstats.getActiveCurrentHealth() * 0.95));
                 event.setCancelled(true);
+
+                //If player is poisoned
             } else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.POISON) {
                 Player player = (Player) event.getEntity();
                 PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
                 //damages player by 2% max health true damage per damage tick
                 playerstats.setActiveCurrentHealth((int) (playerstats.getActiveCurrentHealth() - (0.02 * playerstats.getActiveMaxHealth())));
                 event.setCancelled(true);
+
+                //Any custom damage sources will obviously be caused by me, so event should be cancelled by default (not in use yet)
             } else if (event.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
                 event.setCancelled(true);
             }
         }
     }
-
     @Override
     public void onDisable() {
         // Plugin shutdown logic

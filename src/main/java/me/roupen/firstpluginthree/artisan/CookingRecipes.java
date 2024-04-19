@@ -2,15 +2,18 @@ package me.roupen.firstpluginthree.artisan;
 
 import me.roupen.firstpluginthree.FirstPluginThree;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.BrewingStand;
+import org.bukkit.block.Container;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
 import org.bukkit.event.inventory.BrewingStandFuelEvent;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffectType;
@@ -24,7 +27,6 @@ import java.util.HashMap;
 ==================================================================================================================
 Design Rule of Principle
 
-No Custom Crafting menus, only vanilla
 --> No brewing stands because of technical limitations (will look into that for alchemist update)
 
 ==================================================================================================================
@@ -33,6 +35,9 @@ public class CookingRecipes {
 
     private HashMap<String, Recipe> Recipes;
     private HashMap<String, ItemStack> Items;
+    private HashMap<String, Integer> ItemLevelLock;
+
+
     private NamespacedKey nameKey;
     private ItemStack newItem;
     private ItemMeta newItemMeta;
@@ -46,6 +51,7 @@ public class CookingRecipes {
 
         this.Recipes = new HashMap<>();
         this.Items = new HashMap<>();
+        this.ItemLevelLock = new HashMap<>();
 
         //I honestly wrote this so that I stop getting suggestions from IntelliJ saying that I can localise these variables in initRecipes()
         this.newItem = null;
@@ -65,7 +71,12 @@ public class CookingRecipes {
     public HashMap<String, ItemStack> getItems() {
         return Items;
     }
-
+    public HashMap<String, Integer> getItemLevelLock() {
+        return ItemLevelLock;
+    }
+    private void addToLevelLockMap(String key, int minLevel) {
+        ItemLevelLock.put(key, minLevel);
+    }
     private NamespacedKey makeNameKey(String keyName) {
         return new NamespacedKey(FirstPluginThree.getMyPlugin(), keyName);
     }
@@ -127,36 +138,7 @@ public class CookingRecipes {
         return item;
     }
 
-
-
-    public void initRecipes() {
-
-        ArrayList<Recipe> ListOfRecipes = new ArrayList<>();
-
-        //==========================================================================================================
-        //Example item
-
-        newItem = new ItemStack(Material.DIAMOND, 1);
-
-        newItemMeta = newItem.getItemMeta();
-        newItemMeta.displayName(Component.text("test"));
-
-        ItemStack bottle2 = newItem;
-        bottle2.setItemMeta(newItemMeta);
-
-        RecipeChoice namedBottle = new RecipeChoice.ExactChoice(bottle2);
-
-        nameKey = makeNameKey("test");
-        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
-
-        newShapedRecipe.shape("*%*","%B%","*%*");
-
-        newShapedRecipe.setIngredient('*', namedBottle);
-        newShapedRecipe.setIngredient('%', Material.SUGAR);
-        newShapedRecipe.setIngredient('B', Material.GLASS_BOTTLE);
-
-        FirstPluginThree.getMyPlugin().getServer().addRecipe(newShapedRecipe);
-
+    private void initCoffeeRecipes(ArrayList<Recipe> ListOfRecipes) {
         //==========================================================================================================
         //Coffee Beans
 
@@ -204,6 +186,182 @@ public class CookingRecipes {
         ListOfRecipes.add(newSmokingRecipe);
 
         //==========================================================================================================
+        //Coffee mixes
+
+        newItem = newCraftableItem(newPotionItem(new PotionData(PotionType.WATER)), 1, "Blonde Roast Coffee Mix","A light start to the day!", "just needs to be warmed up...");
+
+        nameKey = makeNameKey("blonderoastcoffeemix");
+        newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
+        newShapelessRecipe.addIngredient(newPotionItem(new PotionData(PotionType.WATER)));
+        newShapelessRecipe.addIngredient(new RecipeChoice.ExactChoice(Items.get("blonde roasted coffee beans")));
+        addToMaps(newItemName, newItem, newShapelessRecipe);
+        ListOfRecipes.add(newShapelessRecipe);
+        addToLevelLockMap(newItemName, 5);
+
+        newItem = newCraftableItem(newPotionItem(new PotionData(PotionType.WATER)), 1, "Medium Roast Coffee Mix","An absolute classic!", "just needs to be warmed up...");
+        nameKey = makeNameKey("mediumroastcoffeemix");
+        newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
+        newShapelessRecipe.addIngredient(newPotionItem(new PotionData(PotionType.WATER)));
+        newShapelessRecipe.addIngredient(new RecipeChoice.ExactChoice(Items.get("medium roasted coffee beans")));
+        addToMaps(newItemName, newItem, newShapelessRecipe);
+        ListOfRecipes.add(newShapelessRecipe);
+        addToLevelLockMap(newItemName, 6);
+
+        newItem = newCraftableItem(newPotionItem(new PotionData(PotionType.WATER)), 1, "Dark Roast Coffee Mix","A bitter tasting start to a sweet day!", "just needs to be warmed up...");
+        nameKey = makeNameKey("darkroastcoffeemix");
+        newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
+        newShapelessRecipe.addIngredient(newPotionItem(new PotionData(PotionType.WATER)));
+        newShapelessRecipe.addIngredient(new RecipeChoice.ExactChoice(Items.get("dark roasted coffee beans")));
+        addToMaps(newItemName, newItem, newShapelessRecipe);
+        ListOfRecipes.add(newShapelessRecipe);
+        addToLevelLockMap(newItemName, 7);
+
+        //==========================================================================================================
+        //Coffees
+
+        newItem = giveEnchantedLook(newCraftableItem(newPotionItem(new PotionData(PotionType.AWKWARD)), 1, "Blonde Roast Coffee","A light start to the day!"));
+        nameKey = makeNameKey("blonderoastcoffee");
+
+        newSmokingRecipe = new SmokingRecipe(nameKey, newItem, new RecipeChoice.ExactChoice(Items.get("Blonde Roast Coffee Mix")), 0F, MinutesToTick(3));
+        addToMaps(newItemName, newItem, newSmokingRecipe);
+        ListOfRecipes.add(newSmokingRecipe);
+
+        newItem = giveEnchantedLook(newCraftableItem(newPotionItem(new PotionData(PotionType.AWKWARD)), 1, "Medium Roast Coffee","Good Morning!"));
+        nameKey = makeNameKey("mediumroastcoffee");
+        newSmokingRecipe = new SmokingRecipe(nameKey, newItem, new RecipeChoice.ExactChoice(Items.get("Medium Roast Coffee Mix")), 0F, MinutesToTick(3));
+        addToMaps(newItemName, newItem, newSmokingRecipe);
+        ListOfRecipes.add(newSmokingRecipe);
+
+        newItem = giveEnchantedLook(newCraftableItem(newPotionItem(new PotionData(PotionType.AWKWARD)), 1, "Dark Roast Coffee","A bitter taste to start a sweet new day!"));
+        nameKey = makeNameKey("darkroastcoffee");
+        newSmokingRecipe = new SmokingRecipe(nameKey, newItem, new RecipeChoice.ExactChoice(Items.get("Dark Roast Coffee Mix")), 0F, MinutesToTick(3));
+        addToMaps(newItemName, newItem, newSmokingRecipe);
+        ListOfRecipes.add(newSmokingRecipe);
+
+        //==========================================================================================================
+        //Iced Coffee
+
+        newItem = giveEnchantedLook(newCraftableItem(newPotionItem(new PotionData(PotionType.AWKWARD)), 1, "Blonde Roast Coffee","Wakes you up in more ways than one!"));
+
+        nameKey = makeNameKey("icedcoffee1");
+        newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
+        newShapelessRecipe.addIngredient(Material.ICE);
+        newShapelessRecipe.addIngredient(new RecipeChoice.ExactChoice(Items.get("Blonde Roast Coffee Mix")));
+        addToMaps(newItemName + "1", newItem, newShapelessRecipe);
+        ListOfRecipes.add(newShapelessRecipe);
+
+        nameKey = makeNameKey("icedcoffee2");
+        newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
+        newShapelessRecipe.addIngredient(Material.ICE);
+        newShapelessRecipe.addIngredient(new RecipeChoice.ExactChoice(Items.get("Medium Roast Coffee Mix")));
+        addToMaps(newItemName + "2", newItem, newShapelessRecipe);
+        ListOfRecipes.add(newShapelessRecipe);
+
+        nameKey = makeNameKey("icedcoffee3");
+        newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
+        newShapelessRecipe.addIngredient(Material.ICE);
+        newShapelessRecipe.addIngredient(new RecipeChoice.ExactChoice(Items.get("Dark Roast Coffee Mix")));
+        addToMaps(newItemName + "3", newItem, newShapelessRecipe);
+        ListOfRecipes.add(newShapelessRecipe);
+        addToLevelLockMap(newItemName, 12);
+
+        //==========================================================================================================
+        //Espresso
+
+        //Espresso dose
+        newItem = giveEnchantedLook(newCraftableItem(Material.BROWN_DYE, 1, "Espresso Dose", "Packs a punch!!"));
+        nameKey = makeNameKey("espressodose");
+        newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
+        newShapelessRecipe.addIngredient(9, Items.get("blonde roasted coffee beans"));
+        addToMaps(newItemName, newItem, newShapelessRecipe);
+        ListOfRecipes.add(newShapelessRecipe);
+        addToLevelLockMap(newItemName, 15);
+
+        //Espresso mix
+        newItem = giveEnchantedLook(newCraftableItem(newPotionItem(new PotionData(PotionType.AWKWARD)), 1, "Espresso Mix","More Caffeine!!"));
+        nameKey = makeNameKey("espressomix");
+        newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
+        newShapelessRecipe.addIngredient(Items.get("Espresso Dose"));
+        newShapelessRecipe.addIngredient(newPotionItem(new PotionData(PotionType.WATER)));
+        addToMaps(newItemName, newItem, newShapelessRecipe);
+        ListOfRecipes.add(newShapelessRecipe);
+        addToLevelLockMap(newItemName, 15);
+
+        //Final item: Espresso
+        newItem = giveEnchantedLook(newCraftableItem(newPotionItem(new PotionData(PotionType.AWKWARD)), 1, "Espresso","I'M AWAKE!!! O_O"));
+        nameKey = makeNameKey("espresso");
+
+        newSmokingRecipe = new SmokingRecipe(nameKey, newItem, new RecipeChoice.ExactChoice(Items.get("Espresso Mix")), 0F, SecondsToTick(18));
+        addToMaps(newItemName, newItem, newSmokingRecipe);
+        ListOfRecipes.add(newSmokingRecipe);
+
+        //==========================================================================================================
+        //Latte
+
+        //Latte Mix
+        newItem = newCraftableItem(newPotionItem(new PotionData(PotionType.AWKWARD)), 1, "Latte Mix","Milk with a bit of coffee in it");
+        nameKey = makeNameKey("lattemix");
+        newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
+        newShapelessRecipe.addIngredient(new RecipeChoice.ExactChoice(Items.get("Espresso Mix")));
+        newShapelessRecipe.addIngredient(Material.MILK_BUCKET);
+        addToMaps(newItemName, newItem, newShapelessRecipe);
+        ListOfRecipes.add(newShapelessRecipe);
+        addToLevelLockMap(newItemName, 16);
+
+        //Final item: Latte
+        newItem = giveEnchantedLook(newCraftableItem(newPotionItem(new PotionData(PotionType.AWKWARD)), 1, "Latte", "You must like this a latte?","..."));
+        nameKey = makeNameKey("latte");
+
+        newSmokingRecipe = new SmokingRecipe(nameKey, newItem, new RecipeChoice.ExactChoice(Items.get("Latte Mix")), 0F, SecondsToTick(36));
+        addToMaps(newItemName, newItem, newSmokingRecipe);
+        ListOfRecipes.add(newSmokingRecipe);
+
+        //==========================================================================================================
+        //Cappucino
+
+        //Milk froth
+        newItem = newCraftableItem(Material.WHITE_DYE, 4, "Milk Froth","It's pretty much in the name");
+        nameKey = makeNameKey("milkfroth");
+        newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
+        newShapelessRecipe.addIngredient(Material.MILK_BUCKET);
+        addToMaps(newItemName, newItem, newShapelessRecipe);
+        ListOfRecipes.add(newShapelessRecipe);
+        addToLevelLockMap(newItemName, 18);
+
+        //Cappucino mix
+        newItem = newCraftableItem(newPotionItem(new PotionData(PotionType.AWKWARD)), 1, "Cappucino Mix","It's pretty much in the name");
+        nameKey = makeNameKey("cappucinomix");
+        newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
+        newShapelessRecipe.addIngredient(new RecipeChoice.ExactChoice(Items.get("Espresso Mix")));
+        newShapelessRecipe.addIngredient(Items.get("Milk Froth"));
+        addToMaps(newItemName, newItem, newShapelessRecipe);
+        ListOfRecipes.add(newShapelessRecipe);
+        addToLevelLockMap(newItemName, 18);
+
+        //Final item: Cappucino
+        newItem = giveEnchantedLook(newCraftableItem(newPotionItem(new PotionData(PotionType.AWKWARD)), 1, "Cappucino","Caffeine but more posh!"));
+        nameKey = makeNameKey("cappucino");
+
+        newSmokingRecipe = new SmokingRecipe(nameKey, newItem, new RecipeChoice.ExactChoice(Items.get("Cappucino Mix")), 0F, SecondsToTick(36));
+        addToMaps(newItemName, newItem, newSmokingRecipe);
+        ListOfRecipes.add(newSmokingRecipe);
+
+        //==========================================================================================================
+        //French Vanilla
+
+        //Sugar cane + Milk Bucket => French Syrup
+        //Espresso + French Syrup => French vanilla "Finalement, quelque chose de bon!"
+
+        //Find a "special" option for medium and dark roasts
+
+    }
+
+    //====================================================================================
+    private void initCookingItemRecipes(ArrayList<Recipe> ListOfRecipes) {
+
+        initCoffeeRecipes(ListOfRecipes);
+
+        //==========================================================================================================
         //Sweet Bread [Artisan Lv 15 locked]
 
         newItem = newCraftableItem(Material.BREAD, 1, "Sweet Bread","Bread but better!");
@@ -213,7 +371,7 @@ public class CookingRecipes {
         newShapelessRecipe.addIngredient(3, Material.BREAD);
         newShapelessRecipe.addIngredient(1, Material.HONEY_BOTTLE);
 
-        addToMaps(newItemName, newItem, newSmokingRecipe);
+        addToMaps(newItemName, newItem, newShapelessRecipe);
         ListOfRecipes.add(newShapelessRecipe);
 
         //==========================================================================================================
@@ -231,7 +389,7 @@ public class CookingRecipes {
         newShapedRecipe.setIngredient('%', Material.HONEYCOMB);
         newShapedRecipe.setIngredient('B', new RecipeChoice.ExactChoice(meadIngredient));
 
-        addToMaps(newItemName, newItem, newSmokingRecipe);
+        addToMaps(newItemName, newItem, newShapedRecipe);
         ListOfRecipes.add(newShapedRecipe);
 
         //==========================================================================================================
@@ -258,7 +416,7 @@ public class CookingRecipes {
         newShapelessRecipe.addIngredient(8, Material.WHEAT);
         newShapelessRecipe.addIngredient(new RecipeChoice.ExactChoice(newPotionItem(new PotionData(PotionType.WEAKNESS))));
 
-        addToMaps(newItemName, newItem, newSmokingRecipe);
+        addToMaps(newItemName, newItem, newShapelessRecipe);
         ListOfRecipes.add(newShapelessRecipe);
 
         //==========================================================================================================
@@ -286,7 +444,7 @@ public class CookingRecipes {
         nameKey = makeNameKey("ithilianfernpowder2");
         newSmokingRecipe = new SmokingRecipe(nameKey, newItem, Material.LARGE_FERN, 0F, SecondsToTick(45));
 
-        addToMaps(newItemName + " 2", newItem, newSmokingRecipe);
+        addToMaps(newItemName + "2", newItem, newSmokingRecipe);
         ListOfRecipes.add(newSmokingRecipe);
 
         //==========================================================================================================
@@ -299,7 +457,7 @@ public class CookingRecipes {
         newShapelessRecipe.addIngredient(new RecipeChoice.ExactChoice(Items.get("Ithilian Fern Powder")));
         newShapelessRecipe.addIngredient(new RecipeChoice.ExactChoice(newPotionItem(new PotionData(PotionType.WATER))));
 
-        addToMaps(newItemName, newItem, newSmokingRecipe);
+        addToMaps(newItemName, newItem, newShapelessRecipe);
         ListOfRecipes.add(newShapelessRecipe);
 
         //==========================================================================================================
@@ -312,13 +470,19 @@ public class CookingRecipes {
 
         addToMaps(newItemName, newItem, newSmokingRecipe);
         ListOfRecipes.add(newSmokingRecipe);
+    }
+    //====================================================================================
+
+    public void initRecipes() {
+
+        ArrayList<Recipe> ListOfRecipes = new ArrayList<>();
+
+        initCookingItemRecipes(ListOfRecipes);
 
         //==========================================================================================================
         //END OF RECIPES
         //==========================================================================================================
 
-
-        //============================================================================================================
         //Adding all of the recipes defined above into the server
         for (Recipe recipe : ListOfRecipes) {
             FirstPluginThree.getMyPlugin().getServer().addRecipe(recipe);
