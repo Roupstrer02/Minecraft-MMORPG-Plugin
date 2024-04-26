@@ -4,6 +4,7 @@ import me.roupen.firstpluginthree.PlayerInteractions.*;
 import me.roupen.firstpluginthree.PlayerInteractions.RuneForge;
 import me.roupen.firstpluginthree.artisan.CookingRecipes;
 import me.roupen.firstpluginthree.commandkit.profileCMD;
+import me.roupen.firstpluginthree.commandkit.weatherCMD;
 import me.roupen.firstpluginthree.constantrunnables.actionbardisplay;
 import me.roupen.firstpluginthree.constantrunnables.spellcasting;
 import me.roupen.firstpluginthree.constantrunnables.weatherforecast;
@@ -13,6 +14,7 @@ import me.roupen.firstpluginthree.utility.MobUtility;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
 import me.roupen.firstpluginthree.wands.wand;
 import me.roupen.firstpluginthree.weather.WeatherForecast;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -20,6 +22,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -56,6 +59,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         // Plugin startup logic
         getServer().getPluginManager().registerEvents(this, this);
         this.getCommand("profile").setExecutor(new profileCMD());
+        this.getCommand("weather_report").setExecutor(new weatherCMD());
         myPlugin = this;
 
         BukkitTask Weather_Forecast = new weatherforecast().runTaskTimer(this, 0, 20);
@@ -147,10 +151,8 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         stats.respawnStatReset();
 
     }
-
     @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event)
-        {
+    public void onPlayerInteract(PlayerInteractEvent event) {
         //trigger abilities based on itemStack held in main hand
 
         //player who clicked
@@ -164,16 +166,13 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         WandCrafting.Interact(event);
         ArtisanRestrictions.Interact(event);
 
-        if (player.getInventory().getItemInOffHand().equals(new ItemStack(Material.COMPASS))) {
-            player.performCommand("mm mobs spawn SkeletalKnight");
-        }
 
         //effects triggered
         if (!(stats.isCastingSpell()) && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) && wand.IsWand(player.getInventory().getItemInOffHand())) {
             //testing purposes
             stats.setCastingSpell(true);
             if (player.isSneaking()) {
-                spellcasting.cast(player, "Meteor Fall");
+                spellcasting.cast(player, "Chrono Thief");
             }
             else if (!player.isOnGround()) {
                 spellcasting.cast(player, "Flame Booster");
@@ -187,8 +186,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         }
     }
     @EventHandler
-    public void onInventoryClick(InventoryClickEvent event)
-    {
+    public void onInventoryClick(InventoryClickEvent event) {
         String invtitle = event.getView().title().toString();
 
         if (event.getInventory().getHolder()==null) {
@@ -209,13 +207,9 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         RuneForge.EarlyExit(event);
     }
     @EventHandler
-    public void onEntitySpawn(EntitySpawnEvent event)
-    {
+    public void onEntitySpawn(EntitySpawnEvent event) {
         Entity entity = event.getEntity();
-        if (!((entity instanceof Player) || (entity instanceof Item) ||
-                (entity instanceof Arrow) || (entity instanceof ThrownPotion) ||
-                (entity instanceof Egg) || (entity instanceof EnderPearl) ||
-                (entity instanceof Snowball)))
+        if (!((entity instanceof Player) || !(entity instanceof LivingEntity)))
         {
             Entity mob = event.getEntity();
             MobStats stats = new MobStats(mob, WeatherForecast.getWeather(event));
@@ -225,8 +219,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         }
     }
     @EventHandler
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent event)
-    {
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof LivingEntity) {
             //ALL DAMAGE LOGIC FOR PLAYERS TO MOBS AND VICE VERSA HAPPENS HERE
 
@@ -237,12 +230,14 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
                 PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
 
                 LivingEntity mob = (LivingEntity) event.getEntity();
+                Creature mobC = (Creature) mob;
                 MobStats mobstats = MobUtility.getMobStats(mob);
 
                 if (mobstats.damage(playerstats, playerstats.getMultihit()))
                 {
                     //damage animation
                     mob.damage(0);
+                    mobC.setTarget(player);
                 }
                 if (mobstats.getHealth() <= 0)
                 {
@@ -311,6 +306,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
                 {
                     //damage animation
                     mob.damage(0);
+                    mob.setLastDamageCause(event);
                     event.getDamager().remove();
                     event.getEntity().customName(mobstats.generateName());
 
@@ -328,14 +324,18 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
             //Damage between mobs cannot happen
             event.setCancelled(true);
         }
-        else
-        {
+        //damage from non-living sources is cancelled
+        else {
+            event.setCancelled(true);
+        }
+        //damage animation for player hits + damage cause tracking
+        if (event.getDamager() instanceof Player) {
+            event.setDamage(0);
             event.setCancelled(false);
         }
     }
     @EventHandler
-    public void onEntityShootBow(EntityShootBowEvent event)
-    {
+    public void onEntityShootBow(EntityShootBowEvent event) {
         if (event.getEntity() instanceof Player)
         {
             Player player = (Player) event.getEntity();
@@ -359,39 +359,34 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         }
     }
     @EventHandler
-    public void onEntityDamage(EntityDamageEvent event)
-    {
+    public void onEntityDamage(EntityDamageEvent event) {
         //All following logic applies to Non-Items
         if (!(event.getEntity() instanceof Item)) {
             if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.FALL) {
                 Player player = (Player) event.getEntity();
                 player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 60, (int) (Math.min((event.getDamage() / 4), 6))));
                 player.playSound(player.getLocation(), Sound.BLOCK_BAMBOO_BREAK, 1, 1);
-                event.setCancelled(true);
 
                 //If player is IN lava
             } else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.LAVA) {
                 Player player = (Player) event.getEntity();
                 PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
                 //damages player by 1% current health true damage per damage tick
-                playerstats.setActiveCurrentHealth(playerstats.getActiveCurrentHealth() - ((int) (playerstats.getActiveMaxHealth() * 0.01)));
-                event.setCancelled(true);
+                playerstats.setActiveCurrentHealth(playerstats.getActiveCurrentHealth() - ((int) (playerstats.getActiveMaxHealth() * 0.1)));
 
                 //If player is IN fire
             } else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.FIRE) {
                 Player player = (Player) event.getEntity();
                 PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
-                //damages player by 5% current health true damage per damage tick
-                playerstats.setActiveCurrentHealth((int) (playerstats.getActiveCurrentHealth() * 0.95));
-                event.setCancelled(true);
+                //damages player by 1% max health true damage per damage tick
+                playerstats.setActiveCurrentHealth(playerstats.getActiveCurrentHealth() - ((int) (playerstats.getActiveMaxHealth() * 0.01)));
 
                 //If player is on fire
             } else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK) {
                 Player player = (Player) event.getEntity();
                 PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
-                //damages player by 5% current health true damage per damage tick
-                playerstats.setActiveCurrentHealth((int) (playerstats.getActiveCurrentHealth() * 0.95));
-                event.setCancelled(true);
+                //damages player by 3% max health true damage per damage tick
+                playerstats.setActiveCurrentHealth(playerstats.getActiveCurrentHealth() - ((int) (playerstats.getActiveMaxHealth() * 0.03)));
 
                 //If player is poisoned
             } else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.POISON) {
@@ -399,12 +394,27 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
                 PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
                 //damages player by 2% max health true damage per damage tick
                 playerstats.setActiveCurrentHealth((int) (playerstats.getActiveCurrentHealth() - (0.02 * playerstats.getActiveMaxHealth())));
-                event.setCancelled(true);
 
                 //Any custom damage sources will obviously be caused by me, so event should be cancelled by default (not in use yet)
-            } else if (event.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
+            } else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.DROWNING) {
+                Player player = (Player) event.getEntity();
+                PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
+                //damages player by 10% max health true damage per damage tick
+                playerstats.setActiveCurrentHealth((int) (playerstats.getActiveCurrentHealth() - (0.1 * playerstats.getActiveMaxHealth())));
+
+                //Any custom damage sources will obviously be caused by me, so event should be cancelled by default (not in use yet)
+            } else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.CONTACT) {
+                Player player = (Player) event.getEntity();
+                PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
+                //damages player by 3% max health true damage per damage tick
+                playerstats.setActiveCurrentHealth((playerstats.getActiveCurrentHealth() - (0.003 * playerstats.getActiveMaxHealth())));
+
+                //Any custom damage sources will obviously be caused by me, so event should be cancelled by default (not in use yet)
+            }
+            else if (event.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
                 event.setCancelled(true);
             }
+            event.setCancelled(true);
         }
     }
     @Override

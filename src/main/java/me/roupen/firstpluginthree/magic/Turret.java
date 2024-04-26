@@ -72,7 +72,7 @@ public class Turret extends spellcasting {
                 this.cancel();
             }
         }
-        else if ((progress > 0) && (progress < 25)) {
+        else if ((progress > 0) && (progress < 100)) {
 
         }
 
@@ -87,6 +87,7 @@ public class Turret extends spellcasting {
         if (!this.isCancelled() && (progress < 50))
         {
             ChannelTime.setProgress(1.0-(0.02 * getProgress()));
+            ChannelTime.setTitle("Spell Cooldown " + NumberFormat.format(spellCooldownTextUpdate(50, progress)));
         }
         else if (getProgress() == 50)
         {

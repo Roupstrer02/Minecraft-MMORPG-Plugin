@@ -112,12 +112,12 @@ public class PlayerEquipment {
     public String getName() {
         if (getRunes() != null)
         {
-            return getRunes()[0].getPrefix() + " " + Name + " " + getRunes()[0].getSuffix();
+            return "Lv" + getLevel() + " " + getRunes()[0].getPrefix() + " " + Name + " " + getRunes()[0].getSuffix();
 
         }
         else
         {
-            return Name;
+            return "Lv" + getLevel() + " " + Name;
         }
     }
     public void setName(String name) {
@@ -268,6 +268,9 @@ public class PlayerEquipment {
         if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "tooltype"), PersistentDataType.STRING))
             NewEquipment.setToolType(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "tooltype"), PersistentDataType.STRING));
 
+        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "level"), PersistentDataType.INTEGER))
+            NewEquipment.setLevel(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "level"), PersistentDataType.INTEGER));
+
 
         return NewEquipment;
     }
@@ -347,6 +350,7 @@ public class PlayerEquipment {
         data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "staminacost"), PersistentDataType.DOUBLE, e.getStaminaCost());
         data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "runes"), PersistentDataType.STRING, e.RunesToString());
         data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "tooltype"), PersistentDataType.STRING, e.getToolType());
+        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "level"), PersistentDataType.INTEGER, e.getLevel());
 
         ArrayList<Component> LoreSegments = new ArrayList<>();
 

@@ -196,19 +196,21 @@ public class PlayerStats {
         this.castingSpell = castingSpell;
     }
     public void AddEquipmentStats(PlayerEquipment e) {
-        equipment.setDamage(equipment.getDamage() + e.getDamage());
-        equipment.setDefense(equipment.getDefense() + e.getDefense());
-        equipment.setCritChance(equipment.getCritChance() + e.getCritChance());
-        equipment.setMaxHealth(equipment.getMaxHealth() + e.getMaxHealth());
-        equipment.setMaxMana(equipment.getMaxMana() + e.getMaxMana());
-        equipment.setMaxStamina(equipment.getMaxStamina() + e.getMaxStamina());
-        equipment.setHealthRegen(equipment.getHealthRegen() + e.getHealthRegen());
-        equipment.setStaminaRegen(equipment.getStaminaRegen() + e.getStaminaRegen());
-        equipment.setManaRegen(equipment.getManaRegen() + e.getManaRegen());
-        equipment.setMultiHit(equipment.getMultiHit() + e.getMultiHit());
-        equipment.setMovementSpeed(equipment.getMovementSpeed() + e.getMovementSpeed());
-        equipment.setCritDamageMult(equipment.getCritDamageMult() + e.getCritDamageMult());
-        equipment.setStaminaCost(equipment.getStaminaCost() + e.getStaminaCost());
+        if (e.getLevel() <= this.Level) {
+            equipment.setDamage(equipment.getDamage() + e.getDamage());
+            equipment.setDefense(equipment.getDefense() + e.getDefense());
+            equipment.setCritChance(equipment.getCritChance() + e.getCritChance());
+            equipment.setMaxHealth(equipment.getMaxHealth() + e.getMaxHealth());
+            equipment.setMaxMana(equipment.getMaxMana() + e.getMaxMana());
+            equipment.setMaxStamina(equipment.getMaxStamina() + e.getMaxStamina());
+            equipment.setHealthRegen(equipment.getHealthRegen() + e.getHealthRegen());
+            equipment.setStaminaRegen(equipment.getStaminaRegen() + e.getStaminaRegen());
+            equipment.setManaRegen(equipment.getManaRegen() + e.getManaRegen());
+            equipment.setMultiHit(equipment.getMultiHit() + e.getMultiHit());
+            equipment.setMovementSpeed(equipment.getMovementSpeed() + e.getMovementSpeed());
+            equipment.setCritDamageMult(equipment.getCritDamageMult() + e.getCritDamageMult());
+            equipment.setStaminaCost(equipment.getStaminaCost() + e.getStaminaCost());
+        }
     }
     public PlayerEquipment getEquipment() {
         return equipment;
@@ -295,7 +297,7 @@ public class PlayerStats {
     }
     public void gainExperience(int exp) {
         //value subject to change
-        int Levelcap = (int) (1000 + (this.Level * 150) + (Math.floor((this.Level / 10)) * 200) + (Math.floor((this.Level / 25)) * 500));
+        int Levelcap = getLevelCap();
         this.Experience += exp;
 
         if (this.Experience >= Levelcap)
@@ -328,7 +330,6 @@ public class PlayerStats {
         setActiveDamage(getStrength() + (equipment.getDamage() * (1 + (0.01 * getStrength()))));
     }//Strength
     public void recalculateCritDamageMult(){
-        //[(1.5 +(0.01 * getStrength())] * [1 + equip.getcritdmgmult()]
         setCritDamageMult(1.5 + ((0.01 * getStrength()) * equipment.getCritDamageMult()));
     }//Strength
     public void recalculateDefense() {
@@ -388,14 +389,13 @@ public class PlayerStats {
         setActiveCurrentMana(getActiveMaxMana());
     }
 
+    public int getLevelCap() {
+        return (int) (1000 + (this.Level * 150) + (Math.floor((this.Level / 10)) * 200) + (Math.floor((this.Level / 25)) * 500));
+    }
+
     public void heal(double amount) {
         ActiveCurrentHealth += amount;
         //if more than max, set to max
-    }
-
-    public void KillReward(LivingEntity mob)
-    {
-
     }
 
 

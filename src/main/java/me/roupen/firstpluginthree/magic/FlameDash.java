@@ -72,7 +72,7 @@ public class FlameDash extends spellcasting {
             loc = origin.getLocation();
 
             //make this a circle particle effect instead
-            ParticleCircle(loc.add(0,0.2,0), SpellAOE());
+            ParticleCircle(loc.add(0,0.2,0), SpellAOE(), Particle.FLAME);
 
             Targets = world.getNearbyLivingEntities(loc, SpellAOE());
 
@@ -117,6 +117,7 @@ public class FlameDash extends spellcasting {
         if (!this.isCancelled() && (getProgress() < 40))
         {
             ChannelTime.setProgress(1.0-(0.025 * getProgress()));
+            ChannelTime.setTitle("Spell Cooldown " + NumberFormat.format(spellCooldownTextUpdate(40, progress)));
         }
         else if (getProgress() == 40)
         {

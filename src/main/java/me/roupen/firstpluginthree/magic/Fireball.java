@@ -93,7 +93,7 @@ public class Fireball extends spellcasting{
 
             MobStats mobstats;
             Location animationLoc = FireballLoc;
-            ParticleSphere(animationLoc, SpellAOE());
+            ParticleSphere(animationLoc, SpellAOE(), Particle.FLAME);
 
             Targets = world.getNearbyLivingEntities(FireballLoc, SpellAOE());
 
@@ -123,6 +123,7 @@ public class Fireball extends spellcasting{
         if (!this.isCancelled() && (getProgress() < 40))
         {
             ChannelTime.setProgress(1.0-(0.025 * getProgress()));
+            ChannelTime.setTitle("Spell Cooldown " + NumberFormat.format(spellCooldownTextUpdate(40, progress)));
         }
         else if (getProgress() == 40)
         {

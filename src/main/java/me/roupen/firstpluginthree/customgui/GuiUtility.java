@@ -4,6 +4,7 @@ import me.roupen.firstpluginthree.data.PlayerStats;
 import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
 import me.roupen.firstpluginthree.playerequipment.Rune;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
+import me.roupen.firstpluginthree.weather.WeatherForecast;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import org.bukkit.Bukkit;
@@ -16,11 +17,17 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import net.kyori.adventure.text.Component;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 
 public class GuiUtility {
 
     private final Inventory inv;
+    private static DecimalFormat df = new DecimalFormat("0.00");
+    private static Material[] weatherIcons = new Material[]
+            {Material.SUNFLOWER, Material.OAK_SAPLING, Material.OAK_LEAVES, Material.WHITE_CONCRETE_POWDER,
+             Material.WATER_BUCKET, Material.LIGHTNING_ROD, Material.PRISMARINE, Material.COBWEB,
+             Material.TRIDENT, Material.REDSTONE, Material.MAGMA_BLOCK, Material.LAVA_BUCKET, Material.CRIMSON_HYPHAE};
     public GuiUtility(Player player, int size, String name)
     {
         inv = Bukkit.createInventory(null, size, name);
@@ -77,15 +84,24 @@ public class GuiUtility {
         PlayerStats stats = PlayerUtility.getPlayerStats(player);
         GuiUtility gui = new GuiUtility(player, 45, "Player Stats");
 
-        gui.addGuiItem(Material.RED_STAINED_GLASS_PANE, "Vitality: ", 4, 0, Integer.toString(stats.getVitality()));
-        gui.addGuiItem(Material.GREEN_STAINED_GLASS_PANE, "Resilience: ", 11, 0, Integer.toString(stats.getResilience()));
-        gui.addGuiItem(Material.BLUE_STAINED_GLASS_PANE, "Intelligence: ", 15, 0, Integer.toString(stats.getIntelligence()));
-        gui.addGuiItem(Material.ORANGE_STAINED_GLASS_PANE, "Strength: ", 29, 0, Integer.toString(stats.getStrength()));
-        gui.addGuiItem(Material.CYAN_STAINED_GLASS_PANE, "Wisdom: ", 33, 0, Integer.toString(stats.getWisdom()));
-        gui.addGuiItem(Material.YELLOW_STAINED_GLASS_PANE, "Dexterity: ", 40, 0, Integer.toString(stats.getDexterity()));
-        gui.addGuiItem(Material.LIME_STAINED_GLASS_PANE, "Artisan: ", 36, 0, Integer.toString(stats.getArtisan()));
-        gui.addGuiItem(Material.GRAY_STAINED_GLASS_PANE, "Level: ", 22, 0, Integer.toString(stats.getLevel()));
-        gui.addGuiItem(Material.DIAMOND, "Unused Skill points: ", 0, 0, Integer.toString(stats.getSkillPoints()));
+        gui.addGuiItem(Material.GRAY_STAINED_GLASS_PANE, "Level: ", 3, 0, Integer.toString(stats.getLevel()), df.format((((double) stats.getExperience()) / stats.getLevelCap()) * 100) + "%");
+        gui.addGuiItem(Material.DIAMOND, "Level Up: ", 8, 0, "Unused Skill Points: " + stats.getSkillPoints());
+        gui.addGuiItem(Material.LIME_STAINED_GLASS_PANE, "Resilience: ", 10, 0, Integer.toString(stats.getResilience()));
+        gui.addGuiItem(Material.BLUE_STAINED_GLASS_PANE, "Intelligence: ", 14, 0, Integer.toString(stats.getIntelligence()));
+
+        gui.addGuiItem(weatherIcons[WeatherForecast.getPlayerWeather(player)], "Weather", 17, 0, "W.I.P");
+
+        gui.addGuiItem(Material.RED_STAINED_GLASS_PANE, "Vitality: ", 18, 0, Integer.toString(stats.getVitality()));
+        gui.addGuiItem(Material.ORANGE_STAINED_GLASS_PANE, "Strength: ", 20, 0, Integer.toString(stats.getStrength()));
+        gui.addGuiItem(Material.YELLOW_STAINED_GLASS_PANE, "Dexterity: ", 22, 0, Integer.toString(stats.getDexterity()));
+        gui.addGuiItem(Material.CYAN_STAINED_GLASS_PANE, "Wisdom: ", 24, 0, Integer.toString(stats.getWisdom()));
+        gui.addGuiItem(Material.AMETHYST_BLOCK, "Spell Book", 35, 0, "Pick your spell Arsenal");
+        gui.addGuiItem(Material.MAGENTA_STAINED_GLASS_PANE, "Artisan: ", 39, 0, Integer.toString(stats.getArtisan()));
+        gui.addGuiItem(Material.WRITTEN_BOOK, "Tutorial", 44, 0, "W.I.P");
+
+        for (int slot : new int[]{7, 16, 25, 26, 34, 43}) {
+            gui.addGuiItem(Material.GLASS_PANE, "", slot, 0, "");
+        }
 
         gui.openInventory(player);
     }
@@ -97,12 +113,12 @@ public class GuiUtility {
 
         upgradegui.addGuiItem(Material.GRAY_DYE, "Back to profile menu", 8, 0, "");
         upgradegui.addGuiItem(Material.RED_STAINED_GLASS_PANE, "Vitality: ", 10, 0, Integer.toString(stats.getVitality()));
-        upgradegui.addGuiItem(Material.GREEN_STAINED_GLASS_PANE, "Resilience: ", 13, 0, Integer.toString(stats.getResilience()));
+        upgradegui.addGuiItem(Material.LIME_STAINED_GLASS_PANE, "Resilience: ", 13, 0, Integer.toString(stats.getResilience()));
         upgradegui.addGuiItem(Material.BLUE_STAINED_GLASS_PANE, "Intelligence: ", 16, 0, Integer.toString(stats.getIntelligence()));
         upgradegui.addGuiItem(Material.ORANGE_STAINED_GLASS_PANE, "Strength: ", 28, 0, Integer.toString(stats.getStrength()));
         upgradegui.addGuiItem(Material.CYAN_STAINED_GLASS_PANE, "Wisdom: ", 31, 0, Integer.toString(stats.getWisdom()));
         upgradegui.addGuiItem(Material.YELLOW_STAINED_GLASS_PANE, "Dexterity: ", 34, 0, Integer.toString(stats.getDexterity()));
-        upgradegui.addGuiItem(Material.LIME_STAINED_GLASS_PANE, "Artisan: ", 36, 0, Integer.toString(stats.getArtisan()));
+        upgradegui.addGuiItem(Material.MAGENTA_STAINED_GLASS_PANE, "Artisan: ", 36, 0, Integer.toString(stats.getArtisan()));
         upgradegui.addGuiItem(Material.DIAMOND, "Unused Skill points: ", 0, 0, Integer.toString(stats.getSkillPoints()));
 
         upgradegui.openInventory(player);

@@ -73,6 +73,7 @@ public class SteamRocketPack extends spellcasting {
         if (!this.isCancelled() && (getProgress() < 20))
         {
             ChannelTime.setProgress(1.0-(0.05 * getProgress()));
+            ChannelTime.setTitle("Spell Cooldown " + NumberFormat.format(spellCooldownTextUpdate(20, progress)));
         }
         else if (getProgress() == 20)
         {

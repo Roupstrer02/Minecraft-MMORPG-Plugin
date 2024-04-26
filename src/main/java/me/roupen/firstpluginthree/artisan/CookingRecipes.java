@@ -352,7 +352,18 @@ public class CookingRecipes {
         //Sugar cane + Milk Bucket => French Syrup
         //Espresso + French Syrup => French vanilla "Finalement, quelque chose de bon!"
 
+        //==========================================================================================================
+        //Chai Tea Latte
+
+        //Milk Froth + tea(?)
+
         //Find a "special" option for medium and dark roasts
+
+        //==========================================================================================================
+        //pumpkin spice latte
+
+        //pumpkin + sugar + bottle water = pumpkin spice
+        //pumpkin spice + espresso mix + milk froth = Pumpkin Spice Latte
 
     }
 

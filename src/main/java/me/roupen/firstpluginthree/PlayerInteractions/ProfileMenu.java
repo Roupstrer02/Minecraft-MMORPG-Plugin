@@ -45,7 +45,7 @@ public class ProfileMenu {
                     stats.addSkillPoints(-1);
                     GuiUtility.CreateUpgradeGui(player);
                 }
-                else if (event.getCurrentItem().getType() == Material.GREEN_STAINED_GLASS_PANE) {
+                else if (event.getCurrentItem().getType() == Material.LIME_STAINED_GLASS_PANE) {
                     stats.addResilience(1);
                     stats.addSkillPoints(-1);
                     GuiUtility.CreateUpgradeGui(player);
@@ -70,7 +70,7 @@ public class ProfileMenu {
                     stats.addSkillPoints(-1);
                     GuiUtility.CreateUpgradeGui(player);
                 }
-                else if (event.getCurrentItem().getType() == Material.LIME_STAINED_GLASS_PANE) {
+                else if (event.getCurrentItem().getType() == Material.MAGENTA_STAINED_GLASS_PANE) {
                     stats.addArtisan(1);
                     stats.addSkillPoints(-1);
                     GuiUtility.CreateUpgradeGui(player);

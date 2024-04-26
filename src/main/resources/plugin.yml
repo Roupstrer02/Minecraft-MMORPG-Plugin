@@ -4,7 +4,12 @@ main: me.roupen.firstpluginthree.FirstPluginThree
 api-version: 1.19
 commands:
   profile:
-    description: Your description
+    description: Shows your profile
     usage: /<command>
-    permission: FirstPluginThree.profile
+    #permission: FirstPluginThree.profile
+    permission-message: Sorry! You don't have permission to execute that command.
+  weather_report:
+    description: Gives a weather report of your current biome
+    usage: /<command>
+    #permission: FirstPluginThree.profile
     permission-message: Sorry! You don't have permission to execute that command.

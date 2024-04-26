@@ -10,11 +10,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.text.DecimalFormat;
+
 public class spellcasting extends BukkitRunnable {
 
     //all spells run every tick (20/s)
     protected String spellName;
     protected wand CastingWand;
+
+    protected DecimalFormat NumberFormat = new DecimalFormat("0.0");
 
 
     public static void cast(Player caster, String input_spell)
@@ -24,20 +28,26 @@ public class spellcasting extends BukkitRunnable {
 
         switch (input_spell)
         {
+                //Pyromancy
             case "Fireball":
                BukkitTask Fireball = new Fireball(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
                break;
             case "Flame Dash":
                 BukkitTask FlameDash = new FlameDash(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
                 break;
-            case "Steam Rocket Pack":
-                BukkitTask SteamRocketPack = new SteamRocketPack(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
-                break;
             case "Flame Booster":
                 BukkitTask FlameBooster = new FlameBooster(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
                 break;
             case "Meteor Fall":
                 BukkitTask MeteorFall = new MeteorFall(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
+                break;
+
+                //Technomancy
+            case "Steam Rocket Pack":
+                BukkitTask SteamRocketPack = new SteamRocketPack(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
+                break;
+            case "Chrono Thief":
+                BukkitTask Chronothief = new Chronothief(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
                 break;
             default:
         }
@@ -48,7 +58,7 @@ public class spellcasting extends BukkitRunnable {
         this.spellName = name;
     }
     protected void setCastingWand(wand Wand) {this.CastingWand = Wand;}
-    protected void ParticleSphere(Location loc, double radius) {
+    protected void ParticleSphere(Location loc, double radius, Particle particletype) {
 
         for(double phi = 0; phi <= Math.PI; phi += Math.PI / (radius * 5)) {
             double y = radius * Math.cos(phi) + 1.5;
@@ -57,34 +67,55 @@ public class spellcasting extends BukkitRunnable {
                 double z = radius * Math.sin(theta) * Math.sin(phi);
 
                 loc.add(x, y, z);
-                loc.getWorld().spawnParticle(Particle.FLAME, loc, 1, 0F, 0F, 0F, 0.001);
+                loc.getWorld().spawnParticle(particletype, loc, 1, 0F, 0F, 0F, 0.001);
                 loc.subtract(x, y, z);
             }
         }
     }
-    protected void ParticleRing(Location loc, double radius) {
+
+    protected void ParticleSphere(Location loc, double radius, Particle particletype, int densityX, int densityY) {
+
+        for(double phi = 0; phi <= Math.PI; phi += Math.PI / (radius * densityY)) {
+            double y = radius * Math.cos(phi) + 1.5;
+            for(double theta = 0; theta <= 2 * Math.PI; theta += Math.PI / (radius * densityX)) {
+                double x = radius * Math.cos(theta) * Math.sin(phi);
+                double z = radius * Math.sin(theta) * Math.sin(phi);
+
+                loc.add(x, y, z);
+                loc.getWorld().spawnParticle(particletype, loc, 1, 0F, 0F, 0F, 0.001);
+                loc.subtract(x, y, z);
+            }
+        }
+    }
+
+    protected void ParticleRing(Location loc, double radius, Particle particletype) {
         for(double theta = 0; theta <= 2 * Math.PI; theta += Math.PI / (radius * 10)) {
             double x = radius * Math.cos(theta);
             double z = radius * Math.sin(theta);
 
             loc.add(x, 0, z);
-            loc.getWorld().spawnParticle(Particle.FLAME, loc, 1, 0F, 0F, 0F, 0.001);
+            loc.getWorld().spawnParticle(particletype, loc, 1, 0F, 0F, 0F, 0.001);
             loc.subtract(x, 0, z);
         }
 
     }
-    protected void ParticleCircle(Location loc, double radius) {
+    protected void ParticleCircle(Location loc, double radius, Particle particletype) {
 
         for(double theta = 0; theta <= 2 * Math.PI; theta += Math.PI / (radius * 5)) {
             double x = radius * Math.cos(theta);
             double z = radius * Math.sin(theta);
 
             loc.add(x, 0, z);
-            loc.getWorld().spawnParticle(Particle.FLAME, loc, 1, 0F, 0F, 0F, 0.001);
+            loc.getWorld().spawnParticle(particletype, loc, 1, 0F, 0F, 0F, 0.001);
             loc.subtract(x, 0, z);
         }
-        loc.getWorld().spawnParticle(Particle.FLAME, loc, (int) (5 * radius), (float) radius / 2, 0F, (float) radius / 2, 0.001);
+        loc.getWorld().spawnParticle(particletype, loc, (int) (5 * radius), (float) radius / 2, 0F, (float) radius / 2, 0.001);
 
+    }
+
+    protected double spellCooldownTextUpdate(double upperLimit, double currentProgress) {
+        double increment = 1.0/upperLimit;
+        return (upperLimit * 0.05) - ((upperLimit * 0.05) * (increment * currentProgress));
     }
 
     protected wand getCastingWand() {return this.CastingWand;}

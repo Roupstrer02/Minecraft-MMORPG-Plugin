@@ -118,7 +118,7 @@ public class MeteorFall extends spellcasting{
                     if (meteor.getBlock().getType() != Material.AIR || ((meteor.getNearbyLivingEntities(0.2).size() > 0) && !(meteor.getNearbyLivingEntities(0.2).iterator().next() instanceof Player))) {
 
                         //SFX
-                        ParticleSphere(meteor, SpellAOE());
+                        ParticleSphere(meteor, SpellAOE(), Particle.FLAME);
                         stats.getPlayer().getWorld().playSound(meteor, Sound.ENTITY_GENERIC_EXPLODE, 1, 0);
 
                         //Getting targets hit
@@ -163,6 +163,7 @@ public class MeteorFall extends spellcasting{
         if (!this.isCancelled() && (getProgress() < 200))
         {
             ChannelTime.setProgress(1.0-(0.005 * getProgress()));
+            ChannelTime.setTitle("Spell Cooldown " + NumberFormat.format(spellCooldownTextUpdate(200, progress)));
         }
         else if (getProgress() == 200)
         {

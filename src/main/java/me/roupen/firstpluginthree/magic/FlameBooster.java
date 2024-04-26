@@ -117,6 +117,7 @@ public class FlameBooster extends spellcasting {
         if (!this.isCancelled() && (progress < 50))
         {
             ChannelTime.setProgress(1.0-(0.02 * getProgress()));
+            ChannelTime.setTitle("Spell Cooldown " + NumberFormat.format(spellCooldownTextUpdate(50, progress)));
         }
         else if (getProgress() == 50)
         {

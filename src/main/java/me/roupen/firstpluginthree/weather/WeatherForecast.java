@@ -13,9 +13,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import net.kyori.adventure.text.Component;
 
-import java.awt.*;
+import javax.inject.Named;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -169,6 +170,78 @@ public class WeatherForecast {
                     .append(Component.text(WeatherDesigns[(int) cfg.get("nether")] + '\n', styles.get( (int) (cfg.get("nether")))))
             );
         }
+    }
+
+    public static void WeatherReport(Player player) {
+        File f = new File(getFolderPath() + "/WeatherForecast.yml");
+        FileConfiguration cfg = YamlConfiguration.loadConfiguration(f);
+
+        player.sendMessage(Component.text(WeatherDesigns[(int) cfg.get(getPlayerBiome(player))], styles.get( (int) (cfg.get(getPlayerBiome(player)))))
+                .append(Component.text(" Lv" + (((((int) cfg.get(getPlayerBiome(player))) + 1) * 10) - 9) + "-" + (((int) cfg.get(getPlayerBiome(player))) + 1) * 10, Style.style(NamedTextColor.WHITE))));
+    }
+
+    public static int getPlayerWeather(Player player) {
+        File f = new File(getFolderPath() + "/WeatherForecast.yml");
+        FileConfiguration cfg = YamlConfiguration.loadConfiguration(f);
+
+        return (int) cfg.get(getPlayerBiome(player));
+    }
+
+    public static String getPlayerBiome(Player player) {
+        String playerBiome = player.getLocation().getBlock().getBiome().toString();
+        String playerBiomeGroup = "";
+
+        if (BiomeGroupContains(PlainsBiomeGroup, playerBiome)) {
+            return "plains";
+        }
+        else if (BiomeGroupContains(SandBiomeGroup, playerBiome)) {
+            return "sand";
+        }
+        else if (BiomeGroupContains(ForestBiomeGroup, playerBiome)) {
+            return "forest";
+        }
+        else if (BiomeGroupContains(TundraBiomeGroup, playerBiome)) {
+            return "tundra";
+        }
+        else if (BiomeGroupContains(SwampBiomeGroup, playerBiome)) {
+            return "swamp";
+        }
+        else if (BiomeGroupContains(OceanBiomeGroup, playerBiome)) {
+            return "ocean";
+        }
+        else if (BiomeGroupContains(JungleBiomeGroup, playerBiome)) {
+            return "jungle";
+        }
+        else if (BiomeGroupContains(CavesBiomeGroup, playerBiome)) {
+            return "caves";
+        }
+        else if (BiomeGroupContains(SavannaBiomeGroup, playerBiome)) {
+            return "savanna";
+        }
+        else if (BiomeGroupContains(MountainousBiomeGroup, playerBiome)) {
+            return "mountainous";
+        }
+        else if (BiomeGroupContains(StonyBiomeGroup, playerBiome)) {
+            return "stony";
+        }
+        else if (BiomeGroupContains(EndBiomeGroup, playerBiome)) {
+            return "end";
+        }
+        else if (BiomeGroupContains(NetherBiomeGroup, playerBiome)) {
+            return "nether";
+        }
+
+        return playerBiomeGroup;
+    }
+
+    public static boolean BiomeGroupContains(String[] biomelist, String player_biome) {
+        for (String biome : biomelist) {
+            if (biome.equals(player_biome))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static String getFolderPath() {
