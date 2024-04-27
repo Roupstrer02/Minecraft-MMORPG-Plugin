@@ -4,6 +4,7 @@ package me.roupen.firstpluginthree.data;
 import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
@@ -43,6 +44,7 @@ public class PlayerStats {
     //Total Stats (in-game)
 
     private Player player; //you are a player, I am a developer, we are not the same.
+    public String currentBiomeGroup = "";
 
     private double ActiveCurrentHealth;
     private double ActiveMaxHealth;
@@ -297,7 +299,7 @@ public class PlayerStats {
     }
     public void gainExperience(int exp) {
         //value subject to change
-        int Levelcap = getLevelCap();
+        int Levelcap = getLevelCap(this.Level);
         this.Experience += exp;
 
         if (this.Experience >= Levelcap)
@@ -306,10 +308,11 @@ public class PlayerStats {
             while (this.Experience >= Levelcap) {
                 this.Experience -= Levelcap;
                 this.Level += 1;
-                Levelcap = (int) (1000 + (this.Level * 150) + (Math.floor((this.Level / 10)) * 200) + (Math.floor((this.Level / 25)) * 500));
+                Levelcap = getLevelCap(this.Level);
                 this.SkillPoints += 1;
             }
             getPlayer().chat("You Leveled up to level " + this.Level + "!");
+            player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1, 1);
         }
     }
 
@@ -319,7 +322,7 @@ public class PlayerStats {
     }//Vitality
     public void recalculateHealth() {
         if (getActiveCurrentHealth() < getActiveMaxHealth()) {
-            setActiveCurrentHealth(getActiveCurrentHealth() + ActiveHealthRegen + equipment.getHealthRegen());
+            setActiveCurrentHealth(Math.min(getActiveMaxHealth(), getActiveCurrentHealth() + ActiveHealthRegen + equipment.getHealthRegen()));
         }
         else
         {
@@ -344,7 +347,7 @@ public class PlayerStats {
     }//Dexterity
     public void recalculateMana() {
         if (getActiveCurrentMana() < getActiveMaxMana()) {
-            setActiveCurrentMana(getActiveCurrentMana() + ActiveManaRegen + equipment.getManaRegen());
+            setActiveCurrentMana(Math.min(getActiveMaxMana(), getActiveCurrentMana() + ActiveManaRegen + equipment.getManaRegen()));
         }
         else
         {
@@ -353,7 +356,7 @@ public class PlayerStats {
     }
     public void recalculateStamina() {
         if (getActiveCurrentStamina() < getActiveMaxStamina()) {
-            setActiveCurrentStamina(getActiveCurrentStamina() + ActiveStaminaRegen + equipment.getStaminaRegen());
+            setActiveCurrentStamina(Math.min(getActiveMaxStamina(), getActiveCurrentStamina() + ActiveStaminaRegen + equipment.getStaminaRegen()));
         }
         else
         {
@@ -389,8 +392,8 @@ public class PlayerStats {
         setActiveCurrentMana(getActiveMaxMana());
     }
 
-    public int getLevelCap() {
-        return (int) (1000 + (this.Level * 150) + (Math.floor((this.Level / 10)) * 200) + (Math.floor((this.Level / 25)) * 500));
+    public int getLevelCap(int l) {
+        return 200 * ( (int) Math.pow(l,1.75));
     }
 
     public void heal(double amount) {

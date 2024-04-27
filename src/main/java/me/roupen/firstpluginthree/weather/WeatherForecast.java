@@ -60,10 +60,15 @@ public class WeatherForecast {
             Style.style(NamedTextColor.BLUE), Style.style(NamedTextColor.DARK_BLUE), Style.style(NamedTextColor.LIGHT_PURPLE), Style.style(NamedTextColor.DARK_PURPLE), Style.style(NamedTextColor.RED), Style.style(NamedTextColor.DARK_RED)
     ));
 
+    public static final String[] colorNames = new String[]
+            {"dark_gray", "dark_green", "green", "yellow",
+             "gold", "aqua", "dark_aqua", "blue", "dark_blue",
+             "light_purple", "dark_purple", "red", "dark_red"};
+
     public static final String[] WeatherDesigns = {
             "Beautiful day", "Pleasant breeze", "Windy", "Strong gusts", "Harsh Rainfall", "Stormy day",
             "Torrential downpour", "Hurricane", "Poseidon's Wrath", "Zeus's Fury", "Hades' Revenge", "The River Styx cries...",
-            "The Moon is Red! The frenzy has begun! There's little time left!"
+            "The frenzy has begun!"
     };
 
     public static void Cycle() { //I lost my byke

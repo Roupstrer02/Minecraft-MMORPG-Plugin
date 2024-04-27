@@ -84,19 +84,19 @@ public class GuiUtility {
         PlayerStats stats = PlayerUtility.getPlayerStats(player);
         GuiUtility gui = new GuiUtility(player, 45, "Player Stats");
 
-        gui.addGuiItem(Material.GRAY_STAINED_GLASS_PANE, "Level: ", 3, 0, Integer.toString(stats.getLevel()), df.format((((double) stats.getExperience()) / stats.getLevelCap()) * 100) + "%");
+        gui.addGuiItem(Material.GRAY_STAINED_GLASS_PANE, "Level " + stats.getLevel(), 3, 0, df.format((((double) stats.getExperience()) / stats.getLevelCap(stats.getLevel())) * 100) + "%");
         gui.addGuiItem(Material.DIAMOND, "Level Up: ", 8, 0, "Unused Skill Points: " + stats.getSkillPoints());
-        gui.addGuiItem(Material.LIME_STAINED_GLASS_PANE, "Resilience: ", 10, 0, Integer.toString(stats.getResilience()));
-        gui.addGuiItem(Material.BLUE_STAINED_GLASS_PANE, "Intelligence: ", 14, 0, Integer.toString(stats.getIntelligence()));
+        gui.addGuiItem(Material.LIME_STAINED_GLASS_PANE, "Resilience ", 10, 0, Component.text("Lv ", Style.style(NamedTextColor.WHITE)).append(Component.text(stats.getResilience(), Style.style(NamedTextColor.GREEN))));
+        gui.addGuiItem(Material.BLUE_STAINED_GLASS_PANE, "Intelligence ", 14, 0, Component.text("Lv ", Style.style(NamedTextColor.WHITE)).append(Component.text(stats.getIntelligence(), NamedTextColor.BLUE)));
 
-        gui.addGuiItem(weatherIcons[WeatherForecast.getPlayerWeather(player)], "Weather", 17, 0, "W.I.P");
+        gui.addGuiItem(weatherIcons[WeatherForecast.getPlayerWeather(player)], WeatherForecast.WeatherDesigns[WeatherForecast.getPlayerWeather(player)], 17, 0, "W.I.P");
 
-        gui.addGuiItem(Material.RED_STAINED_GLASS_PANE, "Vitality: ", 18, 0, Integer.toString(stats.getVitality()));
-        gui.addGuiItem(Material.ORANGE_STAINED_GLASS_PANE, "Strength: ", 20, 0, Integer.toString(stats.getStrength()));
-        gui.addGuiItem(Material.YELLOW_STAINED_GLASS_PANE, "Dexterity: ", 22, 0, Integer.toString(stats.getDexterity()));
-        gui.addGuiItem(Material.CYAN_STAINED_GLASS_PANE, "Wisdom: ", 24, 0, Integer.toString(stats.getWisdom()));
+        gui.addGuiItem(Material.RED_STAINED_GLASS_PANE, "Vitality ", 18, 0, Component.text("Lv ", Style.style(NamedTextColor.WHITE)).append(Component.text(stats.getVitality(), NamedTextColor.RED)));
+        gui.addGuiItem(Material.ORANGE_STAINED_GLASS_PANE, "Strength ", 20, 0, Component.text("Lv ", Style.style(NamedTextColor.WHITE)).append(Component.text(stats.getStrength(), NamedTextColor.GOLD)));
+        gui.addGuiItem(Material.YELLOW_STAINED_GLASS_PANE, "Dexterity ", 22, 0, Component.text("Lv ", Style.style(NamedTextColor.WHITE)).append(Component.text(stats.getDexterity(), NamedTextColor.YELLOW)));
+        gui.addGuiItem(Material.CYAN_STAINED_GLASS_PANE, "Wisdom ", 24, 0, Component.text("Lv ", Style.style(NamedTextColor.WHITE)).append(Component.text(stats.getWisdom(), NamedTextColor.AQUA)));
         gui.addGuiItem(Material.AMETHYST_BLOCK, "Spell Book", 35, 0, "Pick your spell Arsenal");
-        gui.addGuiItem(Material.MAGENTA_STAINED_GLASS_PANE, "Artisan: ", 39, 0, Integer.toString(stats.getArtisan()));
+        gui.addGuiItem(Material.MAGENTA_STAINED_GLASS_PANE, "Artisan ", 39, 0, Component.text("Lv ", Style.style(NamedTextColor.WHITE)).append(Component.text(stats.getIntelligence(), NamedTextColor.LIGHT_PURPLE)));
         gui.addGuiItem(Material.WRITTEN_BOOK, "Tutorial", 44, 0, "W.I.P");
 
         for (int slot : new int[]{7, 16, 25, 26, 34, 43}) {

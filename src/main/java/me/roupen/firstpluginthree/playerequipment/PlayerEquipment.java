@@ -13,12 +13,8 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.tags.ItemTagType;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.w3c.dom.Text;
-
-import java.sql.Array;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -403,6 +399,9 @@ public class PlayerEquipment {
         meta.displayName(Component.text(e.getName(), style));
         meta.setCustomModelData(e.model);
         meta.lore(lore);
+
+        //makes item indestructible
+
         item.setItemMeta(meta);
 
         return item;
@@ -648,11 +647,11 @@ public class PlayerEquipment {
         switch (ttype) {
             case "Dagger":
                 setStaminaCost(3.0);
-                setDamage(Math.round((float) (getLevel() * 1.5)));
+                setDamage(Math.round((float) (getLevel())));
                 break;
             case "Longsword":
                 setStaminaCost(5.0);
-                setDamage(Math.round((float) getLevel()));
+                setDamage(Math.round((float) (getLevel() * 1.5)));
                 break;
             case "Greatsword":
                 setStaminaCost(14.0);

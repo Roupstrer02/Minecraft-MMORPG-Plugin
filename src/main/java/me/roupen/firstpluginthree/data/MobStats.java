@@ -9,9 +9,7 @@ import org.bukkit.Color;
 import org.bukkit.Effect;
 import org.bukkit.Particle;
 
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Monster;
+import org.bukkit.entity.*;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -28,6 +26,7 @@ public class MobStats {
     private HashMap<String, Double> mult_stat_change;
     private HashMap<String, Double> lin_stat_change;
     private boolean passiveMob;
+    private final Random random = new Random();
 
     private final Particle.DustOptions dust = new Particle.DustOptions(
             Color.fromRGB((int) (0.9 * 255), (int) (0.1 * 255), (int) (0.1 * 255)), 1);
@@ -39,13 +38,18 @@ public class MobStats {
 //===========================================================================================================================
     public MobStats(Entity mob, int weather)
     {
-        this.Level = 10 * weather;
+        //level = 10 * weather difficulty - (1 to 9)
+        this.Level = (10 * weather) - (random.nextInt(10));
 
-        if ((mob instanceof LivingEntity) && !(mob instanceof Monster)) {
+        if ((mob instanceof LivingEntity) && !((mob instanceof Monster) || (mob instanceof Ghast) || (mob instanceof Slime))) {
             this.Level = 1;
             this.passiveMob = true;
         }else {
             this.passiveMob = false;
+        }
+
+        if (mob instanceof IronGolem) {
+            this.Level = 100;
         }
 
         this.MaxHealth = 10.0 * this.Level;
@@ -160,6 +164,12 @@ public class MobStats {
             return false;
         }
     }
+
+    public void mobDamage(MobStats mobstats) {
+        this.Health -= (0.01 * ((int) (100 *
+                ((mobstats.getAttack() - (mobstats.getAttack() * (getActiveDefense() / (getActiveDefense() + 100))))
+                ))));
+    }
     public boolean ranged_damage(PlayerStats playerstats, double remainingmultihit, double speed)
     {
         //A way to damage mobs where the stamina usage is done elsewhere
@@ -185,12 +195,15 @@ public class MobStats {
     }
 
     public void KillReward(PlayerStats stats) {
-        Random random = new Random();
-        int EXPtoGive = 15 + (20 * getLevel()) + ((int) (random.nextFloat() * getLevel()));
+        int EXPtoGive = EXPtoGive();
         stats.gainExperience(EXPtoGive);
         if (!passiveMob)
             stats.getPlayer().getInventory().addItem(PlayerEquipment.EquipmentToItem(PlayerEquipment.GenerateRandomEquipment((LivingEntity) getMob())));
         getMob().customName(Component.text("+" + EXPtoGive + "XP" + " - " + stats.getPlayer().getName()));
+    }
+
+    private int EXPtoGive() {
+        return 50 * ((int) Math.pow(getLevel(), 1.25));
     }
 
     public void spell_damage(double amount)

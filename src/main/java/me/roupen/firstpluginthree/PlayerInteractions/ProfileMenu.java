@@ -23,7 +23,7 @@ public class ProfileMenu {
         //when the player clicks in the "Player stats" menu
         if (invtitle.contains("content=\"Player Stats\""))
         {
-            if (Objects.requireNonNull(event.getCurrentItem()).getType() == Material.DIAMOND) {
+            if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.DIAMOND) {
                 player.closeInventory();
                 GuiUtility.CreateUpgradeGui(player);
                 event.setCancelled(true);
