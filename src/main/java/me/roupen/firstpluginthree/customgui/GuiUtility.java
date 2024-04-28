@@ -96,7 +96,7 @@ public class GuiUtility {
         gui.addGuiItem(Material.YELLOW_STAINED_GLASS_PANE, "Dexterity ", 22, 0, Component.text("Lv ", Style.style(NamedTextColor.WHITE)).append(Component.text(stats.getDexterity(), NamedTextColor.YELLOW)));
         gui.addGuiItem(Material.CYAN_STAINED_GLASS_PANE, "Wisdom ", 24, 0, Component.text("Lv ", Style.style(NamedTextColor.WHITE)).append(Component.text(stats.getWisdom(), NamedTextColor.AQUA)));
         gui.addGuiItem(Material.AMETHYST_BLOCK, "Spell Book", 35, 0, "Pick your spell Arsenal");
-        gui.addGuiItem(Material.MAGENTA_STAINED_GLASS_PANE, "Artisan ", 39, 0, Component.text("Lv ", Style.style(NamedTextColor.WHITE)).append(Component.text(stats.getIntelligence(), NamedTextColor.LIGHT_PURPLE)));
+        gui.addGuiItem(Material.MAGENTA_STAINED_GLASS_PANE, "Artisan ", 39, 0, Component.text("Lv ", Style.style(NamedTextColor.WHITE)).append(Component.text(stats.getArtisan(), NamedTextColor.LIGHT_PURPLE)));
         gui.addGuiItem(Material.WRITTEN_BOOK, "Tutorial", 44, 0, "W.I.P");
 
         for (int slot : new int[]{7, 16, 25, 26, 34, 43}) {
@@ -112,14 +112,14 @@ public class GuiUtility {
         PlayerStats stats = PlayerUtility.getPlayerStats(player);
 
         upgradegui.addGuiItem(Material.GRAY_DYE, "Back to profile menu", 8, 0, "");
-        upgradegui.addGuiItem(Material.RED_STAINED_GLASS_PANE, "Vitality: ", 10, 0, Integer.toString(stats.getVitality()));
-        upgradegui.addGuiItem(Material.LIME_STAINED_GLASS_PANE, "Resilience: ", 13, 0, Integer.toString(stats.getResilience()));
-        upgradegui.addGuiItem(Material.BLUE_STAINED_GLASS_PANE, "Intelligence: ", 16, 0, Integer.toString(stats.getIntelligence()));
-        upgradegui.addGuiItem(Material.ORANGE_STAINED_GLASS_PANE, "Strength: ", 28, 0, Integer.toString(stats.getStrength()));
-        upgradegui.addGuiItem(Material.CYAN_STAINED_GLASS_PANE, "Wisdom: ", 31, 0, Integer.toString(stats.getWisdom()));
-        upgradegui.addGuiItem(Material.YELLOW_STAINED_GLASS_PANE, "Dexterity: ", 34, 0, Integer.toString(stats.getDexterity()));
-        upgradegui.addGuiItem(Material.MAGENTA_STAINED_GLASS_PANE, "Artisan: ", 36, 0, Integer.toString(stats.getArtisan()));
-        upgradegui.addGuiItem(Material.DIAMOND, "Unused Skill points: ", 0, 0, Integer.toString(stats.getSkillPoints()));
+        upgradegui.addGuiItem(Material.RED_STAINED_GLASS_PANE, "Level up Vitality", 10, 0, (stats.getVitality()) + " (+" + 1 + ")");
+        upgradegui.addGuiItem(Material.LIME_STAINED_GLASS_PANE, "Level up Resilience", 13, 0, (stats.getResilience()) + " (+" + 1 + ")");
+        upgradegui.addGuiItem(Material.ORANGE_STAINED_GLASS_PANE, "Level up Strength", 16, 0, (stats.getIntelligence()) + " (+" + 1 + ")");
+        upgradegui.addGuiItem(Material.YELLOW_STAINED_GLASS_PANE, "Level up Dexterity", 28, 0, (stats.getStrength()) + " (+" + 1 + ")");
+        upgradegui.addGuiItem(Material.BLUE_STAINED_GLASS_PANE, "Level up Intelligence", 31, 0, (stats.getWisdom()) + " (+" + 1 + ")");
+        upgradegui.addGuiItem(Material.CYAN_STAINED_GLASS_PANE, "Level up Wisdom", 34, 0, (stats.getDexterity()) + " (+" + 1 + ")");
+        upgradegui.addGuiItem(Material.MAGENTA_STAINED_GLASS_PANE, "Level up Artisan", 36, 0, (stats.getArtisan()) + " (+" + 1 + ")");
+        upgradegui.addGuiItem(Material.DIAMOND, "Unused Skill points: ", 0, 0, (stats.getSkillPoints()) + " (+" + 1 + ")");
 
         upgradegui.openInventory(player);
     }

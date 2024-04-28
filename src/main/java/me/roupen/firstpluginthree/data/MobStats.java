@@ -149,13 +149,12 @@ public class MobStats {
                         ))));
             }
 
-            playerstats.useStamina(playerstats.getStaminaCost());
-
             if (Math.random() < remainingmultihit) {
                 playerstats.getPlayer().getWorld().spawnParticle(Particle.REDSTONE, getMob().getLocation().add(0,1,0), 10, 0.25, 0.5, 0.25, 0, dust, false);
                 return damage(playerstats, remainingmultihit - 1.0);
             }
             else {
+                playerstats.useStamina(playerstats.getStaminaCost());
                 return true;
             }
         }

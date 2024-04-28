@@ -19,6 +19,7 @@ import me.roupen.firstpluginthree.utility.MobUtility;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
 import me.roupen.firstpluginthree.wands.wand;
 import me.roupen.firstpluginthree.weather.WeatherForecast;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -136,6 +137,12 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
 
         PlayerUtility.setPlayerStats(event.getPlayer(), stats);
     }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        event.deathMessage(Component.text(event.getPlayer().getName() + " took an L"));
+    }
+
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event){
         PlayerUtility.SavePlayerStats(event.getPlayer());
@@ -205,12 +212,13 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         String invtitle = event.getView().title().toString();
 
         if (event.getInventory().getHolder()==null) {
-            if ((event.getClickedInventory()).getHolder() == null && invtitle.contains("content=\"Rune Forge\""))
-                {RuneForge.ClickMenu(event);}
-            else if ((event.getClickedInventory()).getHolder() == null && (invtitle.contains("content=\"Player Stats\"") || invtitle.contains("content=\"Stat Improvements\"")))
-                {ProfileMenu.ClickMenu(event);}
-    //      else if ((event.getClickedInventory()).getHolder() == null && invtitle.contains("content=\"Equipment Workbench\""))
-    //          {EquipmentWorkbench.ClickMenu(event);}
+            if ((event.getClickedInventory()).getHolder() == null && invtitle.contains("content=\"Rune Forge\"")) {
+                RuneForge.ClickMenu(event);
+                }
+            else if ((event.getView().getTopInventory()).getHolder() == null && (invtitle.contains("content=\"Player Stats\"") || invtitle.contains("content=\"Stat Improvements\""))) {
+                    ProfileMenu.ClickMenu(event);
+                    event.setCancelled(true);
+                }
         }
 
         ArtisanRestrictions.ClickMenu(event);

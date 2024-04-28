@@ -6,6 +6,7 @@ import me.roupen.firstpluginthree.utility.PlayerUtility;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.Objects;
 
@@ -13,12 +14,11 @@ public class ProfileMenu {
 
     public static void ClickMenu(InventoryClickEvent event)
     {
+
         Player player = (Player) event.getWhoClicked();
         PlayerStats stats = PlayerUtility.getPlayerStats(player);
 
         String invtitle = event.getView().title().toString();
-
-
 
         //when the player clicks in the "Player stats" menu
         if (invtitle.contains("content=\"Player Stats\""))
@@ -26,10 +26,6 @@ public class ProfileMenu {
             if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.DIAMOND) {
                 player.closeInventory();
                 GuiUtility.CreateUpgradeGui(player);
-                event.setCancelled(true);
-            }
-            else
-            {
                 event.setCancelled(true);
             }
         }
@@ -74,9 +70,6 @@ public class ProfileMenu {
                     stats.addArtisan(1);
                     stats.addSkillPoints(-1);
                     GuiUtility.CreateUpgradeGui(player);
-                }
-                else {
-
                 }
                 PlayerUtility.setPlayerStats(player, stats);
             }

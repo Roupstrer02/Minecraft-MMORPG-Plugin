@@ -33,6 +33,7 @@ public class PlayerStats {
 
     //Increases mana pool and number of active spells at once (every few points)
     private int Wisdom;
+
     //Determines the player's ability to craft and create things from different fields (cooking, alchemy, etc...)
     private int Artisan;
     private int Experience;
