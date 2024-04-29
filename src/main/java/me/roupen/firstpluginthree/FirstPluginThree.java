@@ -50,7 +50,8 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
 
     //Attempt at fixing NoClassDefFoundError
     //=============================================================================
-    ProfileMenu x = new ProfileMenu();
+    ProfileMenu dummy_x = new ProfileMenu();
+    spellcasting dummy_y = new spellcasting();
     //=============================================================================
 
     BukkitTask playeractionbar;

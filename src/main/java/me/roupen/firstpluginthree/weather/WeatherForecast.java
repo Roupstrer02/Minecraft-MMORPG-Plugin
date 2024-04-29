@@ -236,7 +236,55 @@ public class WeatherForecast {
             return "nether";
         }
 
+        //what is this?...
         return playerBiomeGroup;
+    }
+
+    //Returns the Biome weather modifier for the given biome group a mob is in
+    public static double getBiomeModifier(Entity entity) {
+        String playerBiome = entity.getLocation().getBlock().getBiome().toString();
+
+        if (BiomeGroupContains(PlainsBiomeGroup, playerBiome)) {
+            return 0.2;
+        }
+        else if (BiomeGroupContains(SandBiomeGroup, playerBiome)) {
+            return 1.0;
+        }
+        else if (BiomeGroupContains(ForestBiomeGroup, playerBiome)) {
+            return 0.3;
+        }
+        else if (BiomeGroupContains(TundraBiomeGroup, playerBiome)) {
+            return 0.5;
+        }
+        else if (BiomeGroupContains(SwampBiomeGroup, playerBiome)) {
+            return 0.5;
+        }
+        else if (BiomeGroupContains(OceanBiomeGroup, playerBiome)) {
+            return 1.0;
+        }
+        else if (BiomeGroupContains(JungleBiomeGroup, playerBiome)) {
+            return 0.75;
+        }
+        else if (BiomeGroupContains(CavesBiomeGroup, playerBiome)) {
+            return 1.0;
+        }
+        else if (BiomeGroupContains(SavannaBiomeGroup, playerBiome)) {
+            return 0.25;
+        }
+        else if (BiomeGroupContains(MountainousBiomeGroup, playerBiome)) {
+            return 0.65;
+        }
+        else if (BiomeGroupContains(StonyBiomeGroup, playerBiome)) {
+            return 0.6;
+        }
+        else if (BiomeGroupContains(EndBiomeGroup, playerBiome)) {
+            return 1.25;
+        }
+        else if (BiomeGroupContains(NetherBiomeGroup, playerBiome)) {
+            return 1.1;
+        }
+
+        return 1.0;
     }
 
     public static boolean BiomeGroupContains(String[] biomelist, String player_biome) {

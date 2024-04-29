@@ -346,7 +346,7 @@ public class PlayerStats {
 
     //Stat calculator for each stat
     public void recalculateMaxHealth() {
-        setActiveMaxHealth(100 + (equipment.getMaxHealth() * (1 + (0.01 * getVitality()))) + (getVitality() - 1) * 5);
+        setActiveMaxHealth(100 + (equipment.getMaxHealth() * (1 + (0.01 * getVitality()))) + (getVitality() - 1) * 25);
     }//Vitality
     public void recalculateHealth() {
         if (getActiveCurrentHealth() < getActiveMaxHealth()) {

@@ -1,6 +1,7 @@
 package me.roupen.firstpluginthree.data;
 
 import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
+import me.roupen.firstpluginthree.weather.WeatherForecast;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
@@ -39,7 +40,7 @@ public class MobStats {
     public MobStats(Entity mob, int weather)
     {
         //level = 10 * weather difficulty - (1 to 9)
-        this.Level = (10 * weather) - (random.nextInt(10));
+        this.Level = (int) Math.round(((10 * weather) - (random.nextInt(10))) * WeatherForecast.getBiomeModifier(mob));
 
         if ((mob instanceof LivingEntity) && !((mob instanceof Monster) || (mob instanceof Ghast) || (mob instanceof Slime))) {
             this.Level = 1;
