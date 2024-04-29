@@ -68,6 +68,9 @@ public class PlayerEquipment {
             case "Longbow":
                 this.model = 20025;
                 break;
+            case "Shield":
+                this.model = 20026;
+                break;
             default:
                 this.model = 0;
                 break;
@@ -510,14 +513,16 @@ public class PlayerEquipment {
     {
         Random rd = new Random();
         float value = rd.nextFloat();
-        if (value < 0.25) {
+        if (value < 0.2) {
             return 0;
-        }else if (0.25 <= value && value < 0.5) {
+        }else if (0.2 <= value && value < 0.4) {
             return 1;
-        }else if (0.5 <= value && value < 0.75) {
+        }else if (0.4 <= value && value < 0.6) {
             return 2;
-        }else{
+        }else if (0.6 <= value && value < 0.8){
             return 3;
+        }else{
+            return 4;
         }
     }
     public static int GenerateWeaponType()
@@ -545,11 +550,12 @@ public class PlayerEquipment {
                 {Material.LEATHER_HELMET, Material.CHAINMAIL_HELMET, Material.IRON_HELMET, Material.GOLDEN_HELMET, Material.DIAMOND_HELMET},
                 {Material.LEATHER_CHESTPLATE, Material.CHAINMAIL_CHESTPLATE, Material.IRON_CHESTPLATE, Material.GOLDEN_CHESTPLATE, Material.DIAMOND_CHESTPLATE},
                 {Material.LEATHER_LEGGINGS, Material.CHAINMAIL_LEGGINGS, Material.IRON_LEGGINGS, Material.GOLDEN_LEGGINGS, Material.DIAMOND_LEGGINGS},
-                {Material.LEATHER_BOOTS, Material.CHAINMAIL_BOOTS, Material.IRON_BOOTS, Material.GOLDEN_BOOTS, Material.DIAMOND_BOOTS}
+                {Material.LEATHER_BOOTS, Material.CHAINMAIL_BOOTS, Material.IRON_BOOTS, Material.GOLDEN_BOOTS, Material.DIAMOND_BOOTS},
+                {Material.SHIELD}
         };
         String[] WeaponTypeOptions = {"Dagger", "Longsword", "Greatsword","Shortbow", "Longbow", "Crossbow"};
         String[] RarityNames = {"Common", "Uncommon", "Rare", "Epic", "Legendary"};
-        String[] ArmorNames = {"Helmet", "Chestplate", "Leggings", "Boots"};
+        String[] ArmorNames = {"Helmet", "Chestplate", "Leggings", "Boots", "Shield"};
         MobStats mobstats = MobUtility.getMobStats(mob);
         int level = mobstats.getLevel();
 
@@ -578,22 +584,26 @@ public class PlayerEquipment {
                 new_random_equipment.setRarity(rarity);
                 new_random_equipment.setName(RarityNames[rarity] + " " + new_random_equipment.toolType);
 
-            }else{
+            }else if (WeaponType.equals("Crossbow")) {
                 new_random_equipment = new PlayerEquipment(rarity, Material.CROSSBOW, WeaponType);
+                new_random_equipment.setLevel(level);
+                new_random_equipment.setRarity(rarity);
+                new_random_equipment.setName(RarityNames[rarity] + " " + new_random_equipment.toolType);
+            }else{ //Generate a Shield
+                new_random_equipment = new PlayerEquipment(rarity, Material.SHIELD, WeaponType);
                 new_random_equipment.setLevel(level);
                 new_random_equipment.setRarity(rarity);
                 new_random_equipment.setName(RarityNames[rarity] + " " + new_random_equipment.toolType);
             }
         }else {//Generate an armor piece
             armorType = PlayerEquipment.GenerateArmorType();
-            new_random_equipment = new PlayerEquipment(rarity, ArmorOptions[armorType][rarity], ArmorNames[armorType]);
+            new_random_equipment = new PlayerEquipment(rarity, ArmorOptions[armorType][0], ArmorNames[armorType]);
             new_random_equipment.setLevel(level);
             new_random_equipment.setRarity(rarity);
             new_random_equipment.setName(RarityNames[rarity] + " " + new_random_equipment.toolType);
         }
 
             new_random_equipment.LevelUp(mob);
-
 
         return new_random_equipment;
     }
@@ -611,7 +621,7 @@ public class PlayerEquipment {
                     setMaxHealth(getMaxHealth() + 50);
                     break;
                 case 1:
-                    setHealthRegen(getHealthRegen() + 0.5);
+                    setHealthRegen(getHealthRegen() + 0.25);
                     break;
                 case 2:
                     setDefense(getDefense() + 10);
@@ -626,7 +636,7 @@ public class PlayerEquipment {
                     setMaxStamina(getMaxStamina() + 0.5);
                     break;
                 case 6:
-                    setStaminaRegen(getStaminaRegen() + 0.5);
+                    setStaminaRegen(getStaminaRegen() + 0.125);
                     break;
                 case 7:
                     setMovementSpeed(getMovementSpeed() + (0.1 * 0.01));
@@ -655,7 +665,7 @@ public class PlayerEquipment {
                 break;
             case "Greatsword":
                 setStaminaCost(14.0);
-                setDamage(Math.round((float) (getLevel() * 5)));
+                setDamage(Math.round((float) (getLevel() * 2)));
                 break;
             case "Shortbow":
                 setStaminaCost(6.0);
@@ -670,16 +680,19 @@ public class PlayerEquipment {
                 setDamage(Math.round((float) getLevel()) * 2);
                 break;
             case "Helmet":
-                setDefense(Math.round((float) (getLevel() * 1.2)));
+                setDefense(Math.round((float) (getLevel() * 0.6)));
                 break;
             case "Chestplate":
-                setDefense(Math.round((float) (getLevel() * 2.5)));
+                setDefense(Math.round((float) (getLevel() * 1.25)));
                 break;
             case "Leggings":
-                setDefense(Math.round((float) (getLevel() * 2)));
+                setDefense(Math.round((float) (getLevel())));
                 break;
             case "Boots":
-                setDefense(Math.round((float) getLevel()));
+                setDefense(Math.round((float) getLevel() * 0.5));
+                break;
+            case "Shield":
+                setDefense(Math.round((float) getLevel() * 0.9));
                 break;
             default:
         }
@@ -722,59 +735,33 @@ public class PlayerEquipment {
         return null;
     }
 
-    public int isDagger()
+    public boolean isDagger()
     {
-        if (Objects.equals(getToolType(), "Dagger"))
-        {
-            return 1;
-        }else{
-            return 0;
-        }
+        return Objects.equals(getToolType(), "Dagger");
     }
-    public int isLongSword()
+    public boolean isLongSword()
     {
-        if (Objects.equals(getToolType(), "Longsword"))
-        {
-            return 1;
-        }else{
-            return 0;
-        }
+        return Objects.equals(getToolType(), "Longsword");
     }
-    public int isGreatSword()
+    public boolean isGreatSword()
     {
-        if (Objects.equals(getToolType(), "Greatsword"))
-        {
-            return 1;
-        }else{
-            return 0;
-        }
+        return Objects.equals(getToolType(), "Greatsword");
     }
-    public int isShortBow()
+    public boolean isShortBow()
     {
-        if (Objects.equals(getToolType(), "Shortbow"))
-        {
-            return 1;
-        }else{
-            return 0;
-        }
+        return Objects.equals(getToolType(), "Shortbow");
     }
-    public int isCrossbow()
+    public boolean isCrossbow()
     {
-        if (Objects.equals(getToolType(), "Crossbow"))
-        {
-            return 1;
-        }else{
-            return 0;
-        }
+        return Objects.equals(getToolType(), "Crossbow");
     }
-    public int isLongBow()
+    public boolean isLongBow()
     {
-        if (Objects.equals(getToolType(), "Longsword"))
-        {
-            return 1;
-        }else{
-            return 0;
-        }
+        return Objects.equals(getToolType(), "Longsword");
+    }
+    public boolean isEquipmentShield()
+    {
+        return Objects.equals(getToolType(), "Shield");
     }
 
 }

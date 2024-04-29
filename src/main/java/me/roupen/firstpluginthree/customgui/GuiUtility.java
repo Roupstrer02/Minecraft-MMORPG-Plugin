@@ -119,7 +119,7 @@ public class GuiUtility {
         upgradegui.addGuiItem(Material.BLUE_STAINED_GLASS_PANE, "Level up Intelligence", 31, 0, (stats.getWisdom()) + " (+" + 1 + ")");
         upgradegui.addGuiItem(Material.CYAN_STAINED_GLASS_PANE, "Level up Wisdom", 34, 0, (stats.getDexterity()) + " (+" + 1 + ")");
         upgradegui.addGuiItem(Material.MAGENTA_STAINED_GLASS_PANE, "Level up Artisan", 36, 0, (stats.getArtisan()) + " (+" + 1 + ")");
-        upgradegui.addGuiItem(Material.DIAMOND, "Unused Skill points: ", 0, 0, (stats.getSkillPoints()) + " (+" + 1 + ")");
+        upgradegui.addGuiItem(Material.DIAMOND, "Unused Skill points: ", 0, 0, (stats.getSkillPoints()) + "");
 
         upgradegui.openInventory(player);
     }

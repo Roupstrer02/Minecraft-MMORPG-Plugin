@@ -238,11 +238,34 @@ public class PlayerStats {
         {
             if (AllItems[i] != null && AllItems[i].getType() != Material.AIR) {
                 TempEquipment = PlayerEquipment.ItemToEquipment(AllItems[i]);
-                if (AllItems[i] == OffHand)
-                    {TempEquipment.setDamage(0.0);
-                    TempEquipment.setStaminaCost(0.0);}
+
+                if ((MainHand.getType() != Material.AIR && OffHand.getType() != Material.AIR) && TempEquipment.isDagger() && PlayerEquipment.ItemToEquipment(MainHand).isDagger() && PlayerEquipment.ItemToEquipment(OffHand).isDagger())
+                {
+                    TempEquipment.setDamage(0.75 * TempEquipment.getDamage());
+                }
+                else if (TempEquipment.isGreatSword() && OffHand.getType() == Material.AIR) {
+                    TempEquipment.setDamage(1.5 * TempEquipment.getDamage());
+                }
+                else if (OffHand.getType() == Material.SHIELD && TempEquipment.isLongSword()) {
+                    //insufficient buff? they already have a shield with a damage reduction ability
+                    TempEquipment.setDamage(1.25 * TempEquipment.getDamage());
+                }
+
+                else if (AllItems[i] == OffHand)
+                    {
+                        TempEquipment.setDamage(0.0);
+                        TempEquipment.setStaminaCost(0.0);
+                    }
                 TempEquipment.applyRunes();
                 AddEquipmentStats(TempEquipment);
+            }
+            //if shield is up
+            if (p.isBlocking()) {
+                if (MainHand.getType() == Material.SHIELD) {
+                    equipment.setDefense(equipment.getDefense() * PlayerEquipment.ItemToEquipment(MainHand).getLevel());
+                }else {
+                    equipment.setDefense(equipment.getDefense() * PlayerEquipment.ItemToEquipment(OffHand).getLevel());
+                }
             }
         }
     }
@@ -316,13 +339,18 @@ public class PlayerStats {
     public double getHealingReceivedModifier() {
         return 1 + (0.01 * Resilience);
     }
+
+    public double getActiveHealthRegen() {
+        return ((BaseActiveHealthRegen + ((Resilience - 1) * 0.05) + equipment.getHealthRegen())) * getHealingReceivedModifier();
+    }
+
     //Stat calculator for each stat
     public void recalculateMaxHealth() {
         setActiveMaxHealth(100 + (equipment.getMaxHealth() * (1 + (0.01 * getVitality()))) + (getVitality() - 1) * 5);
     }//Vitality
     public void recalculateHealth() {
         if (getActiveCurrentHealth() < getActiveMaxHealth()) {
-            setActiveCurrentHealth(Math.min(getActiveMaxHealth(), getActiveCurrentHealth() + (getBaseActiveHealthRegen() + equipment.getHealthRegen()) * getHealingReceivedModifier()));
+            setActiveCurrentHealth(Math.min(getActiveMaxHealth(), getActiveCurrentHealth() + getActiveHealthRegen()));
         }
         else
         {

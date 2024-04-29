@@ -8,8 +8,15 @@ commands:
     usage: /<command>
     #permission: FirstPluginThree.profile
     permission-message: Sorry! You don't have permission to execute that command.
+
   weather_report:
     description: Gives a weather report of your current biome
     usage: /<command>
-    #permission: FirstPluginThree.profile
+    #permission: FirstPluginThree.weather_report
+    permission-message: Sorry! You don't have permission to execute that command.
+
+  stats:
+    description: Displays all of your current stats, considering your held equipment
+    usage: /<command>
+    #permission: FirstPluginThree.stats
     permission-message: Sorry! You don't have permission to execute that command.

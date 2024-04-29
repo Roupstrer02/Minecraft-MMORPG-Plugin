@@ -9,12 +9,14 @@ import me.roupen.firstpluginthree.PlayerInteractions.*;
 import me.roupen.firstpluginthree.PlayerInteractions.RuneForge;
 import me.roupen.firstpluginthree.artisan.CookingRecipes;
 import me.roupen.firstpluginthree.commandkit.profileCMD;
+import me.roupen.firstpluginthree.commandkit.statsCMD;
 import me.roupen.firstpluginthree.commandkit.weatherCMD;
 import me.roupen.firstpluginthree.constantrunnables.actionbardisplay;
 import me.roupen.firstpluginthree.constantrunnables.spellcasting;
 import me.roupen.firstpluginthree.constantrunnables.weatherforecast;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
+import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
 import me.roupen.firstpluginthree.utility.MobUtility;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
 import me.roupen.firstpluginthree.wands.wand;
@@ -37,6 +39,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.Vector;
 
 import java.io.File;
 import java.util.*;
@@ -68,6 +71,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
         this.getCommand("profile").setExecutor(new profileCMD());
         this.getCommand("weather_report").setExecutor(new weatherCMD());
+        this.getCommand("stats").setExecutor(new statsCMD());
         myPlugin = this;
 
         BukkitTask Weather_Forecast = new weatherforecast().runTaskTimer(this, 0, 20);
@@ -182,7 +186,6 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         WandCrafting.Interact(event);
         ArtisanRestrictions.Interact(event);
 
-
         //effects triggered
         if (!(stats.isCastingSpell()) && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) && wand.IsWand(player.getInventory().getItemInOffHand())) {
             //testing purposes
@@ -259,6 +262,10 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
                 if (mobstats.damage(playerstats, playerstats.getMultihit()))
                 {
                     //damage animation
+                    ItemStack item = player.getInventory().getItemInMainHand();
+                    if (item.getType() != Material.AIR && PlayerEquipment.ItemToEquipment(item).isGreatSword())
+                        mob.setVelocity(player.getLocation().getDirection().multiply(0.75).add(new Vector(0, 0.25, 0)));
+
                     mob.damage(0);
                     if (event.getEntity() instanceof Creature) {
                         Creature mobC = (Creature) mob;
@@ -299,6 +306,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
                     MobStats mobstats = MobUtility.getMobStats(mob);
 
                     playerstats.damage(mobstats);
+
                 }
 
                 //Makes the health bar match the player's health stat

@@ -1,5 +1,7 @@
 package me.roupen.firstpluginthree.constantrunnables;
 
+import me.roupen.firstpluginthree.FirstPluginThree;
+import me.roupen.firstpluginthree.misc.misc;
 import me.roupen.firstpluginthree.weather.WeatherForecast;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -18,6 +20,7 @@ public class weatherforecast extends BukkitRunnable {
             long time = ((Player) players.toArray()[0]).getWorld().getTime();
             if ((time >= 0) && (time < 20)) {
                 WeatherForecast.DisplayForecast();
+                misc.UndeadBurn(((Player) players.toArray()[0]).getWorld());
             }
         }
 

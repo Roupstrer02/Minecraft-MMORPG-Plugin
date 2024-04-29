@@ -52,6 +52,8 @@ public class MobStats {
             this.Level = 100;
         }
 
+
+
         this.MaxHealth = 10.0 * this.Level;
         this.Health = MaxHealth;
         this.Attack = 20.0 * (this.Level * 0.3);
@@ -197,7 +199,13 @@ public class MobStats {
         int EXPtoGive = EXPtoGive();
         stats.gainExperience(EXPtoGive);
         if (!passiveMob)
-            stats.getPlayer().getInventory().addItem(PlayerEquipment.EquipmentToItem(PlayerEquipment.GenerateRandomEquipment((LivingEntity) getMob())));
+        {
+            if (stats.getPlayer().getInventory().firstEmpty() != -1) { //if there's an empty slot to put an item in
+                stats.getPlayer().getInventory().addItem(PlayerEquipment.EquipmentToItem(PlayerEquipment.GenerateRandomEquipment((LivingEntity) getMob())));
+            }else{
+                stats.getPlayer().getWorld().dropItem(stats.getPlayer().getLocation().add(0,0.2,0), PlayerEquipment.EquipmentToItem(PlayerEquipment.GenerateRandomEquipment((LivingEntity) getMob())));
+            }
+        }
         getMob().customName(Component.text("+" + EXPtoGive + "XP" + " - " + stats.getPlayer().getName()));
     }
 

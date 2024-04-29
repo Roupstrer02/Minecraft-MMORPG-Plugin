@@ -3,6 +3,10 @@ package me.roupen.firstpluginthree.PlayerInteractions;
 import me.roupen.firstpluginthree.customgui.GuiUtility;
 import me.roupen.firstpluginthree.data.PlayerStats;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -26,6 +30,12 @@ public class ProfileMenu {
             if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.DIAMOND) {
                 player.closeInventory();
                 GuiUtility.CreateUpgradeGui(player);
+                event.setCancelled(true);
+            }
+            else if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.WRITTEN_BOOK) {
+                player.closeInventory();
+                player.sendMessage(Component.text("=================================\nClick here to check out the wiki!\n=================================",
+                        Style.style(TextDecoration.BOLD, TextDecoration.ITALIC)).clickEvent(ClickEvent.openUrl("https://roupstrer02.github.io/")));
                 event.setCancelled(true);
             }
         }
