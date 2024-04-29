@@ -2,14 +2,10 @@ package me.roupen.firstpluginthree.data;
 
 
 import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -63,7 +59,7 @@ public class PlayerStats {
 
     //update & regen values
     private double ActiveStaminaRegen = 0.5;
-    private double ActiveHealthRegen = 0.25;
+    private double BaseActiveHealthRegen = 0.25;
     private double ActiveManaRegen = 0.125;
 
     //equipment related stats and values
@@ -174,11 +170,11 @@ public class PlayerStats {
     public void setActiveStaminaRegen(double activeStaminaRegen) {
         ActiveStaminaRegen = activeStaminaRegen;
     }
-    public double getActiveHealthRegen() {
-        return ActiveHealthRegen;
+    public double getBaseActiveHealthRegen() {
+        return BaseActiveHealthRegen;
     }
-    public void setActiveHealthRegen(double activeHealthRegen) {
-        ActiveHealthRegen = activeHealthRegen;
+    public void setBaseActiveHealthRegen(double baseActiveHealthRegen) {
+        BaseActiveHealthRegen = baseActiveHealthRegen;
     }
     public double getActiveManaRegen() {
         return ActiveManaRegen;
@@ -317,13 +313,16 @@ public class PlayerStats {
         }
     }
 
+    public double getHealingReceivedModifier() {
+        return 1 + (0.01 * Resilience);
+    }
     //Stat calculator for each stat
     public void recalculateMaxHealth() {
         setActiveMaxHealth(100 + (equipment.getMaxHealth() * (1 + (0.01 * getVitality()))) + (getVitality() - 1) * 5);
     }//Vitality
     public void recalculateHealth() {
         if (getActiveCurrentHealth() < getActiveMaxHealth()) {
-            setActiveCurrentHealth(Math.min(getActiveMaxHealth(), getActiveCurrentHealth() + ActiveHealthRegen + equipment.getHealthRegen()));
+            setActiveCurrentHealth(Math.min(getActiveMaxHealth(), getActiveCurrentHealth() + (getBaseActiveHealthRegen() + equipment.getHealthRegen()) * getHealingReceivedModifier()));
         }
         else
         {
@@ -337,8 +336,8 @@ public class PlayerStats {
         setCritDamageMult(1.5 + ((0.01 * getStrength()) * equipment.getCritDamageMult()));
     }//Strength
     public void recalculateDefense() {
-        setActiveDefense((getResilience() * 5) + equipment.getDefense());
-    }//Resilience
+        setActiveDefense(equipment.getDefense());
+    }
     public void recalculateMaxMana() {
         setActiveMaxMana((20 + (getIntelligence() - 1) * 8) + equipment.getMaxMana());
     }//Intelligence
@@ -398,8 +397,7 @@ public class PlayerStats {
     }
 
     public void heal(double amount) {
-        ActiveCurrentHealth += amount;
-        //if more than max, set to max
+        ActiveCurrentHealth += amount * getHealingReceivedModifier();
     }
 
 
