@@ -1,6 +1,6 @@
 package me.roupen.firstpluginthree.magic;
 
-import me.roupen.firstpluginthree.constantrunnables.spellcasting;
+import me.roupen.firstpluginthree.constantrunnables.spells;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
 import me.roupen.firstpluginthree.utility.MobUtility;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 
-public class MeteorFall extends spellcasting{
+public class MeteorFall extends spells {
 
     //Progress dictates what stage of the spell has been reached
     private int progress = 0;

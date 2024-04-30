@@ -2,7 +2,6 @@ package me.roupen.firstpluginthree;
 
 //===
 //An attempt at preventing NoClassDefFoundError randomly appearing at runtime (i don't think it's going to work)
-import me.roupen.firstpluginthree.*;
 //===
 import me.roupen.firstpluginthree.CraftingRecipes.BasicTools;
 import me.roupen.firstpluginthree.PlayerInteractions.*;
@@ -13,6 +12,7 @@ import me.roupen.firstpluginthree.commandkit.statsCMD;
 import me.roupen.firstpluginthree.commandkit.weatherCMD;
 import me.roupen.firstpluginthree.constantrunnables.actionbardisplay;
 import me.roupen.firstpluginthree.constantrunnables.spellcasting;
+import me.roupen.firstpluginthree.constantrunnables.spells;
 import me.roupen.firstpluginthree.constantrunnables.weatherforecast;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
@@ -51,7 +51,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
     //Attempt at fixing NoClassDefFoundError
     //=============================================================================
     ProfileMenu dummy_x = new ProfileMenu();
-    spellcasting dummy_y = new spellcasting();
+    spells dummy_y = new spells();
     //=============================================================================
 
     BukkitTask playeractionbar;
@@ -166,6 +166,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         }
 
     }
+
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         PlayerStats stats = PlayerUtility.getPlayerStats(event.getPlayer());
@@ -179,8 +180,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         //player who clicked
         Player player = event.getPlayer();
         PlayerStats stats = PlayerUtility.getPlayerStats(player);
-        //list of items I look for
-        ItemStack stick = new ItemStack(Material.STICK, 1);
+
 
         RuneForge.Interact(event);
         wand.Interact(event);
@@ -207,8 +207,13 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
     }
     @EventHandler
     public void onPlayerItemDamage(PlayerItemDamageEvent event) {
-        if (event.getItem().getType() == Material.WOODEN_SWORD) {
+        Material itemMat = event.getItem().getType();
+
+        if (itemMat == Material.WOODEN_SWORD) {
             event.setCancelled(true);
+        }
+        else if (itemMat == Material.SHIELD) {
+
         }
     }
     @EventHandler
@@ -255,24 +260,24 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
             {
                 Player player = (Player) event.getDamager();
                 PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
-
                 LivingEntity mob = (LivingEntity) event.getEntity();
-
                 MobStats mobstats = MobUtility.getMobStats(mob);
 
                 if (mobstats.damage(playerstats, playerstats.getMultihit()))
                 {
-                    //damage animation
+                    //greatsword knockback
                     ItemStack item = player.getInventory().getItemInMainHand();
                     if (item.getType() != Material.AIR && PlayerEquipment.ItemToEquipment(item).isGreatSword())
                         mob.setVelocity(player.getLocation().getDirection().multiply(0.75).add(new Vector(0, 0.25, 0)));
 
-                    mob.damage(0);
+                    //mob re-aggro
                     if (event.getEntity() instanceof Creature) {
                         Creature mobC = (Creature) mob;
                         mobC.setTarget(player);
                     }
                 }
+
+                //mob death check
                 if (mobstats.getHealth() <= 0)
                 {
                     //"kills" the mob once 0 health is hit and awards EXP and drops
@@ -349,7 +354,8 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
                     if (mobstats.getHealth() <= 0)
                     {
                         //"kills" the mob once 0 health is hit and awards EXP
-                        mob.setHealth(0);
+                        mob.damage(1000000, player);
+
                         mobstats.KillReward(playerstats);
                     }
                 }

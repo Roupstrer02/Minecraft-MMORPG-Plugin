@@ -8,9 +8,11 @@ import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Color;
 import org.bukkit.Effect;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 
 import org.bukkit.entity.*;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -40,7 +42,7 @@ public class MobStats {
     public MobStats(Entity mob, int weather)
     {
         //level = 10 * weather difficulty - (1 to 9)
-        this.Level = (int) Math.round(((10 * weather) - (random.nextInt(10))) * WeatherForecast.getBiomeModifier(mob));
+        this.Level = (int) Math.ceil(((10 * weather) - (random.nextInt(10))) * WeatherForecast.getBiomeModifier(mob));
 
         if ((mob instanceof LivingEntity) && !((mob instanceof Monster) || (mob instanceof Ghast) || (mob instanceof Slime))) {
             this.Level = 1;
@@ -207,6 +209,14 @@ public class MobStats {
                 stats.getPlayer().getWorld().dropItem(stats.getPlayer().getLocation().add(0,0.2,0), PlayerEquipment.EquipmentToItem(PlayerEquipment.GenerateRandomEquipment((LivingEntity) getMob())));
             }
         }
+
+        //specific mob loot drop handler, since the player is technically not the source of damage in this game, some items don't drop
+        if (getMob() instanceof Blaze) {
+            Random rd = new Random();
+            if (rd.nextFloat() < 0.5)
+                getMob().getLocation().getWorld().dropItem(stats.getPlayer().getLocation().add(0,0.2,0), new ItemStack(Material.BLAZE_ROD));
+        }
+
         getMob().customName(Component.text("+" + EXPtoGive + "XP" + " - " + stats.getPlayer().getName()));
     }
 

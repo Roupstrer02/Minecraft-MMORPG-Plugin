@@ -1,6 +1,6 @@
 package me.roupen.firstpluginthree.magic;
 
-import me.roupen.firstpluginthree.constantrunnables.spellcasting;
+import me.roupen.firstpluginthree.constantrunnables.spells;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
 import me.roupen.firstpluginthree.utility.MobUtility;
@@ -11,31 +11,36 @@ import org.bukkit.*;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.*;
+
 import java.util.Collection;
 
-public class Fireball extends spellcasting{
+public class Fireball extends spells {
 
     //Progress dictates what stage of the spell has been reached
     private int progress = 0;
-
-    private final Player origin;
-    private final PlayerStats stats;
-    private final World world;
+    private Player origin = null;
+    private PlayerStats stats;
+    private World world;
     private Location loc;
     private Location FireballLoc;
     private Collection<LivingEntity> Targets;
     private BossBar ChannelTime;
     private boolean SpellHit = false;
 
+    private Material[] exempt_blocks = {Material.AIR, Material.GRASS, Material.TALL_GRASS};
+
     public Fireball(Player caster)
     {
-        this.origin = caster;
+        origin = caster;
         this.stats = PlayerUtility.getPlayerStats(this.origin);
         this.world = origin.getWorld();
         this.loc = origin.getLocation();
-
         setSpellName("Fireball");
-        setCastingWand(wand.ItemToWand(caster.getInventory().getItemInOffHand()));
+        setCastingWand(wand.ItemToWand(origin.getInventory().getItemInOffHand()));
+    }
+
+    public void setCaster(Player caster) {
+
     }
 
     public int getProgress() {

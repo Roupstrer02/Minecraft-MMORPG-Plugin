@@ -114,10 +114,10 @@ public class GuiUtility {
         upgradegui.addGuiItem(Material.GRAY_DYE, "Back to profile menu", 8, 0, "");
         upgradegui.addGuiItem(Material.RED_STAINED_GLASS_PANE, "Level up Vitality", 10, 0, (stats.getVitality()) + " (+" + 1 + ")");
         upgradegui.addGuiItem(Material.LIME_STAINED_GLASS_PANE, "Level up Resilience", 13, 0, (stats.getResilience()) + " (+" + 1 + ")");
-        upgradegui.addGuiItem(Material.ORANGE_STAINED_GLASS_PANE, "Level up Strength", 16, 0, (stats.getIntelligence()) + " (+" + 1 + ")");
-        upgradegui.addGuiItem(Material.YELLOW_STAINED_GLASS_PANE, "Level up Dexterity", 28, 0, (stats.getStrength()) + " (+" + 1 + ")");
-        upgradegui.addGuiItem(Material.BLUE_STAINED_GLASS_PANE, "Level up Intelligence", 31, 0, (stats.getWisdom()) + " (+" + 1 + ")");
-        upgradegui.addGuiItem(Material.CYAN_STAINED_GLASS_PANE, "Level up Wisdom", 34, 0, (stats.getDexterity()) + " (+" + 1 + ")");
+        upgradegui.addGuiItem(Material.ORANGE_STAINED_GLASS_PANE, "Level up Strength", 16, 0, (stats.getStrength()) + " (+" + 1 + ")");
+        upgradegui.addGuiItem(Material.YELLOW_STAINED_GLASS_PANE, "Level up Dexterity", 28, 0, (stats.getDexterity()) + " (+" + 1 + ")");
+        upgradegui.addGuiItem(Material.BLUE_STAINED_GLASS_PANE, "Level up Intelligence", 31, 0, (stats.getIntelligence()) + " (+" + 1 + ")");
+        upgradegui.addGuiItem(Material.CYAN_STAINED_GLASS_PANE, "Level up Wisdom", 34, 0, (stats.getWisdom()) + " (+" + 1 + ")");
         upgradegui.addGuiItem(Material.MAGENTA_STAINED_GLASS_PANE, "Level up Artisan", 36, 0, (stats.getArtisan()) + " (+" + 1 + ")");
         upgradegui.addGuiItem(Material.DIAMOND, "Unused Skill points: ", 0, 0, (stats.getSkillPoints()) + "");
 

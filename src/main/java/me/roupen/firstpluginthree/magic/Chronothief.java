@@ -1,6 +1,6 @@
 package me.roupen.firstpluginthree.magic;
 
-import me.roupen.firstpluginthree.constantrunnables.spellcasting;
+import me.roupen.firstpluginthree.constantrunnables.spells;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
 import me.roupen.firstpluginthree.utility.MobUtility;
@@ -14,10 +14,9 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.entity.*;
 import org.bukkit.util.Vector;
 
-import java.lang.annotation.Target;
 import java.util.*;
 
-public class Chronothief extends spellcasting {
+public class Chronothief extends spells {
 
     //Progress dictates what stage of the spell has been reached
     private int progress = 0;

@@ -1,10 +1,7 @@
 package me.roupen.firstpluginthree.misc;
 
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.Zombie;
+import org.bukkit.entity.*;
 
 import java.util.List;
 
@@ -17,7 +14,7 @@ public class misc {
         List<LivingEntity> mobs = world.getLivingEntities();
 
         for (LivingEntity mob : mobs) {
-            if ((mob instanceof Zombie || mob instanceof Skeleton) && mob.getFireTicks() > 1) {
+            if (mob instanceof Zombie || mob instanceof Skeleton) {
                 mob.remove();
             }
         }

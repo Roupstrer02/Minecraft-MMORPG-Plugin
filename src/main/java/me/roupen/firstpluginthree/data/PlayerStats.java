@@ -60,7 +60,7 @@ public class PlayerStats {
     //update & regen values
     private double ActiveStaminaRegen = 0.5;
     private double BaseActiveHealthRegen = 0.25;
-    private double ActiveManaRegen = 0.125;
+    private double BaseActiveManaRegen = 0.125;
 
     //equipment related stats and values
     private PlayerEquipment equipment = new PlayerEquipment(0, Material.AIR, "");
@@ -176,11 +176,11 @@ public class PlayerStats {
     public void setBaseActiveHealthRegen(double baseActiveHealthRegen) {
         BaseActiveHealthRegen = baseActiveHealthRegen;
     }
-    public double getActiveManaRegen() {
-        return ActiveManaRegen;
+    public double getBaseActiveManaRegen() {
+        return BaseActiveManaRegen;
     }
-    public void setActiveManaRegen(double activeManaRegen) {
-        ActiveManaRegen = activeManaRegen;
+    public void setBaseActiveManaRegen(double baseActiveManaRegen) {
+        BaseActiveManaRegen = baseActiveManaRegen;
     }
     public Player getPlayer() {
         return player;
@@ -344,6 +344,10 @@ public class PlayerStats {
         return ((BaseActiveHealthRegen + ((Resilience - 1) * 0.05) + equipment.getHealthRegen())) * getHealingReceivedModifier();
     }
 
+    public double getActiveManaRegen() {
+        return BaseActiveManaRegen + equipment.getManaRegen();
+    }
+
     //Stat calculator for each stat
     public void recalculateMaxHealth() {
         setActiveMaxHealth(100 + (equipment.getMaxHealth() * (1 + (0.01 * getVitality()))) + (getVitality() - 1) * 25);
@@ -375,7 +379,7 @@ public class PlayerStats {
     }//Dexterity
     public void recalculateMana() {
         if (getActiveCurrentMana() < getActiveMaxMana()) {
-            setActiveCurrentMana(Math.min(getActiveMaxMana(), getActiveCurrentMana() + ActiveManaRegen + equipment.getManaRegen()));
+            setActiveCurrentMana(Math.min(getActiveMaxMana(), getActiveCurrentMana() + getActiveManaRegen()));
         }
         else
         {

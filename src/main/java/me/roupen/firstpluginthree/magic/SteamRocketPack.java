@@ -4,7 +4,7 @@
 
 package me.roupen.firstpluginthree.magic;
 
-import me.roupen.firstpluginthree.constantrunnables.spellcasting;
+import me.roupen.firstpluginthree.constantrunnables.spells;
 import me.roupen.firstpluginthree.data.PlayerStats;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
 import me.roupen.firstpluginthree.wands.wand;
@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.boss.BossBar;
 import org.bukkit.util.Vector;
 
-public class SteamRocketPack extends spellcasting {
+public class SteamRocketPack extends spells {
 
     private Player origin;
     private PlayerStats stats;

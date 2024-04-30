@@ -1,9 +1,8 @@
 package me.roupen.firstpluginthree.magic;
 
-import me.roupen.firstpluginthree.constantrunnables.spellcasting;
+import me.roupen.firstpluginthree.constantrunnables.spells;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
-import me.roupen.firstpluginthree.utility.MobUtility;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
 import me.roupen.firstpluginthree.wands.wand;
 import org.bukkit.*;
@@ -15,7 +14,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Collection;
 
-public class Turret extends spellcasting {
+public class Turret extends spells {
 
     //Progress dictates what stage of the spell has been reached
     private int progress = 0;
