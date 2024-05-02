@@ -180,9 +180,39 @@ public class WeatherForecast {
     public static void WeatherReport(Player player) {
         File f = new File(getFolderPath() + "/WeatherForecast.yml");
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(f);
+        String playerBiome = getPlayerBiome(player);
+        double attenuation = WeatherForecast.getBiomeModifier(player);
+        player.sendMessage(Component.text(playerBiome + ": ", styles.get( (int) (cfg.get(playerBiome))))
+                .append(Component.text(" Lv" + ((int) ((((((int) cfg.get(playerBiome)) + 1) * 10) - 9) * attenuation)) + "-" + ((int) ((((int) cfg.get(playerBiome)) + 1) * 10 * attenuation)) + "\n\n", Style.style(NamedTextColor.WHITE)))
 
-        player.sendMessage(Component.text(WeatherDesigns[(int) cfg.get(getPlayerBiome(player))], styles.get( (int) (cfg.get(getPlayerBiome(player)))))
-                .append(Component.text(" Lv" + (((((int) cfg.get(getPlayerBiome(player))) + 1) * 10) - 9) + "-" + (((int) cfg.get(getPlayerBiome(player))) + 1) * 10, Style.style(NamedTextColor.WHITE))));
+        .append(Component.text("Today's Weather Forecast\n", Style.style(NamedTextColor.WHITE, TextDecoration.BOLD))
+                .append(Component.text("In the plains: "))
+                .append(Component.text(WeatherDesigns[(int) cfg.get("plains")] + '\n', styles.get( (int) (cfg.get("plains")))))
+                .append(Component.text("In the sands: "))
+                .append(Component.text(WeatherDesigns[(int) cfg.get("sand")] + '\n', styles.get( (int) (cfg.get("sand")))))
+                .append(Component.text("In the forests: "))
+                .append(Component.text(WeatherDesigns[(int) cfg.get("forest")] + '\n', styles.get( (int) (cfg.get("forest")))))
+                .append(Component.text("In the tundra: "))
+                .append(Component.text(WeatherDesigns[(int) cfg.get("tundra")] + '\n', styles.get( (int) (cfg.get("tundra")))))
+                .append(Component.text("In the swamps: "))
+                .append(Component.text(WeatherDesigns[(int) cfg.get("swamp")] + '\n', styles.get( (int) (cfg.get("swamp")))))
+                .append(Component.text("In the oceans: "))
+                .append(Component.text(WeatherDesigns[(int) cfg.get("ocean")] + '\n', styles.get( (int) (cfg.get("ocean")))))
+                .append(Component.text("In the jungle: "))
+                .append(Component.text(WeatherDesigns[(int) cfg.get("jungle")] + '\n', styles.get( (int) (cfg.get("jungle")))))
+                .append(Component.text("In the caves: "))
+                .append(Component.text(WeatherDesigns[(int) cfg.get("caves")] + '\n', styles.get( (int) (cfg.get("caves")))))
+                .append(Component.text("In the savanna: "))
+                .append(Component.text(WeatherDesigns[(int) cfg.get("savanna")] + '\n', styles.get( (int) (cfg.get("savanna")))))
+                .append(Component.text("In the mountainous: "))
+                .append(Component.text(WeatherDesigns[(int) cfg.get("mountainous")] + '\n', styles.get( (int) (cfg.get("mountainous")))))
+                .append(Component.text("In the rocky shores: "))
+                .append(Component.text(WeatherDesigns[(int) cfg.get("stony")] + '\n', styles.get( (int) (cfg.get("stony")))))
+                .append(Component.text("In the end: "))
+                .append(Component.text(WeatherDesigns[(int) cfg.get("end")] + '\n', styles.get( (int) (cfg.get("end")))))
+                .append(Component.text("In the nether: "))
+                .append(Component.text(WeatherDesigns[(int) cfg.get("nether")] + '\n', styles.get( (int) (cfg.get("nether")))))
+        ));
     }
 
     public static int getPlayerWeather(Player player) {

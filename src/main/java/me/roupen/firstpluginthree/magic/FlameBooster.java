@@ -74,7 +74,7 @@ public class FlameBooster extends spells {
                     if (!(target instanceof Player))
                     {
                         mobstats = MobUtility.getMobStats(target);
-                        mobstats.spell_damage(FlameBoosterDamageCalc(mobstats));
+                        mobstats.spell_damage(FlameBoosterDamageCalc(mobstats), origin);
                         target.damage(0);
                         if (mobstats.getHealth() <= 0) {
 

@@ -130,7 +130,7 @@ public class MeteorFall extends spells {
                             if (!(target instanceof Player))
                             {
                                 mobstats = MobUtility.getMobStats(target);
-                                mobstats.spell_damage(MeteorDmgCalc(mobstats));
+                                mobstats.spell_damage(MeteorDmgCalc(mobstats), origin);
                                 target.damage(0);
                                 if (mobstats.getHealth() <= 0) {
 

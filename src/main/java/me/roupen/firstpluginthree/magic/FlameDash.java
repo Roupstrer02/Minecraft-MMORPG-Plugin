@@ -93,7 +93,7 @@ public class FlameDash extends spells {
                 if (!(target instanceof Player))
                 {
                     MobStats mobstats = MobUtility.getMobStats(target);
-                    mobstats.spell_damage(FlameDashDamageCalc(mobstats));
+                    mobstats.spell_damage(FlameDashDamageCalc(mobstats), origin);
                     target.damage(0);
                     world.spawnParticle(Particle.SMALL_FLAME, target.getLocation().add(0,1,0), 200, 1, 1, 1, 0, null, true);
 

@@ -1,8 +1,6 @@
 package me.roupen.firstpluginthree;
 
-//===
-//An attempt at preventing NoClassDefFoundError randomly appearing at runtime (i don't think it's going to work)
-//===
+
 import me.roupen.firstpluginthree.CraftingRecipes.BasicTools;
 import me.roupen.firstpluginthree.PlayerInteractions.*;
 import me.roupen.firstpluginthree.PlayerInteractions.RuneForge;
@@ -141,6 +139,8 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         stats.setPlayer(event.getPlayer());
 
         PlayerUtility.setPlayerStats(event.getPlayer(), stats);
+
+        WeatherForecast.WeatherReport(event.getPlayer());
     }
 
     @EventHandler
@@ -253,6 +253,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof LivingEntity) {
+
             //ALL DAMAGE LOGIC FOR PLAYERS TO MOBS AND VICE VERSA HAPPENS HERE
 
             //if player melee attacks the mob
@@ -337,25 +338,20 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
 
                     if (mobstats.ranged_damage(playerstats, playerstats.getMultihit(), event.getDamager().getVelocity().length()))
                     {
-                        //damage animation
-                        mob.damage(0);
+                        //set aggro
                         if (event.getEntity() instanceof Creature) {
                             Creature mobC = (Creature) mob;
                             mobC.setTarget(player);
                         }
-                        mob.setLastDamageCause(event);
-                        event.getDamager().remove();
                         event.getEntity().customName(mobstats.generateName());
-
-                    }else{
-                        player.getInventory().addItem(new ItemStack(Material.ARROW, 1));
                     }
+
+                    event.getDamager().remove();
 
                     if (mobstats.getHealth() <= 0)
                     {
                         //"kills" the mob once 0 health is hit and awards EXP
-                        mob.damage(1000000, player);
-
+                        mob.setHealth(0);
                         mobstats.KillReward(playerstats);
                     }
                 }

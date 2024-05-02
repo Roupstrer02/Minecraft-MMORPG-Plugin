@@ -85,7 +85,7 @@ public class Fireball extends spells {
         {
 
             world.spawnParticle(Particle.FLAME, FireballLoc, 5, 0.1, 0.1, 0.1, 0, null, true);
-            FireballLoc = FireballLoc.add(FireballLoc.getDirection().multiply(1.5));
+            FireballLoc = FireballLoc.add(FireballLoc.getDirection().multiply(1));
         }
         if (getProgress() >= 100)
         {
@@ -109,7 +109,7 @@ public class Fireball extends spells {
                 if (!(target instanceof Player))
                 {
                     mobstats = MobUtility.getMobStats(target);
-                    mobstats.spell_damage(FireballDmgCalc(mobstats));
+                    mobstats.spell_damage(FireballDmgCalc(mobstats), origin);
                     target.damage(0);
                     if (mobstats.getHealth() <= 0) {
 

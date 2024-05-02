@@ -51,8 +51,13 @@ public class MobStats {
             this.passiveMob = false;
         }
 
+        //specific mobs require more levels
         if (mob instanceof IronGolem) {
             this.Level = 100;
+        }
+        else if (mob instanceof Warden)
+        {
+            this.Level = Math.max(this.Level, 100);
         }
 
 
@@ -140,6 +145,11 @@ public class MobStats {
     public boolean damage(PlayerStats playerstats, double remainingmultihit)
     {
         updateStatChanges();
+
+        if ((getMob() instanceof Tameable) && ((Tameable) getMob()).isTamed()) {
+            return false;
+        }
+
         if (playerstats.getActiveCurrentStamina() >= playerstats.getStaminaCost())
         {
             if (Math.random() < playerstats.getCritChance()) {
@@ -178,6 +188,11 @@ public class MobStats {
     {
         //A way to damage mobs where the stamina usage is done elsewhere
         updateStatChanges();
+
+        if (getMob() instanceof Tameable && ((Tameable) getMob()).isTamed()) {
+            return false;
+        }
+
         if (Math.random() < playerstats.getCritChance()) {
             this.Health -= (0.01 * ((int) (100 * ((speed / 2.5) - 0.2) *
                     (((playerstats.getActiveDamage() * playerstats.getCritDamageMult()) - ((playerstats.getActiveDamage() * playerstats.getCritDamageMult()) * (getActiveDefense() / (getActiveDefense() + 100))))
@@ -224,11 +239,21 @@ public class MobStats {
         return 50 * ((int) Math.pow(getLevel(), 1.25));
     }
 
-    public void spell_damage(double amount)
+    public void spell_damage(double amount, Player player)
     {
         updateStatChanges();
+
+        if (getMob() instanceof Tameable && ((Tameable) getMob()).isTamed()) {
+            return;
+        }
+
         setHealth(this.Health - amount);
         getMob().customName(generateName());
+
+        if (getMob() instanceof Creature) {
+            Creature mobC = (Creature) getMob();
+            mobC.setTarget(player);
+        }
     }
 
     public Component generateName() {
