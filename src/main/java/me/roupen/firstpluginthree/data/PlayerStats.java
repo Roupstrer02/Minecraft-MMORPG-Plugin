@@ -259,13 +259,13 @@ public class PlayerStats {
                 TempEquipment.applyRunes();
                 AddEquipmentStats(TempEquipment);
             }
-            //if shield is up
-            if (p.isBlocking()) {
-                if (MainHand.getType() == Material.SHIELD) {
-                    equipment.setDefense(equipment.getDefense() * PlayerEquipment.ItemToEquipment(MainHand).getLevel());
-                }else {
-                    equipment.setDefense(equipment.getDefense() * PlayerEquipment.ItemToEquipment(OffHand).getLevel());
-                }
+        }
+        //if shield is up
+        if (p.isBlocking()) {
+            if (MainHand.getType() == Material.SHIELD) {
+                equipment.setDefense(equipment.getDefense() * (PlayerEquipment.ItemToEquipment(MainHand).getLevel() * 0.01));
+            }else {
+                equipment.setDefense(equipment.getDefense() * PlayerEquipment.ItemToEquipment(OffHand).getLevel() * 0.01);
             }
         }
     }
@@ -413,7 +413,7 @@ public class PlayerStats {
 
     public void damage(MobStats mobstats) {
 
-
+        getPlayer().sendMessage(Double.toString(getActiveDefense()));
         ActiveCurrentHealth -= mobstats.getAttack() - (mobstats.getAttack() * (getActiveDefense() / (getActiveDefense() + 100)));
 
     }

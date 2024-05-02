@@ -403,8 +403,6 @@ public class PlayerEquipment {
         meta.setCustomModelData(e.model);
         meta.lore(lore);
 
-        //makes item indestructible
-
         item.setItemMeta(meta);
 
         return item;

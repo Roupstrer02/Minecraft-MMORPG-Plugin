@@ -213,9 +213,10 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
             event.setCancelled(true);
         }
         else if (itemMat == Material.SHIELD) {
-
+         //   event.setCancelled(true);
         }
     }
+
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         String invtitle = event.getView().title().toString();
@@ -412,65 +413,68 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
     public void onEntityDamage(EntityDamageEvent event) {
         //All following logic applies to Non-Items
         if (!(event.getEntity() instanceof Item)) {
-            if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.FALL) {
-                Player player = (Player) event.getEntity();
-                player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 60, (int) (Math.min((event.getDamage() / 4), 6))));
-                player.playSound(player.getLocation(), Sound.BLOCK_BAMBOO_BREAK, 1, 1);
-
-                //If player is IN lava
-            } else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.LAVA) {
+            if (event.getEntity() instanceof Player) {
                 Player player = (Player) event.getEntity();
                 PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
-                //damages player by 1% current health true damage per damage tick
-                playerstats.setActiveCurrentHealth(playerstats.getActiveCurrentHealth() - ((int) (playerstats.getActiveMaxHealth() * 0.1)));
-                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_HURT_ON_FIRE, 1, 1);
 
-                //If player is IN fire
-            } else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.FIRE) {
-                Player player = (Player) event.getEntity();
-                PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
-                //damages player by 1% max health true damage per damage tick
-                playerstats.setActiveCurrentHealth(playerstats.getActiveCurrentHealth() - ((int) (playerstats.getActiveMaxHealth() * 0.01)));
-                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_HURT_ON_FIRE, 1, 1);
+                if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
 
-                //If player is on fire
-            } else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK) {
-                Player player = (Player) event.getEntity();
-                PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
-                //damages player by 3% max health true damage per damage tick
-                playerstats.setActiveCurrentHealth(playerstats.getActiveCurrentHealth() - ((int) (playerstats.getActiveMaxHealth() * 0.03)));
-                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_HURT_ON_FIRE, 1, 1);
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 60, (int) (Math.min((event.getDamage() / 4), 6))));
+                    player.playSound(player.getLocation(), Sound.BLOCK_BAMBOO_BREAK, 1, 1);
 
-                //If player is poisoned
-            } else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.POISON) {
-                Player player = (Player) event.getEntity();
-                PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
-                //damages player by 2% max health true damage per damage tick
-                playerstats.setActiveCurrentHealth((int) (playerstats.getActiveCurrentHealth() - (0.02 * playerstats.getActiveMaxHealth())));
-                player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_HURT, 1, 1);
+                    //If player is IN lava
+                } else if (event.getCause() == EntityDamageEvent.DamageCause.LAVA) {
 
-                //If player is drowning
-            } else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.DROWNING) {
-                Player player = (Player) event.getEntity();
-                PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
-                //damages player by 10% max health true damage per damage tick
-                playerstats.setActiveCurrentHealth((int) (playerstats.getActiveCurrentHealth() - (0.1 * playerstats.getActiveMaxHealth())));
-                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_HURT_DROWN, 1, 1);
+                    //damages player by 1% current health true damage per damage tick
+                    playerstats.setActiveCurrentHealth(playerstats.getActiveCurrentHealth() - ((int) (playerstats.getActiveMaxHealth() * 0.1)));
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_HURT_ON_FIRE, 1, 1);
 
-                //Any custom damage sources will obviously be caused by me, so event should be cancelled by default (not in use yet)
-            } else if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.CONTACT) {
-                Player player = (Player) event.getEntity();
-                PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
-                //damages player by 3% max health true damage per damage tick
-                playerstats.setActiveCurrentHealth((playerstats.getActiveCurrentHealth() - (0.003 * playerstats.getActiveMaxHealth())));
-                player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_HURT, 1, 1);
+                    //If player is IN fire
+                } else if (event.getCause() == EntityDamageEvent.DamageCause.FIRE) {
 
-                //Any custom damage sources will obviously be caused by me, so event should be cancelled by default (not in use yet)
+                    //damages player by 1% max health true damage per damage tick
+                    playerstats.setActiveCurrentHealth(playerstats.getActiveCurrentHealth() - ((int) (playerstats.getActiveMaxHealth() * 0.01)));
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_HURT_ON_FIRE, 1, 1);
+
+                    //If player is on fire
+                } else if (event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK) {
+
+                    //damages player by 3% max health true damage per damage tick
+                    playerstats.setActiveCurrentHealth(playerstats.getActiveCurrentHealth() - ((int) (playerstats.getActiveMaxHealth() * 0.03)));
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_HURT_ON_FIRE, 1, 1);
+
+                    //If player is poisoned
+                } else if (event.getCause() == EntityDamageEvent.DamageCause.POISON) {
+
+                    //damages player by 2% max health true damage per damage tick
+                    playerstats.setActiveCurrentHealth((int) (playerstats.getActiveCurrentHealth() - (0.02 * playerstats.getActiveMaxHealth())));
+                    player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_HURT, 1, 1);
+
+                    //If player is drowning
+                } else if (event.getCause() == EntityDamageEvent.DamageCause.DROWNING) {
+
+                    //damages player by 10% max health true damage per damage tick
+                    playerstats.setActiveCurrentHealth((int) (playerstats.getActiveCurrentHealth() - (0.1 * playerstats.getActiveMaxHealth())));
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_HURT_DROWN, 1, 1);
+
+                    //Any custom damage sources will obviously be caused by me, so event should be cancelled by default (not in use yet)
+                } else if (event.getCause() == EntityDamageEvent.DamageCause.CONTACT) {
+
+                    //damages player by 3% max health true damage per damage tick
+                    playerstats.setActiveCurrentHealth((playerstats.getActiveCurrentHealth() - (0.003 * playerstats.getActiveMaxHealth())));
+                    player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_HURT, 1, 1);
+
+                    //Any custom damage sources will obviously be caused by me, so event should be cancelled by default (not in use yet)
+                } else if (event.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
+                    event.setCancelled(true);
+                }
+                player.setHealth(Math.min(20, 20 * (playerstats.getActiveCurrentHealth() / playerstats.getActiveMaxHealth())));
+                event.setDamage(0.01);
+
             }
-            else if (event.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
+            else {
                 event.setCancelled(true);
             }
-            event.setCancelled(true);
         }
     }
     @Override
