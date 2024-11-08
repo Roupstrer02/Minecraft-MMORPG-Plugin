@@ -1,6 +1,5 @@
 package me.roupen.firstpluginthree.magic;
 
-import me.roupen.firstpluginthree.constantrunnables.spells;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
 import me.roupen.firstpluginthree.utility.MobUtility;
@@ -12,10 +11,14 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import java.text.DecimalFormat;
 import java.util.Collection;
 
-public class FlameBooster extends spells {
+
+
+public class PyroFlameBooster extends BukkitRunnable {
 
     //Progress dictates what stage of the spell has been reached
     private int progress = 0;
@@ -26,17 +29,18 @@ public class FlameBooster extends spells {
     private Location loc;
     private Collection<LivingEntity> Targets;
     private BossBar ChannelTime;
+    private wand Wand;
+    private DecimalFormat NumberFormat = new DecimalFormat("0.0");
 
     //Need a variable that holds the wand in order to easily apply the modifiers onto the spell (without coupling code)
 
-    public FlameBooster(Player caster)
+    public PyroFlameBooster(Player caster)
     {
         this.origin = caster;
         this.stats = PlayerUtility.getPlayerStats(this.origin);
+        this.loc = origin.getLocation();
         this.world = origin.getWorld();
-
-        setSpellName("Flame Booster");
-        setCastingWand(wand.ItemToWand(caster.getInventory().getItemInOffHand()));
+        this.Wand = wand.ItemToWand(caster.getInventory().getItemInOffHand());
     }
 
     public int getProgress() {
@@ -55,17 +59,18 @@ public class FlameBooster extends spells {
                 stats.spendMana(ManaCostCalc(stats));
 
                 //creates BossBar for player's cooldown timer and shows it to player
-                ChannelTime = Bukkit.createBossBar(this.spellName, BarColor.RED, BarStyle.SOLID);
+                ChannelTime = Bukkit.createBossBar("Spell Cooldown: ", BarColor.RED, BarStyle.SOLID);
                 ChannelTime.addPlayer(stats.getPlayer());
                 ChannelTime.setVisible(true);
 
                 //makes sound
                 stats.getPlayer().getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1, 0);
+                stats.getPlayer().playSound(origin, Sound.ENTITY_GENERIC_EXPLODE, 1, 0);
 
                 //effect of spell
                 MobStats mobstats;
                 loc = origin.getLocation();
-                origin.setVelocity(origin.getVelocity().setY(1 * getCastingWand().getUtilitySpellPowerModifier()));
+                origin.setVelocity(origin.getVelocity().setY(1 * Wand.getUtilitySpellPowerModifier()));
                 Targets = world.getNearbyLivingEntities(loc, SpellAOE());
                 world.spawnParticle(Particle.EXPLOSION_HUGE, origin.getLocation(), 1);
 
@@ -76,15 +81,7 @@ public class FlameBooster extends spells {
                         mobstats = MobUtility.getMobStats(target);
                         mobstats.spell_damage(FlameBoosterDamageCalc(mobstats), origin);
                         target.damage(0);
-                        if (mobstats.getHealth() <= 0) {
 
-                            if (!target.isDead()) {
-                                mobstats.KillReward(stats);
-                            }
-                            target.setHealth(0);
-                        }else{
-                            target.customName(mobstats.generateName());
-                        }
                     }
                 }
             }
@@ -135,17 +132,20 @@ public class FlameBooster extends spells {
         return 5 * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
     }
     public double SpellAOE() {
-        return 2.5 * getCastingWand().getUtilitySpellPowerModifier();
+        return 2.5 * Wand.getUtilitySpellPowerModifier();
     }
     public double CasterSpellDamage() {
-        return stats.getWisdom() * getCastingWand().getOffenseSpellPowerModifier();
+        return stats.getWisdom() * Wand.getOffenseSpellPowerModifier();
     }
 
     public double ManaCostCalc(PlayerStats playerstats)
     {
-        return 40.0 * getCastingWand().getSpellCostModifier();
+        return 40.0 * Wand.getSpellCostModifier();
     }
-
+    public double spellCooldownTextUpdate(double upperLimit, double currentProgress) {
+        double increment = 1.0/upperLimit;
+        return (upperLimit * 0.05) - ((upperLimit * 0.05) * (increment * currentProgress));
+    }
     @Override
     public void run() {
         cast();

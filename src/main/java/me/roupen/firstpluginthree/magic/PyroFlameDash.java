@@ -1,6 +1,5 @@
 package me.roupen.firstpluginthree.magic;
 
-import me.roupen.firstpluginthree.constantrunnables.spells;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
 import me.roupen.firstpluginthree.utility.MobUtility;
@@ -12,11 +11,15 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class FlameDash extends spells {
+import static me.roupen.firstpluginthree.magic.spells.*;
+
+public class PyroFlameDash extends BukkitRunnable {
 
     //Progress dictates what stage of the spell has been reached
     private int progress = 0;
@@ -29,17 +32,18 @@ public class FlameDash extends spells {
     private HashSet<LivingEntity> SavedTargets = new HashSet<LivingEntity>();
     private LivingEntity[] ArrayOfTargets;
     private BossBar ChannelTime;
+    private wand Wand;
+    private DecimalFormat NumberFormat = new DecimalFormat("0.0");
 
     //Need a variable that holds the wand in order to easily apply the modifiers onto the spell (without coupling code)
 
-    public FlameDash(Player caster)
+    public PyroFlameDash(Player caster)
     {
         this.origin = caster;
         this.stats = PlayerUtility.getPlayerStats(this.origin);
         this.world = origin.getWorld();
         this.loc = origin.getLocation();
-        setSpellName("Flame Dash");
-        setCastingWand(wand.ItemToWand(caster.getInventory().getItemInOffHand()));
+        this.Wand = wand.ItemToWand(caster.getInventory().getItemInOffHand());
     }
     public void cast() {
 
@@ -53,7 +57,7 @@ public class FlameDash extends spells {
                 stats.spendMana(ManaCostCalc(stats));
 
                 //creates BossBar for player's cooldown timer and shows it to player
-                ChannelTime = Bukkit.createBossBar(this.spellName, BarColor.RED, BarStyle.SOLID);
+                ChannelTime = Bukkit.createBossBar("Spell Cooldown: ", BarColor.RED, BarStyle.SOLID);
                 ChannelTime.addPlayer(stats.getPlayer());
                 ChannelTime.setVisible(true);
 
@@ -72,19 +76,23 @@ public class FlameDash extends spells {
             loc = origin.getLocation();
 
             //make this a circle particle effect instead
-            ParticleCircle(loc.add(0,0.2,0), SpellAOE(), Particle.FLAME);
+            ParticleCircle(loc.add(0,0.2,0), SpellAOE(), Particle.FLAME, true);
 
             Targets = world.getNearbyLivingEntities(loc, SpellAOE());
 
+            SavedTargets.clear();
             SavedTargets.addAll(Targets);
 
             ArrayOfTargets = SavedTargets.toArray(new LivingEntity[SavedTargets.size()]);
             for (LivingEntity tempTarget : ArrayOfTargets) {
-                if (!(tempTarget instanceof Player))
-                    world.spawnParticle(Particle.SMALL_FLAME, tempTarget.getLocation().add(0, 2.5, 0), 5, 0, 0, 0, 0.05, null, true);
+                if (!(tempTarget instanceof Player)) {
+                    MobStats mobstats = MobUtility.getMobStats(tempTarget);
+                    mobstats.spell_damage(FlameDashDamageCalc(mobstats), origin);
+                    tempTarget.damage(0);
+                    world.spawnParticle(Particle.SMALL_FLAME, tempTarget.getLocation().add(0,1,0), 10, 1, 1, 1, 0, null, true);
+                    world.spawnParticle(Particle.SMALL_FLAME, tempTarget.getLocation().add(0, 2.5, 0), 1, 0, 0, 0, 0.05, null, true);
+                }
             }
-
-
         }
         if (getProgress() >= 60)
         {
@@ -93,19 +101,10 @@ public class FlameDash extends spells {
                 if (!(target instanceof Player))
                 {
                     MobStats mobstats = MobUtility.getMobStats(target);
-                    mobstats.spell_damage(FlameDashDamageCalc(mobstats), origin);
+                    mobstats.spell_damage(15 * FlameDashDamageCalc(mobstats), origin);
                     target.damage(0);
                     world.spawnParticle(Particle.SMALL_FLAME, target.getLocation().add(0,1,0), 200, 1, 1, 1, 0, null, true);
 
-                    if (mobstats.getHealth() <= 0) {
-                        //Maybe Make a "Mob Death" function
-                        if (!target.isDead()) {
-                            mobstats.KillReward(stats);
-                        }
-                        target.setHealth(0);
-                    }else{
-                        target.customName(mobstats.generateName());
-                    }
                 }
 
             }
@@ -133,21 +132,24 @@ public class FlameDash extends spells {
     public void incrementProgress() {this.progress = getProgress() + 1;}
 
     public double FlameDashDamageCalc(MobStats mobstats) {
-        return 5 * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
+        return 0.05 * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
     }
 
     public double CasterSpellDamage()
     {
-        return stats.getWisdom() * CastingWand.getOffenseSpellPowerModifier();
+        return stats.getWisdom() * Wand.getOffenseSpellPowerModifier();
     }
     public double SpellAOE() {
-        return 2.5 * getCastingWand().getUtilitySpellPowerModifier();
+        return 2.5 * Wand.getUtilitySpellPowerModifier();
     }
 
     public double ManaCostCalc(PlayerStats stats) {
-        return 40.0 * getCastingWand().getSpellCostModifier();
+        return 40.0 * Wand.getSpellCostModifier();
     }
-
+    public double spellCooldownTextUpdate(double upperLimit, double currentProgress) {
+        double increment = 1.0/upperLimit;
+        return (upperLimit * 0.05) - ((upperLimit * 0.05) * (increment * currentProgress));
+    }
     @Override
     public void run() {
         cast();

@@ -1,6 +1,8 @@
 package me.roupen.firstpluginthree.data;
 
 import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
+import me.roupen.firstpluginthree.utility.MobUtility;
+import me.roupen.firstpluginthree.utility.PlayerUtility;
 import me.roupen.firstpluginthree.weather.WeatherForecast;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -11,6 +13,7 @@ import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 
@@ -25,10 +28,11 @@ public class MobStats {
     private double ActiveDefense;
     private double Attack;
     private int Level;
-    private Entity Mob;
+    private LivingEntity Mob;
     private HashMap<String, Double> mult_stat_change;
     private HashMap<String, Double> lin_stat_change;
     private boolean passiveMob;
+    public boolean isBoss;
     private final Random random = new Random();
 
     private final Particle.DustOptions dust = new Particle.DustOptions(
@@ -39,9 +43,8 @@ public class MobStats {
 // Mob level is initialized according to the "weather" of the biome it spawns in
 // Variations in the stats attributed according to level are decided by the type of the mob (zombie, skeleton, creeper, spider, etc...) [To be Implemented...]
 //===========================================================================================================================
-    public MobStats(Entity mob, int weather)
+    public MobStats(LivingEntity mob, int weather)
     {
-        //level = 10 * weather difficulty - (1 to 9)
         this.Level = (int) Math.ceil(((10 * weather) - (random.nextInt(10))) * WeatherForecast.getBiomeModifier(mob));
 
         if ((mob instanceof LivingEntity) && !((mob instanceof Monster) || (mob instanceof Ghast) || (mob instanceof Slime))) {
@@ -57,15 +60,22 @@ public class MobStats {
         }
         else if (mob instanceof Warden)
         {
+            this.Level = Math.max(this.Level, 80);
+        }
+        else if (mob instanceof Wither)
+        {
             this.Level = Math.max(this.Level, 100);
+        }
+        else if (mob instanceof EnderDragon)
+        {
+            this.Level = Math.max(this.Level, 120);
         }
 
 
-
-        this.MaxHealth = 10.0 * this.Level;
+        this.MaxHealth = 12.0 * this.Level;
         this.Health = MaxHealth;
         this.Attack = 20.0 * (this.Level * 0.3);
-        this.Defense = 35.0 * (this.Level * 0.1);
+        this.Defense = 25.0 * (this.Level * 0.1);
         this.ActiveDefense = this.Defense;
         this.Mob = mob;
 
@@ -78,8 +88,42 @@ public class MobStats {
         this.lin_stat_change.put("MaxHealth", 0.0);
         this.lin_stat_change.put("Defense", 0.0);
         this.lin_stat_change.put("Attack", 0.0);
+        this.isBoss = false;
 
     }
+
+    public MobStats(LivingEntity mob, String bossType) {
+
+        this.passiveMob = false;
+        this.isBoss = true;
+
+        //=======================================================
+        //Abyss Watcher
+        if (bossType.equals("MythicMob{AbyssWatcherTest}")) {
+            this.Level = 200;
+            this.MaxHealth = 30.0 * this.Level;
+            this.Health = MaxHealth;
+            this.Attack = 500;
+            this.Defense = 125;
+            this.ActiveDefense = this.Defense;
+            this.Mob = mob;
+        }
+
+        //=======================================================
+        //universal across all bosses
+
+        this.mult_stat_change = new HashMap<>();
+        this.mult_stat_change.put("MaxHealth", 1.0);
+        this.mult_stat_change.put("Defense", 1.0);
+        this.mult_stat_change.put("Attack", 1.0);
+
+        this.lin_stat_change = new HashMap<>();
+        this.lin_stat_change.put("MaxHealth", 0.0);
+        this.lin_stat_change.put("Defense", 0.0);
+        this.lin_stat_change.put("Attack", 0.0);
+    }
+
+
     //==================================================================================
     //Getters and Setters
     public double getAttack() {
@@ -130,13 +174,39 @@ public class MobStats {
     public void setMaxHealth(double maxHealth) {
         MaxHealth = maxHealth;
     }
-    public Entity getMob() {
+    public LivingEntity getMob() {
         return Mob;
     }
-    public void setMob(Entity mob) {
+    public void setMob(LivingEntity mob) {
         Mob = mob;
     }
 
+    //==================================================================================
+    //The code for giving a mob a stat block
+    public static void giveStatBlock(LivingEntity entity) {
+
+        if (!((entity instanceof Player) || !(entity instanceof LivingEntity)) && !(entity instanceof ArmorStand))
+        {
+                MobStats stats = new MobStats(entity, WeatherForecast.getWeather(entity));
+                MobUtility.setMobStats(entity, stats);
+                entity.setCustomNameVisible(true);
+                entity.customName(stats.generateName());
+        }
+    }
+    public static void giveBossStatBlock(LivingEntity entity, String Boss_Type_String) {
+
+        if (!(entity instanceof Player) && !(entity instanceof ArmorStand))
+        {
+            MobStats stats = new MobStats(entity, Boss_Type_String);
+            stats.isBoss = true;
+            MobUtility.setMobStats(entity, stats);
+            entity.setCustomNameVisible(true);
+
+            //this needs to be replaced/removed but for now, it remains for debugging
+            //later, when players hit bosses, it'll update the bossbar and not the name of the mob
+            entity.customName(Component.text("Abyss Watcher", Style.style(NamedTextColor.RED)));
+        }
+    }
     //==================================================================================
     public void updateStatChanges() {
         setActiveDefense((Defense * mult_stat_change.get("Defense")) - lin_stat_change.get("Defense"));
@@ -170,6 +240,22 @@ public class MobStats {
             }
             else {
                 playerstats.useStamina(playerstats.getStaminaCost());
+
+                if (!isBoss) {
+                    getMob().customName(generateName());
+                    getMob().setHealth(Math.max(0, getMob().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * (getHealth() / getMaxHealth())));
+                }
+                else {
+                    //this will later change the title on the bossbar instead of the entity itself
+                    getMob().customName(updateBossBarName());
+                    getMob().setHealth(Math.max(0, getMob().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * (getHealth() / getMaxHealth())));
+                }
+                if (getHealth() <= 0 && !playerstats.isInBossFight())
+                {
+                    //"kills" the mob once 0 health is hit and awards EXP and drops
+                    getMob().setHealth(0);
+                    KillReward(playerstats);
+                }
                 return true;
             }
         }
@@ -209,19 +295,37 @@ public class MobStats {
             return ranged_damage(playerstats, remainingmultihit - 1.0, speed);
         }
         else {
+            if (!isBoss)
+                getMob().customName(generateName());
+            else {
+                //this will later change the title on the bossbar instead of the entity itself
+                getMob().customName(updateBossBarName());
+                getMob().setHealth(Math.max(0, getMob().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * (getHealth() / getMaxHealth())));
+            }
+            if (getHealth() <= 0 && !playerstats.isInBossFight())
+            {
+                //"kills" the mob once 0 health is hit and awards EXP and drops
+                getMob().setHealth(0);
+                KillReward(playerstats);
+            }
             return true;
         }
     }
 
     public void KillReward(PlayerStats stats) {
         int EXPtoGive = EXPtoGive();
-        stats.gainExperience(EXPtoGive);
-        if (!passiveMob)
+
+        for (Player p : stats.getParty()) {
+            PlayerStats PMemberStats = PlayerUtility.getPlayerStats(p);
+            PMemberStats.gainExperience(EXPtoGive / PMemberStats.getParty().size());
+        }
+
+        if (!passiveMob && !isBoss)
         {
             if (stats.getPlayer().getInventory().firstEmpty() != -1) { //if there's an empty slot to put an item in
-                stats.getPlayer().getInventory().addItem(PlayerEquipment.EquipmentToItem(PlayerEquipment.GenerateRandomEquipment((LivingEntity) getMob())));
+                stats.getPlayer().getInventory().addItem(PlayerEquipment.EquipmentToItem(PlayerEquipment.GenerateRandomEquipment(getMob())));
             }else{
-                stats.getPlayer().getWorld().dropItem(stats.getPlayer().getLocation().add(0,0.2,0), PlayerEquipment.EquipmentToItem(PlayerEquipment.GenerateRandomEquipment((LivingEntity) getMob())));
+                stats.getPlayer().getWorld().dropItem(stats.getPlayer().getLocation().add(0,0.2,0), PlayerEquipment.EquipmentToItem(PlayerEquipment.GenerateRandomEquipment(getMob())));
             }
         }
 
@@ -231,33 +335,54 @@ public class MobStats {
             if (rd.nextFloat() < 0.5)
                 getMob().getLocation().getWorld().dropItem(stats.getPlayer().getLocation().add(0,0.2,0), new ItemStack(Material.BLAZE_ROD));
         }
-
-        getMob().customName(Component.text("+" + EXPtoGive + "XP" + " - " + stats.getPlayer().getName()));
+        if (!isBoss)
+            getMob().customName(Component.text("+" + EXPtoGive + "XP" + " - " + stats.getPlayer().getName()));
+        else
+            getMob().customName(Component.text("+" + EXPtoGive + "XP" + " - to party"));
     }
 
-    private int EXPtoGive() {
+    public int EXPtoGive() {
         return 50 * ((int) Math.pow(getLevel(), 1.25));
     }
 
     public void spell_damage(double amount, Player player)
     {
-        updateStatChanges();
+        if (!(getMob() instanceof ArmorStand)) {
+            updateStatChanges();
 
-        if (getMob() instanceof Tameable && ((Tameable) getMob()).isTamed()) {
-            return;
-        }
+            if (getMob() instanceof Tameable && ((Tameable) getMob()).isTamed()) {
+                return;
+            }
 
-        setHealth(this.Health - amount);
-        getMob().customName(generateName());
+            setHealth(this.Health - amount);
 
-        if (getMob() instanceof Creature) {
-            Creature mobC = (Creature) getMob();
-            mobC.setTarget(player);
+            if (getMob() instanceof Creature) {
+                Creature mobC = (Creature) getMob();
+                mobC.setTarget(player);
+            }
+            if (!isBoss)
+                getMob().customName(generateName());
+            else {
+                //this will later change the title on the bossbar instead of the entity itself
+                getMob().customName(updateBossBarName());
+                getMob().setHealth(Math.max(0, getMob().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * (getHealth() / getMaxHealth())));
+            }
+            PlayerStats Pstats = PlayerUtility.getPlayerStats(player);
+            if (getHealth() <= 0 && !Pstats.isInBossFight()) {
+                if (!getMob().isDead()) {
+                    KillReward(Pstats);
+                }
+                getMob().setHealth(0);
+            }
+
         }
     }
 
     public Component generateName() {
-        return Component.text("Lv" + getLevel() + " " + getMob().getType()).append(Component.text(" [" + ((int) getHealth()) +"HP]", Style.style(NamedTextColor.RED, TextDecoration.BOLD)));
+        return Component.text("Lv" + getLevel() + " " + getMob().getType().toString().toLowerCase()).append(Component.text(" [" + ((int) getHealth()) +"HP]", Style.style(NamedTextColor.RED, TextDecoration.BOLD)));
+    }
+    public Component updateBossBarName() {
+        return Component.text("Lv" + getLevel() + " " + getMob().getType().toString().toLowerCase()).append(Component.text(" [" + ((int) getHealth()) +"HP]", Style.style(NamedTextColor.RED, TextDecoration.BOLD)));
     }
 
     public void AlterMobDefense(double mult, double lin) {

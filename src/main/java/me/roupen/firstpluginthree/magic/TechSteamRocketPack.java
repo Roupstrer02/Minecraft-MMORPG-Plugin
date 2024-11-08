@@ -4,7 +4,6 @@
 
 package me.roupen.firstpluginthree.magic;
 
-import me.roupen.firstpluginthree.constantrunnables.spells;
 import me.roupen.firstpluginthree.data.PlayerStats;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
 import me.roupen.firstpluginthree.wands.wand;
@@ -15,25 +14,29 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Player;
 import org.bukkit.boss.BossBar;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-public class SteamRocketPack extends spells {
+import java.text.DecimalFormat;
+
+
+public class TechSteamRocketPack extends BukkitRunnable {
 
     private Player origin;
     private PlayerStats stats;
     private World world;
     private int progress;
-
+    private wand Wand;
     private BossBar ChannelTime;
+    private DecimalFormat NumberFormat = new DecimalFormat("0.0");
 
-    public SteamRocketPack(Player caster)
+    public TechSteamRocketPack(Player caster)
     {
         this.origin = caster;
         this.stats = PlayerUtility.getPlayerStats(this.origin);
         this.world = origin.getWorld();
 
-        setSpellName("Steam Rocket Pack");
-        setCastingWand(wand.ItemToWand(caster.getInventory().getItemInOffHand()));
+        this.Wand = wand.ItemToWand(caster.getInventory().getItemInOffHand());
     }
 
     public void cast() {
@@ -45,7 +48,7 @@ public class SteamRocketPack extends spells {
 
                 stats.spendMana(ManaCostCalc());
 
-                ChannelTime = Bukkit.createBossBar(this.spellName, BarColor.PINK, BarStyle.SOLID);
+                ChannelTime = Bukkit.createBossBar("Spell Cooldown: ", BarColor.PINK, BarStyle.SOLID);
                 ChannelTime.addPlayer(stats.getPlayer());
                 ChannelTime.setVisible(true);
 
@@ -58,7 +61,7 @@ public class SteamRocketPack extends spells {
             //Move player in look direction
         if(getProgress() > 0 && getProgress() < 20){
             //look vector = velocity<-------------------------------
-            origin.setVelocity(origin.getLocation().getDirection().multiply(getCastingWand().getUtilitySpellPowerModifier()));
+            origin.setVelocity(origin.getLocation().getDirection().multiply(Wand.getUtilitySpellPowerModifier()));
             Vector lookVector = origin.getLocation().getDirection();
             world.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, origin.getLocation().add(0,1,0), 0, -lookVector.getX(), -lookVector.getY(), -lookVector.getZ(), 0.4, null, true);
 
@@ -86,7 +89,7 @@ public class SteamRocketPack extends spells {
     }
 
     public double ManaCostCalc() {
-        return 30 * getCastingWand().getSpellCostModifier();
+        return 30 * Wand.getSpellCostModifier();
     }
 
     public int getProgress() {
@@ -97,6 +100,10 @@ public class SteamRocketPack extends spells {
     }
 
     public void incrementProgress() {setProgress(getProgress() + 1);}
+    public double spellCooldownTextUpdate(double upperLimit, double currentProgress) {
+        double increment = 1.0/upperLimit;
+        return (upperLimit * 0.05) - ((upperLimit * 0.05) * (increment * currentProgress));
+    }
 
     @Override
     public void run() {

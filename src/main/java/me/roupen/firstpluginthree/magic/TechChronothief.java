@@ -1,6 +1,5 @@
 package me.roupen.firstpluginthree.magic;
 
-import me.roupen.firstpluginthree.constantrunnables.spells;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
 import me.roupen.firstpluginthree.utility.MobUtility;
@@ -12,11 +11,15 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.*;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
-public class Chronothief extends spells {
+import static me.roupen.firstpluginthree.magic.spells.*;
+
+public class TechChronothief extends BukkitRunnable {
 
     //Progress dictates what stage of the spell has been reached
     private int progress = 0;
@@ -30,10 +33,12 @@ public class Chronothief extends spells {
     private BossBar ChannelTime;
     private HashMap<MobStats, Double> defenseRemoved;
     private MobStats mobstats;
+    private wand Wand;
+    private DecimalFormat NumberFormat = new DecimalFormat("0.0");
 
     //Need a variable that holds the wand in order to easily apply the modifiers onto the spell (without coupling code)
 
-    public Chronothief(Player caster)
+    public TechChronothief(Player caster)
     {
         this.origin = caster;
         this.stats = PlayerUtility.getPlayerStats(this.origin);
@@ -42,8 +47,7 @@ public class Chronothief extends spells {
         this.defenseRemoved = new HashMap<>();
         this.TargetsAffected = new HashSet<>();
 
-        setSpellName("Chrono Thief");
-        setCastingWand(wand.ItemToWand(caster.getInventory().getItemInOffHand()));
+        this.Wand = (wand.ItemToWand(caster.getInventory().getItemInOffHand()));
     }
 
     public int getProgress() {
@@ -63,7 +67,7 @@ public class Chronothief extends spells {
                 stats.spendMana(ManaCostCalc(stats));
 
                 //creates BossBar for player's cooldown timer and shows it to player
-                ChannelTime = Bukkit.createBossBar("Spell Cooldown", BarColor.RED, BarStyle.SOLID);
+                ChannelTime = Bukkit.createBossBar("Spell Cooldown", BarColor.PINK, BarStyle.SOLID);
                 ChannelTime.addPlayer(stats.getPlayer());
                 ChannelTime.setVisible(true);
 
@@ -99,7 +103,7 @@ public class Chronothief extends spells {
                 }
 
                 if (progress % 2 == 0)
-                {ParticleSphere(spellblock.getLocation(), SpellAOE(), Particle.ELECTRIC_SPARK, 3, 3);}
+                {ParticleSphere(spellblock.getLocation(), SpellAOE(), Particle.ELECTRIC_SPARK);}
                 if (progress % 20 == 0)
                 {world.playSound(spellblock.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_CHIME, 3, 0);}
 
@@ -157,14 +161,40 @@ public class Chronothief extends spells {
 
 
     public double SpellAOE() {
-        return 5 * getCastingWand().getUtilitySpellPowerModifier();
+        return 2.5 * Wand.getUtilitySpellPowerModifier();
     }
-
     public double ManaCostCalc(PlayerStats playerstats)
     {
-        return 150.0 * getCastingWand().getSpellCostModifier();
+        return 150.0 * Wand.getSpellCostModifier();
     }
+    public void ParticleSphere(Location loc, double radius, Particle particletype) {
+        Random rd = new Random();
+        double a, b, c, noise;
 
+        for (int i = 0; i <= 100 * radius * radius; i++) {
+
+            do {
+                a = (rd.nextDouble() - 0.5) * 2;
+                b = (rd.nextDouble() - 0.5) * 2;
+                c = (rd.nextDouble() - 0.5) * 2;
+            } while ((a*a)+(b*b)+(c*c) == 0);
+
+            double denom = Math.sqrt((a*a)+(b*b)+(c*c));
+            noise = (rd.nextDouble() / 10) + 1;
+            double X = (a / denom) * radius * noise;
+            double Y = (b / denom) * radius * noise;
+            double Z = (c / denom) * radius * noise;
+
+            loc.add(X, Y, Z);
+            loc.getWorld().spawnParticle(particletype, loc, 1, 0F, 0F, 0F, 0.001);
+            loc.subtract(X, Y, Z);
+        }
+
+    }
+    public double spellCooldownTextUpdate(double upperLimit, double currentProgress) {
+        double increment = 1.0/upperLimit;
+        return (upperLimit * 0.05) - ((upperLimit * 0.05) * (increment * currentProgress));
+    }
     @Override
     public void run() {
         cast();

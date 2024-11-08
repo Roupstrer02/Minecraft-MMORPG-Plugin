@@ -10,8 +10,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+
 public class PlayerUtility {
     private static Map<String, PlayerStats> playerStatsMap = new HashMap<>();
+
+    public static boolean hasPlayerStats(UUID id) {
+        return playerStatsMap.containsKey(id.toString());
+    }
 
     public static PlayerStats getPlayerStats(Player p){
         if(!playerStatsMap.containsKey(p.getUniqueId().toString())){
@@ -52,6 +58,10 @@ public class PlayerUtility {
         cfg.set("stats.CurrentMana", stats.getActiveCurrentMana());
         cfg.set("stats.CurrentStamina", stats.getActiveCurrentStamina());
 
+        cfg.set("stats.HomeLocation", stats.getHomeLocation());
+
+        cfg.set("stats.SpellBook", stats.getSpellbook());
+        
 
         try { cfg.save(f); } catch (IOException e){ e.printStackTrace(); }
         PlayerUtility.setPlayerStats(player, null);

@@ -14,6 +14,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import javax.inject.Named;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
@@ -23,15 +25,21 @@ public class actionbardisplay extends BukkitRunnable {
     private final Style styleHealth;
     private final Style styleStamina;
     private final Style styleMana;
+    private final Style styleConsumableIndicator;
+    private String ConsumableIndicatorState;
+    private String ConsumableIndicateSeparator;
 
     private PlayerStats stats;
+
+
 
     public actionbardisplay()//brad?
     {
 
         this.styleHealth = Style.style(NamedTextColor.RED, TextDecoration.BOLD);
         this.styleStamina = Style.style(NamedTextColor.YELLOW, TextDecoration.BOLD);
-        this.styleMana = Style.style(NamedTextColor.AQUA, TextDecoration.BOLD);
+        this.styleMana = Style.style(NamedTextColor.DARK_AQUA, TextDecoration.BOLD);
+        this.styleConsumableIndicator = Style.style(NamedTextColor.GREEN, TextDecoration.BOLD);
     }
 
     @Override
@@ -73,6 +81,17 @@ public class actionbardisplay extends BukkitRunnable {
                 {
                     player.setHealth(Math.min(20, 20 * (stats.getActiveCurrentHealth() / stats.getActiveMaxHealth())));
                 }
+
+                if (stats.hasConsumedItem()) {
+                    ConsumableIndicatorState = "Well Fed";
+                    ConsumableIndicateSeparator = " | ";
+                }
+                else {
+                    ConsumableIndicatorState = "";
+                    ConsumableIndicateSeparator = "";
+                }
+                player.setSaturation(10);
+
                 String playerBiome = WeatherForecast.getPlayerBiome(player);
                 if (!playerBiome.equals(stats.currentBiomeGroup)) {
                     stats.currentBiomeGroup = playerBiome;
@@ -82,9 +101,13 @@ public class actionbardisplay extends BukkitRunnable {
                 }
 
                 player.sendActionBar(Component.text()
-                        .append(Component.text((int) Math.floor(stats.getActiveCurrentHealth()) + "/" + (int) stats.getActiveMaxHealth() + " | ", styleHealth)
-                                .append(Component.text(misc.round(stats.getActiveCurrentStamina()) + "/" + stats.getActiveMaxStamina() + " | ", styleStamina)))
-                        .append(Component.text((int) Math.floor(stats.getActiveCurrentMana()) + "/" + (int) stats.getActiveMaxMana(), styleMana)).build());
+                        .append(Component.text((int) Math.floor(stats.getActiveCurrentHealth()) + "/" + (int) stats.getActiveMaxHealth(), styleHealth)
+                        .append(Component.text(" | ", Style.style(NamedTextColor.GOLD, TextDecoration.BOLD)))
+                        .append(Component.text(misc.round(stats.getActiveCurrentStamina()) + "/" + stats.getActiveMaxStamina(), styleStamina)))
+                        .append(Component.text(" | ", Style.style(NamedTextColor.GREEN, TextDecoration.BOLD)))
+                        .append(Component.text((int) Math.floor(stats.getActiveCurrentMana()) + "/" + (int) stats.getActiveMaxMana(), styleMana))
+                        .append(Component.text(ConsumableIndicateSeparator, Style.style(NamedTextColor.AQUA, TextDecoration.BOLD)))
+                        .append(Component.text(ConsumableIndicatorState, styleConsumableIndicator)).build());
 
 
             }

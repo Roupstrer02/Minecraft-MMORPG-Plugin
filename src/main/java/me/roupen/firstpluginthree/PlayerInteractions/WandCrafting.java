@@ -201,10 +201,10 @@ public class WandCrafting {
                         NewWand.setUtilitySpellPowerModifier(NewWand.getUtilitySpellPowerModifier() + (0.05 * (NewWand.getTier() * 0.5)));
                         break;
                 }
-                    //Do the rest of the materials (also decide on what they are)
             }
         }
 
+        NewWand.setSpellCostModifier(Math.max(0.6, NewWand.getSpellCostModifier()));
         return NewWand;
 
     }

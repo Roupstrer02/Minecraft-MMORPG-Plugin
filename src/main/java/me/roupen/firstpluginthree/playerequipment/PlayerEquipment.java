@@ -212,8 +212,13 @@ public class PlayerEquipment {
     }
     public static PlayerEquipment ItemToEquipment(ItemStack item)
     {
+        PlayerEquipment NewEquipment;
 
-        PlayerEquipment NewEquipment = new PlayerEquipment(0, item.getType(), "");
+        if (item.getItemMeta().hasCustomModelData())
+            NewEquipment = new PlayerEquipment(0, item.getType(), getToolTypeFromModel(item.getItemMeta().getCustomModelData()));
+        else
+            NewEquipment = new PlayerEquipment(0, item.getType(), "getToolTypeFromModel(item.getItemMeta().getCustomModelData()");
+
         PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
 
         if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "damage"), PersistentDataType.DOUBLE))
@@ -612,8 +617,8 @@ public class PlayerEquipment {
         String ttype = getToolType();
 
         for (int i = 0; i < Math.floorDiv(this.getLevel(), 10); i++) {
-            index = (int) Math.floor(rd.nextFloat() * 11);
-            if (index == 11){index = 10;}
+            index = (int) Math.floor(rd.nextFloat() * 10);
+            if (index == 10){index = 9;}
             switch (index) {
                 case 0:
                     setMaxHealth(getMaxHealth() + 50);
@@ -631,21 +636,18 @@ public class PlayerEquipment {
                     setManaRegen(getManaRegen() + 0.25);
                     break;
                 case 5:
-                    setMaxStamina(getMaxStamina() + 0.5);
+                    setMaxStamina(getMaxStamina() + 2.0);
                     break;
                 case 6:
                     setStaminaRegen(getStaminaRegen() + 0.125);
                     break;
                 case 7:
-                    setMovementSpeed(getMovementSpeed() + (0.1 * 0.01));
-                    break;
-                case 8:
                     setMultiHit(getMultiHit() + 0.1);
                     break;
-                case 9:
+                case 8:
                     setCritChance(getCritChance() + 0.05);
                     break;
-                case 10:
+                case 9:
                     setCritDamageMult(getCritDamageMult() + 0.1);
                     break;
                 default:
@@ -731,6 +733,27 @@ public class PlayerEquipment {
     public static PlayerEquipment MobEquipDrop(LivingEntity mob) {
 
         return null;
+    }
+
+    private static String getToolTypeFromModel(int modelID) {
+        switch (modelID) {
+            case 20020:
+                return "Dagger";
+            case 20021:
+                return "Longsword";
+            case 20022:
+                return "Greatsword";
+            case 20023:
+                return "Shortbow";
+            case 20024:
+                return "Crossbow";
+            case 20025:
+                return "Longbow";
+            case 20026:
+                return "Shield";
+            default:
+                return "";
+        }
     }
 
     public boolean isDagger()

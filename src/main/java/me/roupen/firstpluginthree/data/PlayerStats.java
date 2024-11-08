@@ -1,13 +1,22 @@
 package me.roupen.firstpluginthree.data;
 
 
+import io.lumine.mythic.bukkit.utils.lib.jooq.impl.QOM;
 import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+
+import javax.sound.sampled.Line;
+import java.text.DecimalFormat;
+import java.util.*;
 
 public class PlayerStats {
     //Permanent Stats
@@ -42,7 +51,7 @@ public class PlayerStats {
 
     private Player player; //you are a player, I am a developer, we are not the same.
     public String currentBiomeGroup = "";
-
+    public List<Double> HomeLocation = null;
     private double ActiveCurrentHealth;
     private double ActiveMaxHealth;
     private double ActiveDefense;
@@ -61,20 +70,120 @@ public class PlayerStats {
     private double ActiveStaminaRegen = 0.5;
     private double BaseActiveHealthRegen = 0.25;
     private double BaseActiveManaRegen = 0.125;
+    private double baseActiveStaminaRegen = 0.5;
 
     //equipment related stats and values
     private PlayerEquipment equipment = new PlayerEquipment(0, Material.AIR, "");
 
     //Spellcasting related variables
     private boolean castingSpell = false;
+    private String[] spellbook = new String[4];
 
-    //getter and setter and adder functions for all statistics
+    //consumable item related variables
+    private boolean consumingItem = false;
 
+    //stat multipliers
+    public Map<String, Double> LinearStatChanges = new HashMap<String, Double>() {{
+        put("Max HP", 0.0);
+        put("HP Regen", 0.0);
+        put("Defense", 0.0);
+        put("Damage", 0.0);
+        put("Max Mana", 0.0);
+        put("Mana Regen", 0.0);
+        put("Stamina Cap", 0.0);
+        put("Stamina Regen", 0.0);
+        put("Multi Hit", 0.0);
+        put("Crit Chance", 0.0);
+        put("Crit Damage Mult", 0.0);
+        put("Movement Speed", 0.0);
+    }};
+
+    public Map<String, Double> MultiplicativeStatChanges = new HashMap<String, Double>() {{
+        put("Max HP", 1.0);
+        put("HP Regen", 1.0);
+        put("Defense", 1.0);
+        put("Damage", 1.0);
+        put("Max Mana", 1.0);
+        put("Mana Regen", 1.0);
+        put("Stamina Cap", 1.0);
+        put("Stamina Regen", 1.0);
+        put("Multi Hit", 1.0);
+        put("Crit Chance", 1.0);
+        put("Crit Damage Mult", 1.0);
+        put("Movement Speed", 1.0);
+    }};
+
+    //constructor
+
+    //Number Rounding
+    private DecimalFormat df = new DecimalFormat("0.0");
+
+    //Boss Fight related variables
+    private boolean isInBossFight = false;
+    //party related variables
+    private Player pendingInvite;
+    private ArrayList<Player> party = new ArrayList<>();
+
+    //getter and setter and adder functions for everything
+    public Player getPendingInvite() {
+        return pendingInvite;
+    }
+    public void setPendingInvite(Player pendingInvite) {
+        this.pendingInvite = pendingInvite;
+    }
+    public ArrayList<Player> getParty() {
+        return party;
+    }
+    public void setParty(ArrayList<Player> party) {
+        this.party = party;
+    }
+    public void addMemberToParty(Player player) {
+        party.add(player);
+    }
+    public void removeMemberFromParty(Player player) {
+        party.remove(player);
+    }
+    public Component getViewPartyMessage() {
+        Component message = Component.text("Party Members: \n", Style.style(NamedTextColor.GREEN));
+        for (Player p : party) {
+            message = message.append(Component.text("- " + p.getName() + "\n", Style.style(NamedTextColor.GREEN)));
+        }
+        return message;
+    }
+
+    public String[] getSpellbook() {
+        return spellbook;
+    }
+    public void setSpellbook(String[] spellbook) {
+        this.spellbook = spellbook;
+    }
+    public void updateSpellBook(int slot, String spell) {
+        spellbook[slot] = spell;
+    }
+
+    public boolean isInBossFight() {
+        return isInBossFight;
+    }
+    public void setInBossFight(boolean inBossFight) {
+        isInBossFight = inBossFight;
+    }
+    public List<Double> getHomeLocation() {
+        return HomeLocation;
+    }
+    public void setHomeLocation(List<Double> homeLocation) {
+        HomeLocation = homeLocation;
+    }
     public double getStaminaCost() {
         return StaminaCost;
     }
     public void setStaminaCost(double staminaCost) {
         StaminaCost = staminaCost;
+    }
+    public double getBaseActiveStaminaRegen() {
+        return baseActiveStaminaRegen;
+    }
+    public void setBaseActiveStaminaRegen(double baseActiveStaminaRegen) {
+        this.baseActiveStaminaRegen = baseActiveStaminaRegen;
     }
     public double getActiveDamage() {
         return ActiveDamage;
@@ -191,6 +300,8 @@ public class PlayerStats {
     public boolean isCastingSpell() {
         return castingSpell;
     }
+    public boolean hasConsumedItem() {return consumingItem; }
+    public void setConsumingItem(boolean consuming) { consumingItem = consuming;}
     public void setCastingSpell(boolean castingSpell) {
         this.castingSpell = castingSpell;
     }
@@ -208,7 +319,7 @@ public class PlayerStats {
             equipment.setMultiHit(equipment.getMultiHit() + e.getMultiHit());
             equipment.setMovementSpeed(equipment.getMovementSpeed() + e.getMovementSpeed());
             equipment.setCritDamageMult(equipment.getCritDamageMult() + e.getCritDamageMult());
-            equipment.setStaminaCost(equipment.getStaminaCost() + e.getStaminaCost());
+
         }
     }
     public PlayerEquipment getEquipment() {
@@ -239,26 +350,39 @@ public class PlayerStats {
             if (AllItems[i] != null && AllItems[i].getType() != Material.AIR) {
                 TempEquipment = PlayerEquipment.ItemToEquipment(AllItems[i]);
 
+                //Special use case for double daggers
                 if ((MainHand.getType() != Material.AIR && OffHand.getType() != Material.AIR) && TempEquipment.isDagger() && PlayerEquipment.ItemToEquipment(MainHand).isDagger() && PlayerEquipment.ItemToEquipment(OffHand).isDagger())
                 {
                     TempEquipment.setDamage(0.75 * TempEquipment.getDamage());
                 }
+
+                //Special use case for two-handing Greatswords
                 else if (TempEquipment.isGreatSword() && OffHand.getType() == Material.AIR) {
                     TempEquipment.setDamage(1.5 * TempEquipment.getDamage());
                 }
+
+                //Special use case for sword and shield
                 else if (OffHand.getType() == Material.SHIELD && TempEquipment.isLongSword()) {
                     //insufficient buff? they already have a shield with a damage reduction ability
                     TempEquipment.setDamage(1.25 * TempEquipment.getDamage());
                 }
 
+                //adds offhand stats excluding damage and cost
                 else if (AllItems[i] == OffHand)
-                    {
-                        TempEquipment.setDamage(0.0);
-                        TempEquipment.setStaminaCost(0.0);
-                    }
+                {
+                    TempEquipment.setDamage(0.0);
+                    TempEquipment.setStaminaCost(0.0);
+                }
+
+                //sets stamina cost of attacks
+                else if (AllItems[i] == MainHand) {
+                    equipment.setStaminaCost(TempEquipment.getStaminaCost());
+                }
+
                 TempEquipment.applyRunes();
                 AddEquipmentStats(TempEquipment);
             }
+
         }
         //if shield is up
         if (p.isBlocking()) {
@@ -337,20 +461,20 @@ public class PlayerStats {
     }
 
     public double getHealingReceivedModifier() {
-        return 1 + (0.01 * Resilience);
+        return 1 + (0.01 * (Resilience - 1));
     }
 
     public double getActiveHealthRegen() {
-        return ((BaseActiveHealthRegen + ((Resilience - 1) * 0.05) + equipment.getHealthRegen())) * getHealingReceivedModifier();
+        return (((BaseActiveHealthRegen + ((Resilience - 1) * 0.05) + equipment.getHealthRegen()) + LinearStatChanges.get("HP Regen")) * MultiplicativeStatChanges.get("HP Regen")) * getHealingReceivedModifier();
     }
 
     public double getActiveManaRegen() {
-        return BaseActiveManaRegen + equipment.getManaRegen();
+        return ((BaseActiveManaRegen + equipment.getManaRegen()) + LinearStatChanges.get("Mana Regen")) * MultiplicativeStatChanges.get("Mana Regen");
     }
 
     //Stat calculator for each stat
     public void recalculateMaxHealth() {
-        setActiveMaxHealth(100 + (equipment.getMaxHealth() * (1 + (0.01 * getVitality()))) + (getVitality() - 1) * 25);
+        setActiveMaxHealth(Double.parseDouble(df.format(((100 + (equipment.getMaxHealth() * (1 + (0.01 * getVitality()))) + (getVitality() - 1) * 25) + LinearStatChanges.get("Max HP")) * MultiplicativeStatChanges.get("Max HP"))));
     }//Vitality
     public void recalculateHealth() {
         if (getActiveCurrentHealth() < getActiveMaxHealth()) {
@@ -362,19 +486,19 @@ public class PlayerStats {
         }
     }
     public void recalculateDamage() {
-        setActiveDamage(getStrength() + (equipment.getDamage() * (1 + (0.01 * getStrength()))));
+        setActiveDamage(Double.parseDouble(df.format(MultiplicativeStatChanges.get("Damage") * ((getStrength() + (equipment.getDamage() * (1 + (0.01 * getStrength())))) + LinearStatChanges.get("Damage")))));
     }//Strength
     public void recalculateCritDamageMult(){
-        setCritDamageMult(1.5 + ((0.01 * getStrength()) * equipment.getCritDamageMult()));
+        setCritDamageMult(Double.parseDouble(df.format(((1.5 + ((0.01 * getStrength()) * equipment.getCritDamageMult())) + LinearStatChanges.get("Crit Damage Mult")) * MultiplicativeStatChanges.get("Crit Damage Mult"))));
     }//Strength
     public void recalculateDefense() {
-        setActiveDefense(equipment.getDefense());
+        setActiveDefense(Double.parseDouble(df.format(MultiplicativeStatChanges.get("Defense") * (equipment.getDefense() + LinearStatChanges.get("Defense")))));
     }
     public void recalculateMaxMana() {
-        setActiveMaxMana((20 + (getIntelligence() - 1) * 8) + equipment.getMaxMana());
+        setActiveMaxMana(Double.parseDouble(df.format(MultiplicativeStatChanges.get("Max Mana") * (20 + ((getIntelligence() - 1) * 8) + equipment.getMaxMana() + LinearStatChanges.get("Max Mana")))));
     }//Intelligence
     public void recalculateMovementSpeed(Player p){
-        setMovementSpeed(0.1 + (0.001 * getDexterity()) + equipment.getMovementSpeed());
+        setMovementSpeed((0.1 + (0.001 * (getDexterity() - 1)) + equipment.getMovementSpeed() + LinearStatChanges.get("Movement Speed")) * MultiplicativeStatChanges.get("Movement Speed"));
         p.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(getMovementSpeed());
     }//Dexterity
     public void recalculateMana() {
@@ -387,8 +511,10 @@ public class PlayerStats {
         }
     }
     public void recalculateStamina() {
+        setActiveStaminaRegen((baseActiveStaminaRegen + equipment.getStaminaRegen() + LinearStatChanges.get("Stamina Regen")) * MultiplicativeStatChanges.get("Stamina Regen"));
+
         if (getActiveCurrentStamina() < getActiveMaxStamina()) {
-            setActiveCurrentStamina(Math.min(getActiveMaxStamina(), getActiveCurrentStamina() + ActiveStaminaRegen + equipment.getStaminaRegen()));
+            setActiveCurrentStamina(Math.min(getActiveMaxStamina(), getActiveCurrentStamina() + ActiveStaminaRegen));
         }
         else
         {
@@ -396,26 +522,44 @@ public class PlayerStats {
         }
     }
     public void recalculateStaminaCost() {
-        setStaminaCost(1.0 + equipment.getStaminaCost());
+        setStaminaCost(Double.parseDouble(df.format(1.0 + equipment.getStaminaCost())));
     }
     public void recalculateMaxStamina() {
         //this function will have a player equipment input eventually to add-on to the calculations
-        setActiveMaxStamina(20.0 + equipment.getMaxStamina());
+        setActiveMaxStamina(Double.parseDouble(df.format(MultiplicativeStatChanges.get("Stamina Cap") * (20.0 + equipment.getMaxStamina() + LinearStatChanges.get("Stamina Cap")))));
     }//None
     public void recalculateMultihit(){
-        setMultihit((0.01 * getDexterity()) + equipment.getMultiHit());
+        setMultihit(Double.parseDouble(df.format(((0.01 * getDexterity()) + equipment.getMultiHit() + LinearStatChanges.get("Multi Hit")) * MultiplicativeStatChanges.get("Multi Hit"))));
     } //Dexterity
     public void recalculateCritChance(){
-        setCritChance(0.01 + equipment.getCritChance());
-    } //None
+        setCritChance(Double.parseDouble(df.format((0.01 + equipment.getCritChance() + LinearStatChanges.get("Crit Chance")) * MultiplicativeStatChanges.get("Crit Chance"))));
+    }
+    //==================================================================================
+    //Stat Multiplier handlers
 
-    //Wisdom will add %dmg increase towards all spells
+    public void changeLinearStats(String statName, double value) {
+        LinearStatChanges.put(statName, LinearStatChanges.get(statName) + value);
+    }
 
+    public void changeMultiplicativeStats(String statName, double value) {
+        MultiplicativeStatChanges.put(statName, MultiplicativeStatChanges.get(statName) * value);
+    }
+    //==================================================================================
     public void damage(MobStats mobstats) {
-
-        getPlayer().sendMessage(Double.toString(getActiveDefense()));
         ActiveCurrentHealth -= mobstats.getAttack() - (mobstats.getAttack() * (getActiveDefense() / (getActiveDefense() + 100)));
+    }
 
+    public void damage(MobStats mobstats, double mult_factor) {
+        double damage_taken = mobstats.getAttack() * mult_factor;
+        ActiveCurrentHealth -= damage_taken - (damage_taken * (getActiveDefense() / (getActiveDefense() + 100)));
+    }
+
+    public void trueDamage(MobStats mobstats) {
+        ActiveCurrentHealth -= mobstats.getAttack();
+    }
+
+    public void trueDamage(MobStats mobstats, double mult_factor) {
+        ActiveCurrentHealth -= mobstats.getAttack() * mult_factor;
     }
 
     public void respawnStatReset() {
@@ -423,31 +567,63 @@ public class PlayerStats {
         setActiveCurrentStamina(getActiveMaxStamina());
         setActiveCurrentMana(getActiveMaxMana());
     }
-
     public int getLevelCap(int l) {
         return 200 * ( (int) Math.pow(l,1.75));
     }
-
     public void heal(double amount) {
         ActiveCurrentHealth += amount * getHealingReceivedModifier();
     }
+    public Double getHomeDimension() {
+        return HomeLocation.get(3);
+    }
+    public Double getPlayerDimensionID() {
+        String dimension = player.getWorld().getEnvironment().toString();
+        double dimension_id;
+        switch (dimension) {
+            case "NORMAL":
+                dimension_id = 0;
+                break;
 
+            case "NETHER":
+                dimension_id = 1;
+                break;
 
-    public String toString()
-    {
-        //outdated, some stats missing
-        return "Constitution: " + this.Vitality + "\n" +
-                "Resilience: " + this.Resilience + "\n" +
-                "Intelligence: " + this.Intelligence + "\n" +
-                "Strength: " + this.Strength + "\n" +
-                "Dexterity: " + this.Dexterity + "\n" +
-                "Wisdom: " + this.Wisdom + "\n" +
-                "Maximum Health: " + this.ActiveMaxHealth + "\n" +
-                "Armor: " + this.ActiveDefense + "\n" +
-                "Mana Pool: " + this.ActiveMaxMana + "\n" +
-                "Level: " + this.Level + "\n" +
-                "Unused Skill points: " + this.SkillPoints;
+            case "THE_END":
+                dimension_id = 2;
+                break;
+
+            default:
+                dimension_id = -1;
+        }
+        return dimension_id;
     }
 
+    public void updateHomeLocation() {
+        Location location = player.getLocation();
+        String dimension = location.getWorld().getEnvironment().toString();
+        double dimension_id;
+
+        switch (dimension) {
+            case "NORMAL":
+                dimension_id = 0;
+                break;
+
+            case "NETHER":
+                dimension_id = 1;
+                break;
+
+            case "THE_END":
+                dimension_id = 2;
+                break;
+
+            default:
+                dimension_id = -1;
+
+        }
+
+        //HomeLocation = Arrays.asList(location.getX(), location.getY(), location.getZ());
+        player.sendMessage(dimension);
+        HomeLocation = Arrays.asList(location.getX(), location.getY(), location.getZ(), dimension_id);
+    }
 
 }

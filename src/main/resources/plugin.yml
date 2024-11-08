@@ -2,6 +2,7 @@ name: FirstPluginThree
 version: '${project.version}'
 main: me.roupen.firstpluginthree.FirstPluginThree
 api-version: 1.19
+load: STARTUP
 commands:
   profile:
     description: Shows your profile
@@ -17,6 +18,24 @@ commands:
 
   stats:
     description: Displays all of your current stats, considering your held equipment
+    usage: /<command>
+    #permission: FirstPluginThree.stats
+    permission-message: Sorry! You don't have permission to execute that command.
+
+  sethome:
+    description: Sets your home location to the position you are standing
+    usage: /<command>
+    #permission: FirstPluginThree.stats
+    permission-message: Sorry! You don't have permission to execute that command.
+
+  home:
+    description: teleports you to your set home location
+    usage: /<command>
+    #permission: FirstPluginThree.stats
+    permission-message: Sorry! You don't have permission to execute that command.
+
+  party:
+    description: Edits your current party members
     usage: /<command>
     #permission: FirstPluginThree.stats
     permission-message: Sorry! You don't have permission to execute that command.

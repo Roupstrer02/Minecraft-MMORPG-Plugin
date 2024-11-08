@@ -130,18 +130,23 @@ public class wand {
         {
             case 1:
                 style = Style.style(NamedTextColor.WHITE);
+                meta.setCustomModelData(1);
                 break;
             case 2:
                 style = Style.style(NamedTextColor.LIGHT_PURPLE);
+                meta.setCustomModelData(2);
                 break;
             case 3:
                 style = Style.style(NamedTextColor.GOLD);
+                meta.setCustomModelData(3);
                 break;
             case 4:
                 style = Style.style(NamedTextColor.BLUE);
+                meta.setCustomModelData(4);
                 break;
             default:
                 style = Style.style(NamedTextColor.DARK_GRAY);
+                meta.setCustomModelData(0);
         }
 
         List<Component> lore = LoreSegments;

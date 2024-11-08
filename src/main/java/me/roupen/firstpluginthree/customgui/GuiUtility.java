@@ -124,6 +124,54 @@ public class GuiUtility {
         upgradegui.openInventory(player);
     }
 
+    public static void CreateSpellBookGui(Player player)
+    {
+        GuiUtility spellbookgui = new GuiUtility(player,54, "Spell Book");
+        PlayerStats stats = PlayerUtility.getPlayerStats(player);
+
+        int[] glass_pane_slots = new int[]{0,2,4,6,8,11,13,15,17,20,22,24,26,29,31,33,35,38,40,42,44,45,46,47,48,51,52,53};
+
+        for (int slot : glass_pane_slots) {
+            spellbookgui.addGuiItem(Material.GLASS_PANE, "", slot, 0, "");
+        }
+        spellbookgui.addGuiItem(Material.GRAY_DYE, "Back to profile menu", 49, 0, "");
+        spellbookgui.addGuiItem(Material.REDSTONE_TORCH, "Next Page", 50, 0, "Coming soon...");
+
+        spellbookgui.addGuiItem(Material.MAGMA_BLOCK, "Pyromancy", 1, 0, "All-out offense fit for those", " ", "in the deepest pits of the underworld");
+        spellbookgui.addGuiItem(Material.PISTON, "Technomancy", 3, 0, "Clockwork efficiency", " ", "made to see past the feeble defenses of your enemies");
+        spellbookgui.addGuiItem(Material.ENCHANTED_GOLDEN_APPLE, "Divinity", 5, 0, "Blessed-be the arbiter of the Creator", " ", "For the benevolent and selfless" ,"who put others ahead of themselves");
+        spellbookgui.addGuiItem(Material.OAK_SAPLING, "Druidomancy", 7, 0, "Nature's touch", " ", "magic fit for the day to day needs of a spell slinger");
+
+        spellbookgui.addGuiItem(Material.BLAZE_ROD, "Standard Spells", 9, 0, "Right-Click");
+        spellbookgui.addGuiItem(Material.IRON_BOOTS, "Dash Spells", 18, 0, "Sprint + Right-Click");
+        spellbookgui.addGuiItem(Material.FEATHER, "Aerial Spells", 27, 0, "Midair + Right-Click");
+        spellbookgui.addGuiItem(Material.END_CRYSTAL, "Ultimate Spells", 36, 0, "Shift + Right-Click");
+
+        spellbookgui.addGuiItem(Material.FIRE_CHARGE, "Fireball", 10, 0, "Shoots a fireball forward"," ", "explodes on terrain or first entity hit");
+        spellbookgui.addGuiItem(Material.FIRE_CHARGE, "Fiery Step", 19, 0, "Summons a ring of fire around the caster", " ", "Marks enemies in range, ", "making them explode after a few seconds");
+        spellbookgui.addGuiItem(Material.FIRE_CHARGE, "Explosive leap", 28, 0, "Create an explosion launching the caster up", " ", "damages enemies caught in the explosion");
+        spellbookgui.addGuiItem(Material.FIRE_CHARGE, "Meteor Fall", 37, 0, "The world burn in hellfire!", " ", "May you find solace in the flames","for it is all you will see");
+
+        spellbookgui.addGuiItem(Material.REDSTONE, "Snipe", 12, 0, "Shoots an instantly travelling bullet"," ", "Ignores armor of enemy hit");
+        spellbookgui.addGuiItem(Material.REDSTONE, "Fault In The Armor", 21, 0, "Launches the caster forward", " ", "Damages first enemy hit and knocks them back");
+        spellbookgui.addGuiItem(Material.REDSTONE, "Aerial Supremacy", 30, 0, "Caster flies in the direction they're looking");
+        spellbookgui.addGuiItem(Material.REDSTONE, "Chronomancer's prison", 39, 0, "Throws device that creates a time-stopping field upon impact", " ", "Enemies caught in the field have their armor reduced", "and movement frozen");
+
+        spellbookgui.addGuiItem(Material.NETHER_STAR, "Healing Orb", 14, 0, "Shoots a slow moving orb"," ", "Heals all players in it's vicinity");
+        spellbookgui.addGuiItem(Material.NETHER_STAR, "Strength Of Faith", 23, 0, "Creates an area around the caster"," ", "Strengthens the attacks of allies in range");
+        spellbookgui.addGuiItem(Material.NETHER_STAR, "Angelic Wings", 32, 0, "Teleports caster just in time to save an injured ally"," ", "Target receives minor healing and a temporary defense increase");
+        spellbookgui.addGuiItem(Material.NETHER_STAR, "We Yield To None", 41, 0, "I see no Deities here..."," ", "Other than ME!!!");
+
+        spellbookgui.addGuiItem(Material.OAK_WOOD, "Nature's Bounty", 16, 0, "Breaks the first block in front of the player"," ", "Grants EXP when breaking ores. Chance for bonus drops");
+        spellbookgui.addGuiItem(Material.OAK_WOOD, "Nature's Storage", 25, 0, "Breaks the first block in front of the player"," ", "Grants EXP when breaking ores. Chance for bonus drops");
+        spellbookgui.addGuiItem(Material.OAK_WOOD, "Nature's Workbench", 34, 0, "Breaks the first block in front of the player"," ", "Grants EXP when breaking ores. Chance for bonus drops");
+        spellbookgui.addGuiItem(Material.OAK_WOOD, "Nature's Diversity", 43, 0, "Cycles through the block subtypes of the targeted block"," ", "affects saplings, logs, woods and planks");
+
+        spellbookgui.addGuiItem(Material.GRAY_DYE, "Back to profile menu", 49, 0, "");
+
+        spellbookgui.openInventory(player);
+    }
+
     public static void CreateRuneGui(Player player)
     {
         GuiUtility runegui = new GuiUtility(player,45, "Rune Forge");

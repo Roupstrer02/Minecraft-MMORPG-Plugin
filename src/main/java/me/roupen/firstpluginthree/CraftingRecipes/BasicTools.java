@@ -211,6 +211,34 @@ public class BasicTools {
 
         addToMaps(newItemName, newItem, newShapedRecipe);
         ListOfRecipes.add(newShapedRecipe);
+
+        //==================================================================================================================
+        //Charcoal block
+
+        newItem = new ItemStack(Material.COAL_BLOCK, 1);
+        nameKey = makeNameKey("charcoal-block");
+
+        newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
+
+        newShapelessRecipe.addIngredient(9, Material.CHARCOAL);
+
+        addToMaps(newItem.toString(), newItem, newShapelessRecipe);
+        ListOfRecipes.add(newShapelessRecipe);
+
+        //==================================================================================================================
+        //slime ball
+
+        newItem = new ItemStack(Material.SLIME_BALL, 4);
+        nameKey = makeNameKey("slime-ball");
+
+        newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
+
+        newShapelessRecipe.addIngredient(1, Material.SOUL_SAND);
+        newShapelessRecipe.addIngredient(1, Material.HONEY_BOTTLE);
+        newShapelessRecipe.addIngredient(1, Material.WATER_BUCKET);
+
+        addToMaps(newItem.toString(), newItem, newShapelessRecipe);
+        ListOfRecipes.add(newShapelessRecipe);
     }
 
 
@@ -224,7 +252,7 @@ public class BasicTools {
         //END OF RECIPES
         //==========================================================================================================
 
-        //Adding all of the recipes defined above into the server
+        //Adding all the recipes defined above into the server
         for (Recipe recipe : ListOfRecipes) {
             FirstPluginThree.getMyPlugin().getServer().addRecipe(recipe);
         }

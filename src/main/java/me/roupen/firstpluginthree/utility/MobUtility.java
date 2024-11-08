@@ -8,6 +8,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 
 import java.io.File;
@@ -24,7 +25,7 @@ public class MobUtility {
     public static MobStats getMobStats(Entity entity)
     {
         if(!mobStatsMap.containsKey(entity.getUniqueId().toString())){
-            MobStats s = new MobStats(entity, WeatherForecast.getWeather(entity));
+            MobStats s = new MobStats((LivingEntity) entity, WeatherForecast.getWeather(entity));
             mobStatsMap.put(entity.getUniqueId().toString(), s);
 
             return s;
@@ -37,6 +38,10 @@ public class MobUtility {
         String uuid = e.getUniqueId().toString();
 
         mobStatsMap.put(uuid, stats);
+    }
+
+    public static boolean hasMobStats(UUID id) {
+        return mobStatsMap.containsKey(id.toString());
     }
 
 }

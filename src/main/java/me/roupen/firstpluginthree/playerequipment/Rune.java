@@ -17,6 +17,8 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
 
 public class Rune {
 
@@ -29,6 +31,14 @@ public class Rune {
     String prefix;
     String suffix = "";
     ItemStack item;
+    private HashMap<Material, Integer> ModelIDMap = new HashMap<Material, Integer>() {{
+        put(Material.RED_DYE, 1);
+        put(Material.ORANGE_DYE, 2);
+        put(Material.YELLOW_DYE, 3);
+        put(Material.GREEN_DYE, 4);
+        put(Material.BLUE_DYE, 5);
+        put(Material.PURPLE_DYE, 6);
+    }};
 
     public Rune()
     {
@@ -162,9 +172,7 @@ public class Rune {
         PersistentDataContainer data = meta.getPersistentDataContainer();
 
         meta.displayName(Component.text(name, style));
-        meta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
-        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        meta.setCustomModelData(123456);
+        meta.setCustomModelData(ModelIDMap.get(item.getType()));
         data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "maincolor"), PersistentDataType.STRING, getColor().toString());
 
         if (getSecondaryColor() != null)
@@ -173,6 +181,14 @@ public class Rune {
         item.setItemMeta(meta);
 
         return item;
+    }
+
+    public static ItemStack GenerateRandomTier1Rune() {
+        Material[] runeMatTypes = {Material.RED_DYE,Material.ORANGE_DYE,Material.YELLOW_DYE,Material.GREEN_DYE,Material.BLUE_DYE,Material.PURPLE_DYE};
+        Random rand = new Random();
+        int matType = rand.nextInt(6);
+        Rune r = new Rune(runeMatTypes[matType]);
+        return r.BuildItem();
     }
 
     public static Rune ItemToRune(ItemStack item)

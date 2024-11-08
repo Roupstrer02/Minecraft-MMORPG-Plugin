@@ -1,6 +1,5 @@
 package me.roupen.firstpluginthree.magic;
 
-import me.roupen.firstpluginthree.constantrunnables.spells;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
 import me.roupen.firstpluginthree.utility.MobUtility;
@@ -11,12 +10,14 @@ import org.bukkit.*;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.*;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 
-public class MeteorFall extends spells {
+public class PyroMeteorFall extends BukkitRunnable {
 
     //Progress dictates what stage of the spell has been reached
     private int progress = 0;
@@ -33,10 +34,12 @@ public class MeteorFall extends spells {
     private Random rand;
     private BossBar ChannelTime;
     private boolean SpellHit = false;
+    private wand Wand;
+    private DecimalFormat NumberFormat = new DecimalFormat("0.0");
 
     //Need a variable that holds the wand in order to easily apply the modifiers onto the spell (without coupling code)
 
-    public MeteorFall(Player caster)
+    public PyroMeteorFall(Player caster)
     {
         this.origin = caster;
         this.stats = PlayerUtility.getPlayerStats(this.origin);
@@ -44,9 +47,7 @@ public class MeteorFall extends spells {
         this.loc = origin.getLocation();
         this.meteors = new ArrayList<>();
         this.rand = new Random();
-
-        setSpellName("Meteor Fall");
-        setCastingWand(wand.ItemToWand(caster.getInventory().getItemInOffHand()));
+        this.Wand = wand.ItemToWand(caster.getInventory().getItemInOffHand());
     }
 
     public int getProgress() {
@@ -68,7 +69,7 @@ public class MeteorFall extends spells {
                 stats.spendMana(ManaCostCalc(stats));
 
                 //creates BossBar for player's cooldown timer and shows it to player
-                ChannelTime = Bukkit.createBossBar(this.spellName, BarColor.RED, BarStyle.SOLID);
+                ChannelTime = Bukkit.createBossBar("Spell Cooldown: ", BarColor.RED, BarStyle.SOLID);
                 ChannelTime.addPlayer(stats.getPlayer());
                 ChannelTime.setVisible(true);
 
@@ -132,15 +133,7 @@ public class MeteorFall extends spells {
                                 mobstats = MobUtility.getMobStats(target);
                                 mobstats.spell_damage(MeteorDmgCalc(mobstats), origin);
                                 target.damage(0);
-                                if (mobstats.getHealth() <= 0) {
 
-                                    if (!target.isDead()) {
-                                        mobstats.KillReward(stats);
-                                    }
-                                    target.setHealth(0);
-                                }else{
-                                    target.customName(mobstats.generateName());
-                                }
                             }
                         }
                         //deleting meteor
@@ -178,16 +171,46 @@ public class MeteorFall extends spells {
         return 7.5 * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
     }
     public double CasterSpellDamage() {
-        return stats.getWisdom() * getCastingWand().getOffenseSpellPowerModifier();
+        return stats.getWisdom() * Wand.getOffenseSpellPowerModifier();
     }
 
     public double SpellAOE() {
-        return 2 * getCastingWand().getUtilitySpellPowerModifier();
+        return 2 * Wand.getUtilitySpellPowerModifier();
     }
 
     public double ManaCostCalc(PlayerStats playerstats)
     {
-        return 250.0 * getCastingWand().getSpellCostModifier();
+        return 250.0 * Wand.getSpellCostModifier();
+    }
+
+    public void ParticleSphere(Location loc, double radius, Particle particletype) {
+        Random rd = new Random();
+        double a, b, c, noise;
+
+        for (int i = 0; i <= 100 * radius * radius; i++) {
+
+            do {
+                a = (rd.nextDouble() - 0.5) * 2;
+                b = (rd.nextDouble() - 0.5) * 2;
+                c = (rd.nextDouble() - 0.5) * 2;
+            } while ((a*a)+(b*b)+(c*c) == 0);
+
+            double denom = Math.sqrt((a*a)+(b*b)+(c*c));
+            noise = (rd.nextDouble() / 10) + 1;
+            double X = (a / denom) * radius * noise;
+            double Y = (b / denom) * radius * noise;
+            double Z = (c / denom) * radius * noise;
+
+            loc.add(X, Y, Z);
+            loc.getWorld().spawnParticle(particletype, loc, 1, 0F, 0F, 0F, 0.001);
+            loc.subtract(X, Y, Z);
+        }
+
+    }
+
+    public double spellCooldownTextUpdate(double upperLimit, double currentProgress) {
+        double increment = 1.0/upperLimit;
+        return (upperLimit * 0.05) - ((upperLimit * 0.05) * (increment * currentProgress));
     }
 
     @Override
