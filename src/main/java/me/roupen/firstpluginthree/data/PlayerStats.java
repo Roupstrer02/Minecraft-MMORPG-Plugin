@@ -13,6 +13,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.potion.PotionEffectType;
 
 import javax.sound.sampled.Line;
 import java.text.DecimalFormat;
@@ -345,6 +346,8 @@ public class PlayerStats {
 
         ItemStack[] AllItems = {MainHand, OffHand, Helmet, Chestplate, Leggings, Boots};
 
+        //==========================
+        //Sum up relevant stats of all equipment, accounting for playstyles (dual blades, sword & shield, greatsword)
         for (int i = 0; i < AllItems.length; i++)
         {
             if (AllItems[i] != null && AllItems[i].getType() != Material.AIR) {
@@ -372,6 +375,11 @@ public class PlayerStats {
                 {
                     TempEquipment.setDamage(0.0);
                     TempEquipment.setStaminaCost(0.0);
+
+                    //only get more defensive stats if the OffHand item is a shield (holding a helmet doesn't do much for you)
+                    if (OffHand.getType() != Material.SHIELD) {
+                        TempEquipment.setDefense(0.0);
+                    }
                 }
 
                 //sets stamina cost of attacks
@@ -384,14 +392,42 @@ public class PlayerStats {
             }
 
         }
+        //==========================
         //if shield is up
         if (p.isBlocking()) {
             if (MainHand.getType() == Material.SHIELD) {
-                equipment.setDefense(equipment.getDefense() * (PlayerEquipment.ItemToEquipment(MainHand).getLevel() * 0.01));
+                equipment.setDefense(equipment.getDefense() * (1 + (PlayerEquipment.ItemToEquipment(MainHand).getLevel() * 0.01)));
             }else {
-                equipment.setDefense(equipment.getDefense() * PlayerEquipment.ItemToEquipment(OffHand).getLevel() * 0.01);
+                equipment.setDefense(equipment.getDefense() * (1 + (PlayerEquipment.ItemToEquipment(OffHand).getLevel() * 0.01)));
             }
         }
+
+        //==========================
+        //stat modifications from potion effects
+        applyPotionEquipmentModifiers(p);
+    }
+
+    public void applyPotionEquipmentModifiers(Player p) {
+        //can it scale off of the level of the effect easily?
+        p.getActivePotionEffects();
+        if (p.hasPotionEffect(PotionEffectType.POISON)) {
+            equipment.setDefense(equipment.getDefense() * 0.6);
+        }
+        if (p.hasPotionEffect(PotionEffectType.WITHER)) {
+            equipment.setStaminaCost(1 + equipment.getStaminaCost() * 1.5);
+        }
+        if (p.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE)) {
+            equipment.setDamage(equipment.getDamage() * 1.25);
+            equipment.setCritChance(equipment.getCritChance() + 0.05);
+        }
+        if (p.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE)) {
+            equipment.setDefense(equipment.getDefense() * 1.25);
+        }
+        if (p.hasPotionEffect(PotionEffectType.WEAKNESS)) {
+            equipment.setDefense(equipment.getDefense() * 0.8);
+            equipment.setDamage(equipment.getDamage() * 0.70);
+        }
+
     }
     public void addResilience(int addedresilience){Resilience+=addedresilience;}
     public int getIntelligence() {

@@ -56,7 +56,7 @@ public class MobStats {
 
         //specific mobs require more levels
         if (mob instanceof IronGolem) {
-            this.Level = 100;
+            this.Level = 50;
         }
         else if (mob instanceof Warden)
         {
@@ -64,11 +64,11 @@ public class MobStats {
         }
         else if (mob instanceof Wither)
         {
-            this.Level = Math.max(this.Level, 100);
+            this.Level = Math.max(this.Level, 90);
         }
         else if (mob instanceof EnderDragon)
         {
-            this.Level = Math.max(this.Level, 120);
+            this.Level = Math.max(this.Level, 100);
         }
 
 
@@ -101,14 +101,46 @@ public class MobStats {
         //Abyss Watcher
         if (bossType.equals("MythicMob{AbyssWatcherTest}")) {
             this.Level = 200;
-            this.MaxHealth = 30.0 * this.Level;
+            this.MaxHealth = 150 * this.Level;
             this.Health = MaxHealth;
             this.Attack = 500;
             this.Defense = 125;
             this.ActiveDefense = this.Defense;
             this.Mob = mob;
         }
-
+        //=======================================================
+        //Arcane Golem
+        else if (bossType.equals("MythicMob{ArcaneGolem}")) {
+            this.Level = 120;
+            this.MaxHealth = 120 * this.Level;
+            this.Health = MaxHealth;
+            this.Attack = 500;
+            this.Defense = 125;
+            this.ActiveDefense = this.Defense;
+            this.Mob = mob;
+        }
+        //=======================================================
+        //QuakeFish
+        if (bossType.equals("MythicMob{Quakefish}")) {
+            this.Level = 120;
+            this.MaxHealth = 100 * this.Level;
+            this.Health = MaxHealth;
+            this.Attack = 500;
+            this.Defense = 125;
+            this.ActiveDefense = this.Defense;
+            this.Mob = mob;
+        }
+        //=======================================================
+        //Lunaris Stag
+        if (bossType.equals("MythicMob{LunarisStag}")) {
+            this.Level = 120;
+            this.MaxHealth = 85 * this.Level;
+            this.Health = MaxHealth;
+            this.Attack = 500;
+            this.Defense = 125;
+            this.ActiveDefense = this.Defense;
+            this.Mob = mob;
+        }
         //=======================================================
         //universal across all bosses
 
@@ -241,15 +273,8 @@ public class MobStats {
             else {
                 playerstats.useStamina(playerstats.getStaminaCost());
 
-                if (!isBoss) {
-                    getMob().customName(generateName());
-                    getMob().setHealth(Math.max(0, getMob().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * (getHealth() / getMaxHealth())));
-                }
-                else {
-                    //this will later change the title on the bossbar instead of the entity itself
-                    getMob().customName(updateBossBarName());
-                    getMob().setHealth(Math.max(0, getMob().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * (getHealth() / getMaxHealth())));
-                }
+                updateMobHealthbar();
+
                 if (getHealth() <= 0 && !playerstats.isInBossFight())
                 {
                     //"kills" the mob once 0 health is hit and awards EXP and drops
@@ -295,13 +320,9 @@ public class MobStats {
             return ranged_damage(playerstats, remainingmultihit - 1.0, speed);
         }
         else {
-            if (!isBoss)
-                getMob().customName(generateName());
-            else {
-                //this will later change the title on the bossbar instead of the entity itself
-                getMob().customName(updateBossBarName());
-                getMob().setHealth(Math.max(0, getMob().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * (getHealth() / getMaxHealth())));
-            }
+
+            updateMobHealthbar();
+
             if (getHealth() <= 0 && !playerstats.isInBossFight())
             {
                 //"kills" the mob once 0 health is hit and awards EXP and drops
@@ -309,6 +330,19 @@ public class MobStats {
                 KillReward(playerstats);
             }
             return true;
+        }
+    }
+
+    public void updateMobHealthbar() {
+        if (getHealth() > 0) {
+            if (!isBoss && !getMob().isDead()) {
+                getMob().customName(generateName());
+                getMob().setHealth(Math.max(0, getMob().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * (getHealth() / getMaxHealth())));
+            } else if (isBoss && !getMob().isDead()) {
+                //this will later change the title on the bossbar instead of the entity itself
+                getMob().customName(updateBossBarName());
+                getMob().setHealth(Math.max(0, getMob().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * (getHealth() / getMaxHealth())));
+            }
         }
     }
 
@@ -360,13 +394,9 @@ public class MobStats {
                 Creature mobC = (Creature) getMob();
                 mobC.setTarget(player);
             }
-            if (!isBoss)
-                getMob().customName(generateName());
-            else {
-                //this will later change the title on the bossbar instead of the entity itself
-                getMob().customName(updateBossBarName());
-                getMob().setHealth(Math.max(0, getMob().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * (getHealth() / getMaxHealth())));
-            }
+
+            updateMobHealthbar();
+
             PlayerStats Pstats = PlayerUtility.getPlayerStats(player);
             if (getHealth() <= 0 && !Pstats.isInBossFight()) {
                 if (!getMob().isDead()) {
@@ -374,6 +404,7 @@ public class MobStats {
                 }
                 getMob().setHealth(0);
             }
+
 
         }
     }

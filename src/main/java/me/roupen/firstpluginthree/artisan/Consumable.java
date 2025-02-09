@@ -40,6 +40,9 @@ public class Consumable extends BukkitRunnable {
        put("Slowness", PotionEffectType.SLOW);
        put("Haste", PotionEffectType.FAST_DIGGING);
        put("Mining Fatigue", PotionEffectType.SLOW_DIGGING);
+       put("Strength", PotionEffectType.INCREASE_DAMAGE);
+       put("Wither", PotionEffectType.WITHER);
+       put("Resistance", PotionEffectType.WITHER);
     }};
     private Map<String, Integer[]> ConsumablePotionEffects = new HashMap<String, Integer[]>() {{
         put("Night Vision", new Integer[2]);
@@ -53,6 +56,9 @@ public class Consumable extends BukkitRunnable {
         put("Slowness", new Integer[2]);
         put("Haste", new Integer[2]);
         put("Mining Fatigue", new Integer[2]);
+        put("Strength", new Integer[2]);
+        put("Wither", new Integer[2]);
+        put("Resistance", new Integer[2]);
     }};
 
     //stat change storage maps

@@ -14,6 +14,7 @@ import me.roupen.firstpluginthree.artisan.Consumable;
 import me.roupen.firstpluginthree.artisan.CookingRecipes;
 import me.roupen.firstpluginthree.commandkit.*;
 import me.roupen.firstpluginthree.constantrunnables.actionbardisplay;
+import me.roupen.firstpluginthree.elite.elite;
 import me.roupen.firstpluginthree.magic.spellcasting;
 import me.roupen.firstpluginthree.magic.spells;
 import me.roupen.firstpluginthree.constantrunnables.weatherforecast;
@@ -326,7 +327,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         }
         if (event.getEntity() instanceof LivingEntity && !(event.getEntity() instanceof ArmorStand) && !DamagerIsBossMob) {
 
-            //ALL DAMAGE LOGIC FOR PLAYERS TO MOBS AND VICE VERSA (NON-BOSS) HAPPENS HERE
+            //ALL DAMAGE LOGIC FOR PLAYERS TO MOBS AND VICE VERSA HAPPENS HERE
 
             //if player melee attacks the mob
             if (event.getDamager() instanceof Player && !(event.getEntity() instanceof Player))
@@ -497,6 +498,13 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
                         playerstats.setActiveCurrentHealth((int) (playerstats.getActiveCurrentHealth() - (0.02 * playerstats.getActiveMaxHealth())));
                         player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_HURT, 1, 1);
 
+                        //If player is Withered
+                    } else if (event.getCause() == EntityDamageEvent.DamageCause.WITHER) {
+
+                        //damages player by 5% max health true damage per damage tick
+                        playerstats.setActiveCurrentHealth((int) (playerstats.getActiveCurrentHealth() - (0.05 * playerstats.getActiveMaxHealth())));
+                        player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_HURT, 1, 1);
+
                         //If player is drowning
                     } else if (event.getCause() == EntityDamageEvent.DamageCause.DROWNING) {
 
@@ -561,10 +569,13 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
     @EventHandler
     public void onMythicMobEntitySpawn(MythicMobSpawnEvent event) {
         ActiveMob ent = event.getMob();
-        if (ent.getType().toString().equals("MythicMob{AbyssWatcherTest}")) {
+        String MythicMobID = ent.getType().toString();
+
+        if (MythicMobID == "MythicMob{AbyssWatcherTest}") {
             LivingEntity bossEnt = (LivingEntity) event.getEntity();
             MobStats.giveBossStatBlock(bossEnt, ent.getType().toString());
         }
+
     }
     @EventHandler
     public void onMythicMobDamage(MythicDamageEvent event) {
@@ -580,6 +591,11 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
             p.damage(0);
 
         }
+    }
+
+    @EventHandler
+    public void onMythicMobDeath(MythicMobDeathEvent event) {
+        elite.generateRoamingEliteDrops(event);
     }
     @EventHandler
     public void onMythicEntityDeath(MythicMobDeathEvent event) {

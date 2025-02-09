@@ -36,6 +36,8 @@ public class EliteFight {
     public static void Interact(PlayerInteractEvent event) throws InvalidMobTypeException {
 
         Player player = event.getPlayer();
+
+        //determines the location of the Arena Fight Starting Button, editing this changes where the button is supposed to be
         Location ArenaInteractLoc = new Location(player.getWorld(), -275,73,353);
 
         if (
