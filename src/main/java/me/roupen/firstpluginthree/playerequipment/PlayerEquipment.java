@@ -40,6 +40,8 @@ public class PlayerEquipment {
     private boolean isMagic = false;
     private String toolType;
     private Rune[] runes;
+    private static final String[] ArmorNames = {"Helmet", "Chestplate", "Leggings", "Boots", "Shield"};
+    private static final String[] WeaponTypeOptions = {"Dagger", "Longsword", "Greatsword","Shortbow", "Longbow", "Crossbow"};
     int model;
 
     //Constructor
@@ -556,9 +558,9 @@ public class PlayerEquipment {
                 {Material.LEATHER_BOOTS, Material.CHAINMAIL_BOOTS, Material.IRON_BOOTS, Material.GOLDEN_BOOTS, Material.DIAMOND_BOOTS},
                 {Material.SHIELD}
         };
-        String[] WeaponTypeOptions = {"Dagger", "Longsword", "Greatsword","Shortbow", "Longbow", "Crossbow"};
+
         String[] RarityNames = {"Common", "Uncommon", "Rare", "Epic", "Legendary"};
-        String[] ArmorNames = {"Helmet", "Chestplate", "Leggings", "Boots", "Shield"};
+
         MobStats mobstats = MobUtility.getMobStats(mob);
         int level = mobstats.getLevel();
 
@@ -611,48 +613,74 @@ public class PlayerEquipment {
         return new_random_equipment;
     }
 
-    public void LevelUp(LivingEntity mob) {
+    public void rollSubStats(String ttype) {
         Random rd = new Random();
         int index;
-        String ttype = getToolType();
+        boolean isArmor = false;
 
-        for (int i = 0; i < Math.floorDiv(this.getLevel(), 10); i++) {
-            index = (int) Math.floor(rd.nextFloat() * 10);
-            if (index == 10){index = 9;}
-            switch (index) {
-                case 0:
-                    setMaxHealth(getMaxHealth() + 50);
-                    break;
-                case 1:
-                    setHealthRegen(getHealthRegen() + 0.25);
-                    break;
-                case 2:
-                    setDefense(getDefense() + 10);
-                    break;
-                case 3:
-                    setMaxMana(getMaxMana() + 20);
-                    break;
-                case 4:
-                    setManaRegen(getManaRegen() + 0.25);
-                    break;
-                case 5:
-                    setMaxStamina(getMaxStamina() + 2.0);
-                    break;
-                case 6:
-                    setStaminaRegen(getStaminaRegen() + 0.125);
-                    break;
-                case 7:
-                    setMultiHit(getMultiHit() + 0.1);
-                    break;
-                case 8:
-                    setCritChance(getCritChance() + 0.05);
-                    break;
-                case 9:
-                    setCritDamageMult(getCritDamageMult() + 0.1);
-                    break;
-                default:
+        for (String armorName : ArmorNames) {
+            if (armorName == ttype) {
+                isArmor = true;
+                break;
             }
         }
+
+        for (int i = 0; i < Math.floorDiv(this.getLevel(), 10); i++) {
+
+
+            if (isArmor) {
+                index = rd.nextInt(6);
+                switch (index) {
+                    case 0:
+                        setMaxHealth(getMaxHealth() + 50);
+                        break;
+                    case 1:
+                        setHealthRegen(getHealthRegen() + 0.25);
+                        break;
+                    case 2:
+                        setDefense(getDefense() + 10);
+                        break;
+                    case 3:
+                        setMaxMana(getMaxMana() + 20);
+                        break;
+                    case 4:
+                        setManaRegen(getManaRegen() + 0.25);
+                        break;
+                    case 5:
+                        setMaxStamina(getMaxStamina() + 2.0);
+                        break;
+                    default:
+                }
+            }
+            else {
+                index = rd.nextInt(5);
+                switch (index) {
+                    case 0:
+                        setStaminaRegen(getStaminaRegen() + 0.125);
+                        break;
+                    case 1:
+                        setMultiHit(getMultiHit() + 0.1);
+                        break;
+                    case 2:
+                        setCritChance(getCritChance() + 0.05);
+                        break;
+                    case 3:
+                        setCritDamageMult(getCritDamageMult() + 0.1);
+                        break;
+                    default:
+                }
+            }
+        }
+
+
+
+    }
+
+    public void LevelUp(LivingEntity mob) {
+
+        String ttype = getToolType();
+
+        rollSubStats(ttype);
 
         switch (ttype) {
             case "Dagger":
@@ -721,18 +749,12 @@ public class PlayerEquipment {
 
     }
 
-    //not sure if this v v v works properly...
     public static boolean isEquip(ItemStack item)
     {
         if (item == null) {return false;}
         PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
 
         return data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "name"), PersistentDataType.STRING);
-    }
-
-    public static PlayerEquipment MobEquipDrop(LivingEntity mob) {
-
-        return null;
     }
 
     private static String getToolTypeFromModel(int modelID) {

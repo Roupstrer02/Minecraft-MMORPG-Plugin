@@ -425,7 +425,7 @@ public class PlayerStats {
         }
         if (p.hasPotionEffect(PotionEffectType.WEAKNESS)) {
             equipment.setDefense(equipment.getDefense() * 0.8);
-            equipment.setDamage(equipment.getDamage() * 0.70);
+            equipment.setDamage(equipment.getDamage() * 0.7);
         }
 
     }

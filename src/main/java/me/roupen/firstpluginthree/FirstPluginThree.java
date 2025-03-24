@@ -72,6 +72,12 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
     BukkitTask Weather_Forecast;
     spellcasting NewSpell = new spellcasting();
     private static FirstPluginThree myPlugin;
+    public static ArrayList<String> bossIDNames = new ArrayList<String>(Arrays.asList(
+            "MythicMob{AbyssWatcherTest}",
+            "MythicMob{Larian}",
+            "MythicMob{ArcaneGolem}",
+            "MythicMob{Quakefish}",
+            "MythicMob{LunarisStag}"));
     private static BukkitAPIHelper mmhelp = new BukkitAPIHelper();
     public static FirstPluginThree getMyPlugin()
     {
@@ -571,7 +577,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         ActiveMob ent = event.getMob();
         String MythicMobID = ent.getType().toString();
 
-        if (MythicMobID == "MythicMob{AbyssWatcherTest}") {
+        if (bossIDNames.contains(MythicMobID)) {
             LivingEntity bossEnt = (LivingEntity) event.getEntity();
             MobStats.giveBossStatBlock(bossEnt, ent.getType().toString());
         }

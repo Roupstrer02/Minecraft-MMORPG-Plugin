@@ -112,10 +112,10 @@ public class MobStats {
         //Arcane Golem
         else if (bossType.equals("MythicMob{ArcaneGolem}")) {
             this.Level = 120;
-            this.MaxHealth = 120 * this.Level;
+            this.MaxHealth = 50 * this.Level;
             this.Health = MaxHealth;
-            this.Attack = 500;
-            this.Defense = 125;
+            this.Attack = 200;
+            this.Defense = 300;
             this.ActiveDefense = this.Defense;
             this.Mob = mob;
         }
@@ -125,8 +125,8 @@ public class MobStats {
             this.Level = 120;
             this.MaxHealth = 100 * this.Level;
             this.Health = MaxHealth;
-            this.Attack = 500;
-            this.Defense = 125;
+            this.Attack = 250;
+            this.Defense = 75;
             this.ActiveDefense = this.Defense;
             this.Mob = mob;
         }
@@ -136,8 +136,19 @@ public class MobStats {
             this.Level = 120;
             this.MaxHealth = 85 * this.Level;
             this.Health = MaxHealth;
-            this.Attack = 500;
-            this.Defense = 125;
+            this.Attack = 300;
+            this.Defense = 90;
+            this.ActiveDefense = this.Defense;
+            this.Mob = mob;
+        }
+        //=======================================================
+        //Larian the Nightmare
+        if (bossType.equals("MythicMob{Larian}")) {
+            this.Level = 200;
+            this.MaxHealth = 100 * this.Level;
+            this.Health = MaxHealth;
+            this.Attack = 250;
+            this.Defense = 100;
             this.ActiveDefense = this.Defense;
             this.Mob = mob;
         }
