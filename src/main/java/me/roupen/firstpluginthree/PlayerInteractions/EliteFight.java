@@ -25,51 +25,86 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static me.roupen.firstpluginthree.customgui.GuiUtility.CreateRuneGui;
 
 public class EliteFight {
 
-    private static ArrayList<String> eliteEntTypes = new ArrayList<String>() {{
+    //determines the location of the Arena Fight Starting Buttons, editing these changes where the button is supposed to be
+    private static final Location ArenaInteractLoc1 = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), 42,-12,1273);
+    private static final Location ArenaInteractLoc2 = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), 43,-12,1274);
+    private static final ArrayList<Location> LarianLowInteracts = new ArrayList<>(Arrays.asList(ArenaInteractLoc1, ArenaInteractLoc2));
+    private static final Location ArenaInteractLoc3 = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), 24,-12,1291);
+    private static final Location ArenaInteractLoc4 = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), 25,-12,1292);
+    private static final ArrayList<Location> LarianMidInteracts = new ArrayList<>(Arrays.asList(ArenaInteractLoc1, ArenaInteractLoc2));
+    private static final Location ArenaInteractLoc5 = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), 43,-12,1291);
+    private static final Location ArenaInteractLoc6 = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), 42,-12,1292);
+    private static final ArrayList<Location> LarianInteracts = new ArrayList<>(Arrays.asList(ArenaInteractLoc1, ArenaInteractLoc2));
+    private static final Location spawnLoc = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), -30, -41, 1167);
+    private static final Location teleportLoc = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), -30, -41, 1185);
+    private static final Location BossEndLocation = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), -275,73,354);
+    private static final ArrayList<String> eliteEntTypes = new ArrayList<String>() {{
         add("MythicMob{AbyssWatcherTest}");
+        add("MythicMob{LarianLow}");
+        add("MythicMob{LarianMid}");
+        add("MythicMob{Larian}");
     }};
+
+    private static boolean buttonInteractCheck(Location interactLocation, ArrayList<Location> ArenaButtonLocs) {
+
+        for (Location loc : ArenaButtonLocs) {
+            if (interactLocation.getX() == loc.getX() && interactLocation.getY() == loc.getY() && interactLocation.getZ() == loc.getZ()) {
+                return true;
+
+            }
+        }
+        return false;
+    }
+
     public static void Interact(PlayerInteractEvent event) throws InvalidMobTypeException {
 
         Player player = event.getPlayer();
 
-        //determines the location of the Arena Fight Starting Button, editing this changes where the button is supposed to be
-        Location ArenaInteractLoc = new Location(player.getWorld(), -275,73,353);
-
-        if (
-                event.getAction() == Action.RIGHT_CLICK_BLOCK &&
-                event.getClickedBlock().getType().equals(Material.STONE_BUTTON)
+        if
+        (
+            event.getAction() == Action.RIGHT_CLICK_BLOCK &&
+            event.getClickedBlock().getType().equals(Material.STONE_BUTTON) &&
+            FirstPluginThree.PlayersInBossFight.isEmpty() &&
+            player.getWorld().getEnvironment() == World.Environment.NORMAL
         )
         {
             Location InteractedLoc = new Location(player.getWorld(), event.getClickedBlock().getX(), event.getClickedBlock().getY(), event.getClickedBlock().getZ());
-            if (
-                    ArenaInteractLoc.getX() == InteractedLoc.getX() &&
-                    ArenaInteractLoc.getY() == InteractedLoc.getY() &&
-                    ArenaInteractLoc.getZ() == InteractedLoc.getZ() &&
-                    FirstPluginThree.PlayersInBossFight.isEmpty()
-            )
+            if (buttonInteractCheck(InteractedLoc, LarianLowInteracts) || buttonInteractCheck(InteractedLoc, LarianMidInteracts) || buttonInteractCheck(InteractedLoc, LarianInteracts))
             {
-                //set spawn locations for boss and players
-                Location spawnLoc = new Location(player.getWorld(), -270,72,357);
-                Location teleportLoc = new Location(player.getWorld(), -272,72,354);
                 PlayerStats pStats = PlayerUtility.getPlayerStats(player);
                 ArrayList<Player> party = new ArrayList<>(pStats.getParty());
                 FirstPluginThree.PlayersInBossFight = party;
                 for (Player p : party) {
                     p.teleport(teleportLoc);
                     p.sendMessage(Component.text("An Elite of Zelandris has been Challenged", Style.style(NamedTextColor.GOLD, TextDecoration.BOLD)));
-                    p.setGameMode(GameMode.ADVENTURE);
+
                     PlayerUtility.getPlayerStats(p).setInBossFight(true);
                 }
-
-                elite AbyssWatcher = new elite("Abyss Watcher");
-                AbyssWatcher.spawn(spawnLoc);
                 event.setCancelled(true);
             }
+            if (buttonInteractCheck(InteractedLoc, LarianLowInteracts))
+            {
+                player.sendMessage("ArenaButton1 pressed");
+                elite LarianLow = new elite("Larian the Night Hunter");
+                LarianLow.spawn(spawnLoc);
+
+            } else if (buttonInteractCheck(InteractedLoc, LarianMidInteracts)) {
+                player.sendMessage("ArenaButton2 pressed");
+                elite LarianMid = new elite("Larian the Berserker");
+                LarianMid.spawn(spawnLoc);
+
+            } else if (buttonInteractCheck(InteractedLoc, LarianInteracts)) {
+                player.sendMessage("ArenaButton3 pressed");
+                elite Larian = new elite("Larian the Nightmare");
+                Larian.spawn(spawnLoc);
+            }
+
         }
 
     }
@@ -84,7 +119,7 @@ public class EliteFight {
             for (Player p : FirstPluginThree.PlayersInBossFight) {
                 Entity bukkitEnt = ent.getEntity().getBukkitEntity();
                 LivingEntity bossEnt = (LivingEntity) bukkitEnt;
-                Location BossEndLocation = new Location(bossEnt.getWorld(), -275,73,354);
+
                 MobStats bossStatBlock = MobUtility.getMobStats(bossEnt);
                 p.sendMessage(Component.text("An Elite of Zelandris has been Defeated", Style.style(NamedTextColor.GOLD)));
                 p.sendMessage(Component.text("Each party member gains " + bossStatBlock.EXPtoGive() + " EXP", Style.style(NamedTextColor.GOLD)));
@@ -93,8 +128,13 @@ public class EliteFight {
                 //give players boss drops
                 if (ent.getType().toString().equals("MythicMob{AbyssWatcherTest}")) {
                     GiveAbyssWatcherDrops(p);
+                } else if (ent.getType().toString().equals("MythicMob{LarianLow}")) {
+                    GiveLarianLowDrops(p);
+                } else if (ent.getType().toString().equals("MythicMob{LarianMid}")) {
+                    GiveLarianMidDrops(p);
+                } else if (ent.getType().toString().equals("MythicMob{Larian}")) {
+                    GiveLarianDrops(p);
                 }
-                //else if other boss -> drop their loot
 
                 EliteArenaLeaveCountdown countDown = new EliteArenaLeaveCountdown(BossEndLocation);
                 countDown.runTaskTimer(FirstPluginThree.getMyPlugin(), 0, 20);
@@ -105,6 +145,21 @@ public class EliteFight {
 
     private static void GiveAbyssWatcherDrops(Player p) {
         Inventory inv = p.getInventory();
+        inv.addItem(Rune.GenerateRandomTier1Rune());
+    }
+    private static void GiveLarianLowDrops(Player p) {
+        Inventory inv = p.getInventory();
+        inv.addItem(Rune.GenerateRandomTier1Rune());
+    }
+    private static void GiveLarianMidDrops(Player p) {
+        Inventory inv = p.getInventory();
+        inv.addItem(Rune.GenerateRandomTier1Rune());
+        inv.addItem(Rune.GenerateRandomTier1Rune());
+    }
+    private static void GiveLarianDrops(Player p) {
+        Inventory inv = p.getInventory();
+        inv.addItem(Rune.GenerateRandomTier1Rune());
+        inv.addItem(Rune.GenerateRandomTier1Rune());
         inv.addItem(Rune.GenerateRandomTier1Rune());
     }
 }

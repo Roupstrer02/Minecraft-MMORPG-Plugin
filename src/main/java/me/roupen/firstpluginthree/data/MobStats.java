@@ -1,5 +1,6 @@
 package me.roupen.firstpluginthree.data;
 
+import me.roupen.firstpluginthree.FirstPluginThree;
 import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
 import me.roupen.firstpluginthree.utility.MobUtility;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
@@ -32,7 +33,7 @@ public class MobStats {
     private HashMap<String, Double> mult_stat_change;
     private HashMap<String, Double> lin_stat_change;
     private boolean passiveMob;
-    public boolean isBoss;
+    public boolean isBoss = false;
     private final Random random = new Random();
 
     private final Particle.DustOptions dust = new Particle.DustOptions(
@@ -71,7 +72,6 @@ public class MobStats {
             this.Level = Math.max(this.Level, 100);
         }
 
-
         this.MaxHealth = 12.0 * this.Level;
         this.Health = MaxHealth;
         this.Attack = 20.0 * (this.Level * 0.3);
@@ -95,12 +95,11 @@ public class MobStats {
     public MobStats(LivingEntity mob, String bossType) {
 
         this.passiveMob = false;
-        this.isBoss = true;
 
         //=======================================================
         //Abyss Watcher
         if (bossType.equals("MythicMob{AbyssWatcherTest}")) {
-            this.Level = 200;
+            this.Level = 5;
             this.MaxHealth = 150 * this.Level;
             this.Health = MaxHealth;
             this.Attack = 500;
@@ -136,14 +135,14 @@ public class MobStats {
             this.Level = 120;
             this.MaxHealth = 85 * this.Level;
             this.Health = MaxHealth;
-            this.Attack = 300;
+            this.Attack = 150;
             this.Defense = 90;
             this.ActiveDefense = this.Defense;
             this.Mob = mob;
         }
         //=======================================================
         //Larian the Nightmare
-        if (bossType.equals("MythicMob{Larian}")) {
+        if (bossType.equals("MythicMob{LarianLow}") || bossType.equals("MythicMob{LarianMid}") || bossType.equals("MythicMob{Larian}")) {
             this.Level = 200;
             this.MaxHealth = 100 * this.Level;
             this.Health = MaxHealth;
@@ -151,7 +150,10 @@ public class MobStats {
             this.Defense = 100;
             this.ActiveDefense = this.Defense;
             this.Mob = mob;
+            this.isBoss = true;
+
         }
+
         //=======================================================
         //universal across all bosses
 
@@ -241,7 +243,7 @@ public class MobStats {
         if (!(entity instanceof Player) && !(entity instanceof ArmorStand))
         {
             MobStats stats = new MobStats(entity, Boss_Type_String);
-            stats.isBoss = true;
+
             MobUtility.setMobStats(entity, stats);
             entity.setCustomNameVisible(true);
 
@@ -284,14 +286,14 @@ public class MobStats {
             else {
                 playerstats.useStamina(playerstats.getStaminaCost());
 
-                updateMobHealthbar();
 
-                if (getHealth() <= 0 && !playerstats.isInBossFight())
-                {
-                    //"kills" the mob once 0 health is hit and awards EXP and drops
-                    getMob().setHealth(0);
-                    KillReward(playerstats);
-                }
+                    updateMobHealthbar();
+                    if (getHealth() <= 0 && ((!playerstats.isInBossFight() && !isBoss) || (playerstats.isInBossFight() && isBoss))) {
+                        //"kills" the mob once 0 health is hit and awards EXP and drops
+                        getMob().setHealth(0);
+                        KillReward(playerstats);
+                    }
+
                 return true;
             }
         }
@@ -308,39 +310,41 @@ public class MobStats {
     }
     public boolean ranged_damage(PlayerStats playerstats, double remainingmultihit, double speed)
     {
-        //A way to damage mobs where the stamina usage is done elsewhere
-        updateStatChanges();
+        if (!getMob().getName().equals("HoloTuto")) {
+            //A way to damage mobs where the stamina usage is done elsewhere
+            updateStatChanges();
 
-        if (getMob() instanceof Tameable && ((Tameable) getMob()).isTamed()) {
-            return false;
-        }
-
-        if (Math.random() < playerstats.getCritChance()) {
-            this.Health -= (0.01 * ((int) (100 * ((speed / 2.5) - 0.2) *
-                    (((playerstats.getActiveDamage() * playerstats.getCritDamageMult()) - ((playerstats.getActiveDamage() * playerstats.getCritDamageMult()) * (getActiveDefense() / (getActiveDefense() + 100))))
-                    ))));
-            playerstats.getPlayer().getWorld().playEffect(playerstats.getPlayer().getLocation(), Effect.ANVIL_LAND, 1, 0);
-        }
-        else{
-            this.Health -= (0.01 * ((int) (100 * ((speed / 2.5) - 0.2) *
-                    ((playerstats.getActiveDamage() - (playerstats.getActiveDamage() * (getActiveDefense() / (getActiveDefense() + 100))))
-                    ))));
-        }
-
-        if (Math.random() < remainingmultihit) {
-            return ranged_damage(playerstats, remainingmultihit - 1.0, speed);
-        }
-        else {
-
-            updateMobHealthbar();
-
-            if (getHealth() <= 0 && !playerstats.isInBossFight())
-            {
-                //"kills" the mob once 0 health is hit and awards EXP and drops
-                getMob().setHealth(0);
-                KillReward(playerstats);
+            if (getMob() instanceof Tameable && ((Tameable) getMob()).isTamed()) {
+                return false;
             }
-            return true;
+
+            if (Math.random() < playerstats.getCritChance()) {
+                this.Health -= (0.01 * ((int) (100 * ((speed / 2.5) - 0.2) *
+                        (((playerstats.getActiveDamage() * playerstats.getCritDamageMult()) - ((playerstats.getActiveDamage() * playerstats.getCritDamageMult()) * (getActiveDefense() / (getActiveDefense() + 100))))
+                        ))));
+                playerstats.getPlayer().getWorld().playEffect(playerstats.getPlayer().getLocation(), Effect.ANVIL_LAND, 1, 0);
+            } else {
+                this.Health -= (0.01 * ((int) (100 * ((speed / 2.5) - 0.2) *
+                        ((playerstats.getActiveDamage() - (playerstats.getActiveDamage() * (getActiveDefense() / (getActiveDefense() + 100))))
+                        ))));
+            }
+
+            if (Math.random() < remainingmultihit) {
+                return ranged_damage(playerstats, remainingmultihit - 1.0, speed);
+            } else {
+
+                updateMobHealthbar();
+
+                if (getHealth() <= 0 && ((!playerstats.isInBossFight() && !isBoss) || (playerstats.isInBossFight() && isBoss))) {
+                    //"kills" the mob once 0 health is hit and awards EXP and drops
+                    getMob().setHealth(0);
+                    KillReward(playerstats);
+                }
+
+                return true;
+            }
+        } else {
+            return false;
         }
     }
 
@@ -392,29 +396,31 @@ public class MobStats {
 
     public void spell_damage(double amount, Player player)
     {
-        if (!(getMob() instanceof ArmorStand)) {
+        PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
+        if (!(getMob() instanceof ArmorStand) && !getMob().getName().equals("HoloTuto")) {
             updateStatChanges();
 
             if (getMob() instanceof Tameable && ((Tameable) getMob()).isTamed()) {
                 return;
             }
 
-            setHealth(this.Health - amount);
+                setHealth(this.Health - amount);
 
-            if (getMob() instanceof Creature) {
-                Creature mobC = (Creature) getMob();
-                mobC.setTarget(player);
-            }
-
-            updateMobHealthbar();
-
-            PlayerStats Pstats = PlayerUtility.getPlayerStats(player);
-            if (getHealth() <= 0 && !Pstats.isInBossFight()) {
-                if (!getMob().isDead()) {
-                    KillReward(Pstats);
+                if (getMob() instanceof Creature) {
+                    Creature mobC = (Creature) getMob();
+                    mobC.setTarget(player);
                 }
-                getMob().setHealth(0);
-            }
+
+                updateMobHealthbar();
+
+                PlayerStats Pstats = PlayerUtility.getPlayerStats(player);
+                if (getHealth() <= 0 && ((!playerstats.isInBossFight() && !isBoss) || (playerstats.isInBossFight() && isBoss))) {
+                    if (!getMob().isDead()) {
+                        KillReward(Pstats);
+                    }
+                    getMob().setHealth(0);
+                }
+
 
 
         }

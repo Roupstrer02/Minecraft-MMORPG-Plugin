@@ -85,6 +85,7 @@ public class NatureNaturesBounty extends BukkitRunnable {
     private boolean SpellHit = false;
     private Vector direction;
     private ArrayList<Material> exempt_blocks = new ArrayList<>(); //{Material.AIR, Material.GRASS, Material.TALL_GRASS}
+    private ArrayList<Material> mod_blocks = new ArrayList<>();
     private DecimalFormat NumberFormat = new DecimalFormat("0.0");
 
     //Constructor
@@ -102,6 +103,12 @@ public class NatureNaturesBounty extends BukkitRunnable {
         exempt_blocks.add(Material.TALL_GRASS);
         exempt_blocks.add(Material.WATER);
         exempt_blocks.add(Material.CAVE_AIR);
+
+        mod_blocks.add(Material.BEDROCK);
+        mod_blocks.add(Material.BARRIER);
+        mod_blocks.add(Material.COMMAND_BLOCK);
+        mod_blocks.add(Material.CHAIN_COMMAND_BLOCK);
+        mod_blocks.add(Material.REPEATING_COMMAND_BLOCK);
 
         this.Wand = (wand.ItemToWand(origin.getInventory().getItemInOffHand()));
 
@@ -141,9 +148,9 @@ public class NatureNaturesBounty extends BukkitRunnable {
     public void spellStartup() {
         //Any code written here will happen immediately upon casting the spell (progress == 0) ------- (if the player is able to cast it)
         loc.add(0,origin.getEyeHeight(),0);
-
+        boolean isSurvival = origin.getGameMode() == GameMode.SURVIVAL;
         for (int i = 0; i <= 28; i++) {
-            if (!SpellHit && !stats.isInBossFight()) {
+            if (!SpellHit && !stats.isInBossFight() && isSurvival) {
                 loc.add(direction);
                 Block targetBlock = loc.getBlock();
                 Material targetMat = targetBlock.getType();
@@ -151,8 +158,10 @@ public class NatureNaturesBounty extends BukkitRunnable {
                 boolean giveExtraDrops = rd.nextFloat() < BountyChanceThreshold();
 
                 if (!exempt_blocks.contains(targetMat)) {
-                    targetBlock.breakNaturally(new ItemStack(Material.DIAMOND_PICKAXE));
 
+                    if (!mod_blocks.contains(targetMat)) {
+                        targetBlock.breakNaturally(new ItemStack(Material.DIAMOND_PICKAXE));
+                    }
                     //give extra bi-product and EXP
                     switch (targetMat) {
                         case COAL_ORE:

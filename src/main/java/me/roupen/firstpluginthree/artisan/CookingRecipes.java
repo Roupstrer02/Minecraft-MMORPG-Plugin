@@ -196,6 +196,7 @@ public class CookingRecipes {
 
         newItem = newCraftableItem(newPotionItem(new PotionData(PotionType.WATER)), 1, "Blonde Roast Coffee Mix","A light start to the day!", "just needs to be warmed up...");
 
+        //blonde roast coffee needs 1 blond roast bean item
         nameKey = makeNameKey("blonderoastcoffeemix");
         newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
         newShapelessRecipe.addIngredient(newPotionItem(new PotionData(PotionType.WATER)));
@@ -204,19 +205,24 @@ public class CookingRecipes {
         ListOfRecipes.add(newShapelessRecipe);
         addToLevelLockMap(newItemName, 5);
 
+        //blonde roast coffee needs 2 medium roast bean item
         newItem = newCraftableItem(newPotionItem(new PotionData(PotionType.WATER)), 1, "Medium Roast Coffee Mix","An absolute classic!", "just needs to be warmed up...");
         nameKey = makeNameKey("mediumroastcoffeemix");
         newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
         newShapelessRecipe.addIngredient(newPotionItem(new PotionData(PotionType.WATER)));
         newShapelessRecipe.addIngredient(new RecipeChoice.ExactChoice(Items.get("medium roasted coffee beans")));
+        newShapelessRecipe.addIngredient(new RecipeChoice.ExactChoice(Items.get("medium roasted coffee beans")));
         addToMaps(newItemName, newItem, newShapelessRecipe);
         ListOfRecipes.add(newShapelessRecipe);
         addToLevelLockMap(newItemName, 6);
 
+        //blonde roast coffee needs 3 dark roast bean item
         newItem = newCraftableItem(newPotionItem(new PotionData(PotionType.WATER)), 1, "Dark Roast Coffee Mix","A bitter tasting start to a sweet day!", "just needs to be warmed up...");
         nameKey = makeNameKey("darkroastcoffeemix");
         newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
         newShapelessRecipe.addIngredient(newPotionItem(new PotionData(PotionType.WATER)));
+        newShapelessRecipe.addIngredient(new RecipeChoice.ExactChoice(Items.get("dark roasted coffee beans")));
+        newShapelessRecipe.addIngredient(new RecipeChoice.ExactChoice(Items.get("dark roasted coffee beans")));
         newShapelessRecipe.addIngredient(new RecipeChoice.ExactChoice(Items.get("dark roasted coffee beans")));
         addToMaps(newItemName, newItem, newShapelessRecipe);
         ListOfRecipes.add(newShapelessRecipe);
@@ -228,7 +234,6 @@ public class CookingRecipes {
         newItem = (newCraftableItem(Material.MILK_BUCKET, 1, "Blonde Roast Coffee","A light start to the day!"));
         applyModel(newItem, 1);
         nameKey = makeNameKey("blonderoastcoffee");
-
         newSmokingRecipe = new SmokingRecipe(nameKey, newItem, new RecipeChoice.ExactChoice(Items.get("Blonde Roast Coffee Mix")), 0F, MinutesToTick(3));
         addToMaps(newItemName, newItem, newSmokingRecipe);
         ListOfRecipes.add(newSmokingRecipe);
@@ -447,6 +452,7 @@ public class CookingRecipes {
         //Thorylin Mead
 
         newItem = newCraftableItem(Material.MILK_BUCKET, 1, "Thorylin Mead","Brothers of the Mine Rejoice!");
+        applyModel(newItem, 11);
         newItemMeta = newItem.getItemMeta();
         newItemMeta.addEnchant(Enchantment.DURABILITY, 1, true);
         newItemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -495,9 +501,9 @@ public class CookingRecipes {
         // Bottle Of Wine
 
         newItem = newCraftableItem(Material.MILK_BUCKET, 1, "Bottle Of Wine","Enjoyed by the upper class all around Zelandris");
-        applyModel(newItem, 11);
+        applyModel(newItem, 12);
         nameKey = makeNameKey("bottleofwine");
-        newSmokingRecipe = new SmokingRecipe(nameKey, newItem, new RecipeChoice.ExactChoice(Items.get("Grape Juice")), 0F, MinutesToTick(30));
+        newSmokingRecipe = new SmokingRecipe(nameKey, newItem, new RecipeChoice.ExactChoice(Items.get("Grape Juice")), 0F, MinutesToTick(20));
 
         addToMaps(newItemName, newItem, newSmokingRecipe);
         ListOfRecipes.add(newSmokingRecipe);
@@ -506,7 +512,7 @@ public class CookingRecipes {
         // Wine Glass [Artisan lv 8 locked]
 
         newItem = newCraftableItem(Material.GLASS_BOTTLE, 4, "Wine Glass", "Looks nicer than a bottle");
-        applyModel(newItem, 12);
+        applyModel(newItem, 13);
 
         nameKey = makeNameKey("wineglass");
 
@@ -524,7 +530,8 @@ public class CookingRecipes {
         // 8x Glass Of Wine
 
         newItem = newCraftableItem(Material.MILK_BUCKET, 8, "Glass Of Wine", "The perfect accompaniment to a fancy night out");
-        applyModel(newItem, 13);
+
+        applyModel(newItem, 14);
         nameKey = makeNameKey("glassofwine");
 
         newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
@@ -532,6 +539,7 @@ public class CookingRecipes {
         newShapelessRecipe.addIngredient(new RecipeChoice.ExactChoice(Items.get("Bottle Of Wine")));
         newShapelessRecipe.addIngredient(8, Material.GLASS_BOTTLE);
 
+        newItem.setAmount(1);
         addToMaps(newItemName, newItem, newShapelessRecipe);
         ListOfRecipes.add(newShapelessRecipe);
         addToLevelLockMap(newItemName, 8);
@@ -569,6 +577,7 @@ public class CookingRecipes {
         // Lunaris-Shine
 
         newItem = newCraftableItem(Material.MILK_BUCKET, 1, "Lunaris-Shine","Named for the celestial body in the sky you will surely see", "during the long process of making this drink");
+        applyModel(newItem, 15);
         giveEnchantedLook(newItem);
         nameKey = makeNameKey("lunarisshine");
         newSmokingRecipe = new SmokingRecipe(nameKey, newItem, new RecipeChoice.ExactChoice(Items.get("Cooked Mash Of Foods")), 0F, MinutesToTick(5));
@@ -593,6 +602,7 @@ public class CookingRecipes {
         //Embermoorian Beer
 
         newItem = newCraftableItem(Material.MILK_BUCKET, 1, "Embermoorian Beer","A favorite amongst the workers of the Engine!");
+        applyModel(newItem, 16);
         newItem = giveEnchantedLook(newItem);
         nameKey = makeNameKey("embermoorianbeer");
         newSmokingRecipe = new SmokingRecipe(nameKey, newItem, new RecipeChoice.ExactChoice(Items.get("Beer Wort")), 0F, MinutesToTick(10));
@@ -635,6 +645,7 @@ public class CookingRecipes {
         //Ithilian Pine Blend
 
         newItem = newCraftableItem(Material.MILK_BUCKET, 1, "Ithilian Pine Blend","A drink fit for stargazing in Iliasing");
+        applyModel(newItem, 17);
         newItem = giveEnchantedLook(newItem);
         nameKey = makeNameKey("ithilianpineblend");
         newSmokingRecipe = new SmokingRecipe(nameKey, newItem, new RecipeChoice.ExactChoice(Items.get("Lukewarm Tea Blend")), 0F, MinutesToTick(1));

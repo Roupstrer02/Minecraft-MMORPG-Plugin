@@ -1,11 +1,17 @@
 package me.roupen.firstpluginthree;
 
 import io.lumine.mythic.api.adapters.AbstractEntity;
+import io.lumine.mythic.api.adapters.AbstractLocation;
 import io.lumine.mythic.api.exceptions.InvalidMobTypeException;
+import io.lumine.mythic.api.holograms.IHologram;
 import io.lumine.mythic.bukkit.BukkitAPIHelper;
+import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.bukkit.events.MythicDamageEvent;
 import io.lumine.mythic.bukkit.events.MythicMobDeathEvent;
 import io.lumine.mythic.bukkit.events.MythicMobSpawnEvent;
+import io.lumine.mythic.bukkit.utils.holograms.Hologram;
+import io.lumine.mythic.bukkit.utils.holograms.HologramFactory;
+import io.lumine.mythic.core.holograms.HologramManager;
 import io.lumine.mythic.core.mobs.ActiveMob;
 import me.roupen.firstpluginthree.CraftingRecipes.BasicTools;
 import me.roupen.firstpluginthree.PlayerInteractions.*;
@@ -31,10 +37,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
@@ -74,6 +77,8 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
     private static FirstPluginThree myPlugin;
     public static ArrayList<String> bossIDNames = new ArrayList<String>(Arrays.asList(
             "MythicMob{AbyssWatcherTest}",
+            "MythicMob{LarianLow}",
+            "MythicMob{LarianMid}",
             "MythicMob{Larian}",
             "MythicMob{ArcaneGolem}",
             "MythicMob{Quakefish}",
@@ -121,6 +126,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
            MobStats.giveStatBlock(mob);
            mob.customName(MobUtility.getMobStats(mob).generateName());
        }
+
    }
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event){
@@ -209,11 +215,24 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
     public void onPlayerDeath(PlayerDeathEvent event) {
 
         Random rd = new Random();
+        Player p = event.getPlayer();
+        PlayerStats pStats = PlayerUtility.getPlayerStats(p);
         String[] FlavorTexts = new String[]
                 {"took an L", "is weak to damage", "involuntarily returned home"};
         int index = rd.nextInt(FlavorTexts.length);
         event.deathMessage(Component.text(event.getPlayer().getName() + " " + FlavorTexts[index]));
 
+        if (pStats.isInBossFight())
+            pStats.setInBossFight(false);
+        if (PlayersInBossFight.contains(p)) {
+            PlayersInBossFight.remove(p);
+            event.deathMessage(Component.text(p.getName() + " has fallen to an elite",  Style.style(TextDecoration.ITALIC, NamedTextColor.GRAY)));
+            List<Player> players = getServer().getWorld("world").getPlayers();
+
+            for (Player pl : players) {
+                pl.playSound(pl.getLocation(), Sound.BLOCK_END_PORTAL_SPAWN, 0.5F, 0.5F);
+            }
+        }
 
     }
     @EventHandler
@@ -312,10 +331,14 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
     @EventHandler
     public void onEntitySpawn(EntitySpawnEvent event) {
         Entity ent = event.getEntity();
+
+        //removing withers from the game
         if (!(ent.hasMetadata("BukkitValues")) && ent instanceof Wither) {
             Location loc = ent.getLocation();
             event.setCancelled(true);
         }
+
+        //Handler for all MythicMobs to spawn with their custom values
         else if (!(ent.hasMetadata("BukkitValues")) && ent instanceof LivingEntity) {
             MobStats.giveStatBlock((LivingEntity) event.getEntity());
         }
@@ -595,9 +618,10 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
             MobStats Mstats = MobUtility.getMobStats(event.getCaster().getEntity().getBukkitEntity());
             Pstats.damage(Mstats, damageMult);
             p.damage(0);
-
         }
     }
+
+
 
     @EventHandler
     public void onMythicMobDeath(MythicMobDeathEvent event) {

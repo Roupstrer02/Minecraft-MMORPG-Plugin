@@ -28,10 +28,10 @@ public class elite {
     }};
 
     public static ArrayList<String> ArenaEliteNames = new ArrayList<String>() {{
+        add("MythicMob{LarianLow}");
+        add("MythicMob{LarianMid}");
         add("MythicMob{Larian}");
         add("MythicMob{AbyssWatcherTest}");
-        add("MythicMob{Alarak}");
-        add("MythicMob{QuakeFish}");
     }};
     public elite(String boss_name)
     {
@@ -67,8 +67,19 @@ public class elite {
 
 
     public void spawn(Location spawnLoc) throws InvalidMobTypeException {
-        if (BossName.equals("Abyss Watcher")) {
-            FirstPluginThree.getMMHelper().spawnMythicMob("AbyssWatcherTest", spawnLoc);
+        switch (BossName) {
+            case "Abyss Watcher":
+                FirstPluginThree.getMMHelper().spawnMythicMob("AbyssWatcherTest", spawnLoc);
+                break;
+            case "Larian the Night Hunter":
+                FirstPluginThree.getMMHelper().spawnMythicMob("LarianLow", spawnLoc);
+                break;
+            case "Larian the Berserker":
+                FirstPluginThree.getMMHelper().spawnMythicMob("LarianMid", spawnLoc);
+                break;
+            case "Larian the Nightmare":
+                FirstPluginThree.getMMHelper().spawnMythicMob("Larian", spawnLoc);
+                break;
         }
     }
 
