@@ -191,6 +191,16 @@ public class Rune {
         return r.BuildItem();
     }
 
+    public static ItemStack GenerateRandomTier2Rune() {
+        Material[] runeMatTypes = {Material.RED_DYE,Material.ORANGE_DYE,Material.YELLOW_DYE,Material.GREEN_DYE,Material.BLUE_DYE,Material.PURPLE_DYE};
+        Random rand = new Random();
+        int matType1 = rand.nextInt(6);
+        int matType2 = rand.nextInt(6);
+        Rune r = CombineRunes(new Rune(runeMatTypes[matType1]), new Rune(runeMatTypes[matType2]));
+        return r.BuildItem();
+    }
+
+
     public static Rune ItemToRune(ItemStack item)
     {
         ItemMeta meta = item.getItemMeta();

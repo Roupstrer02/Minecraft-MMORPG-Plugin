@@ -37,10 +37,10 @@ public class EliteFight {
     private static final ArrayList<Location> LarianLowInteracts = new ArrayList<>(Arrays.asList(ArenaInteractLoc1, ArenaInteractLoc2));
     private static final Location ArenaInteractLoc3 = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), 24,-12,1291);
     private static final Location ArenaInteractLoc4 = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), 25,-12,1292);
-    private static final ArrayList<Location> LarianMidInteracts = new ArrayList<>(Arrays.asList(ArenaInteractLoc1, ArenaInteractLoc2));
+    private static final ArrayList<Location> LarianMidInteracts = new ArrayList<>(Arrays.asList(ArenaInteractLoc3, ArenaInteractLoc4));
     private static final Location ArenaInteractLoc5 = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), 43,-12,1291);
     private static final Location ArenaInteractLoc6 = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), 42,-12,1292);
-    private static final ArrayList<Location> LarianInteracts = new ArrayList<>(Arrays.asList(ArenaInteractLoc1, ArenaInteractLoc2));
+    private static final ArrayList<Location> LarianInteracts = new ArrayList<>(Arrays.asList(ArenaInteractLoc5, ArenaInteractLoc6));
     private static final Location spawnLoc = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), -30, -41, 1167);
     private static final Location teleportLoc = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), -30, -41, 1185);
     private static final Location BossEndLocation = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), -275,73,354);
@@ -80,9 +80,11 @@ public class EliteFight {
                 PlayerStats pStats = PlayerUtility.getPlayerStats(player);
                 ArrayList<Player> party = new ArrayList<>(pStats.getParty());
                 FirstPluginThree.PlayersInBossFight = party;
+
+                player.getWorld().sendMessage(Component.text("An Elite of Zelandris has been Challenged", Style.style(NamedTextColor.GOLD, TextDecoration.BOLD)));
                 for (Player p : party) {
                     p.teleport(teleportLoc);
-                    p.sendMessage(Component.text("An Elite of Zelandris has been Challenged", Style.style(NamedTextColor.GOLD, TextDecoration.BOLD)));
+
 
                     PlayerUtility.getPlayerStats(p).setInBossFight(true);
                 }
@@ -115,14 +117,16 @@ public class EliteFight {
 
             //FIND WHAT PARTS OF THIS CAN BE FACTORED OUT AND SHARED AMONGST ALL OTHER BOSSES (More Efficient)
 
+            event.getEntity().getWorld().sendMessage(Component.text("An Elite of Zelandris has been Defeated", Style.style(NamedTextColor.GOLD)));
+
             //else if another boss -> drop its loot instead
             for (Player p : FirstPluginThree.PlayersInBossFight) {
                 Entity bukkitEnt = ent.getEntity().getBukkitEntity();
                 LivingEntity bossEnt = (LivingEntity) bukkitEnt;
 
                 MobStats bossStatBlock = MobUtility.getMobStats(bossEnt);
-                p.sendMessage(Component.text("An Elite of Zelandris has been Defeated", Style.style(NamedTextColor.GOLD)));
-                p.sendMessage(Component.text("Each party member gains " + bossStatBlock.EXPtoGive() + " EXP", Style.style(NamedTextColor.GOLD)));
+
+                p.sendMessage(Component.text("Each party member gains " + bossStatBlock.EXPtoGive(PlayerUtility.getPlayerStats(p).getLevel()) + " EXP", Style.style(NamedTextColor.GOLD)));
                 p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
 
                 //give players boss drops

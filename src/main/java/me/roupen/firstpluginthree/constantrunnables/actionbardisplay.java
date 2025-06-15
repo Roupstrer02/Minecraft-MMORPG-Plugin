@@ -72,6 +72,10 @@ public class actionbardisplay extends BukkitRunnable {
                 stats.recalculateCritChance();
                 stats.recalculateCritDamageMult();
 
+                player.setLevel(stats.getLevel());
+                player.setExp(0F);
+                player.setExp(stats.getExperience() / (float) stats.getLevelCap());
+
                 if (stats.getActiveCurrentHealth() <= 0 || player.isDead())
                 {
                     stats.setActiveCurrentHealth(0);
@@ -79,7 +83,7 @@ public class actionbardisplay extends BukkitRunnable {
                 }
                 else
                 {
-                    player.setHealth(Math.min(20, 20 * (stats.getActiveCurrentHealth() / stats.getActiveMaxHealth())));
+                    player.setHealth(Math.min(20, Math.round(20 * (stats.getActiveCurrentHealth() / stats.getActiveMaxHealth()))));
                 }
 
                 if (stats.hasConsumedItem()) {

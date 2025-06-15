@@ -25,17 +25,35 @@ commands:
   sethome:
     description: Sets your home location to the position you are standing
     usage: /<command>
-    #permission: FirstPluginThree.stats
+    #permission: FirstPluginThree.sethome
     permission-message: Sorry! You don't have permission to execute that command.
 
   home:
     description: teleports you to your set home location
     usage: /<command>
-    #permission: FirstPluginThree.stats
+    #permission: FirstPluginThree.home
     permission-message: Sorry! You don't have permission to execute that command.
 
   party:
-    description: Edits your current party members
+    description: use /party help for more info
     usage: /<command>
-    #permission: FirstPluginThree.stats
+    #permission: FirstPluginThree.party
+    permission-message: Sorry! You don't have permission to execute that command.
+
+  minimum_loot_level:
+    description: Disables equipment dropping from mobs you kill below given level
+    usage: /<command> <minLevel>
+    #permission: FirstPluginThree.minimum_loot_level
+    permission-message: Sorry! You don't have permission to execute that command.
+
+  enemy_create:
+    description: Debug command for use by admins only
+    usage: /<command> <level> <mobCount>
+    permission: FirstPluginThree.enemy_create
+    permission-message: Sorry! You don't have permission to execute that command.
+
+  player_reset:
+    description: Debug command for use by admins only
+    usage: /<command> <player>
+    permission: FirstPluginThree.player_reset
     permission-message: Sorry! You don't have permission to execute that command.

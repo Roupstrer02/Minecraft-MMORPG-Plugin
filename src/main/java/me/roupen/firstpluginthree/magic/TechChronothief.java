@@ -17,8 +17,6 @@ import org.bukkit.util.Vector;
 import java.text.DecimalFormat;
 import java.util.*;
 
-import static me.roupen.firstpluginthree.magic.spells.*;
-
 public class TechChronothief extends BukkitRunnable {
 
     //Progress dictates what stage of the spell has been reached
@@ -36,7 +34,8 @@ public class TechChronothief extends BukkitRunnable {
     private wand Wand;
     private DecimalFormat NumberFormat = new DecimalFormat("0.0");
 
-    //Need a variable that holds the wand in order to easily apply the modifiers onto the spell (without coupling code)
+    public static double baseManaCost = 200.0;
+
 
     public TechChronothief(Player caster)
     {
@@ -165,7 +164,7 @@ public class TechChronothief extends BukkitRunnable {
     }
     public double ManaCostCalc(PlayerStats playerstats)
     {
-        return 150.0 * Wand.getSpellCostModifier();
+        return baseManaCost * Wand.getSpellCostModifier();
     }
     public void ParticleSphere(Location loc, double radius, Particle particletype) {
         Random rd = new Random();

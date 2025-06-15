@@ -11,7 +11,6 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.*;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -37,7 +36,8 @@ public class TechSnipe extends BukkitRunnable {
     private Location bulletLoc;
     private Material[] exempt_blocks = {Material.AIR, Material.GRASS, Material.TALL_GRASS, Material.WATER};
     private DecimalFormat NumberFormat = new DecimalFormat("0.0");
-    //Need a variable that holds the wand in order to easily apply the modifiers onto the spell (without coupling code)
+
+    public static double baseManaCost = 30.0;
 
     public TechSnipe(Player caster)
     {
@@ -165,7 +165,7 @@ public class TechSnipe extends BukkitRunnable {
         return 20 * Wand.getUtilitySpellPowerModifier();
     }
     public double CasterSpellDamage() {
-        return stats.getWisdom() * Wand.getOffenseSpellPowerModifier();
+        return stats.getCasterSpellDamage() * Wand.getOffenseSpellPowerModifier();
     }
     public double TechSnipeDmgCalc(MobStats mobstats)
     {
@@ -173,7 +173,7 @@ public class TechSnipe extends BukkitRunnable {
     }
     public double ManaCostCalc(PlayerStats playerstats)
     {
-        return 35.0 * Wand.getSpellCostModifier();
+        return baseManaCost * Wand.getSpellCostModifier();
     }
     public double spellCooldownTextUpdate(double upperLimit, double currentProgress) {
         double increment = 1.0/upperLimit;

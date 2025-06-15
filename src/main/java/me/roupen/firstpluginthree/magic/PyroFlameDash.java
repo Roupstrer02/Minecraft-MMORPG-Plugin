@@ -34,6 +34,7 @@ public class PyroFlameDash extends BukkitRunnable {
     private BossBar ChannelTime;
     private wand Wand;
     private DecimalFormat NumberFormat = new DecimalFormat("0.0");
+    public static double baseManaCost = 40.0;
 
     //Need a variable that holds the wand in order to easily apply the modifiers onto the spell (without coupling code)
 
@@ -132,19 +133,19 @@ public class PyroFlameDash extends BukkitRunnable {
     public void incrementProgress() {this.progress = getProgress() + 1;}
 
     public double FlameDashDamageCalc(MobStats mobstats) {
-        return 0.05 * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
+        return 0.15 * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
     }
 
     public double CasterSpellDamage()
     {
-        return stats.getWisdom() * Wand.getOffenseSpellPowerModifier();
+        return stats.getCasterSpellDamage() * Wand.getOffenseSpellPowerModifier();
     }
     public double SpellAOE() {
         return 2.5 * Wand.getUtilitySpellPowerModifier();
     }
 
     public double ManaCostCalc(PlayerStats stats) {
-        return 40.0 * Wand.getSpellCostModifier();
+        return baseManaCost * Wand.getSpellCostModifier();
     }
     public double spellCooldownTextUpdate(double upperLimit, double currentProgress) {
         double increment = 1.0/upperLimit;

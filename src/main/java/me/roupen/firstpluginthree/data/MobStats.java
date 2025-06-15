@@ -1,7 +1,7 @@
 package me.roupen.firstpluginthree.data;
 
-import me.roupen.firstpluginthree.FirstPluginThree;
 import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
+import me.roupen.firstpluginthree.balance.Balance;
 import me.roupen.firstpluginthree.utility.MobUtility;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
 import me.roupen.firstpluginthree.weather.WeatherForecast;
@@ -9,10 +9,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Color;
-import org.bukkit.Effect;
-import org.bukkit.Material;
-import org.bukkit.Particle;
+import org.bukkit.*;
 
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
@@ -44,9 +41,14 @@ public class MobStats {
 // Mob level is initialized according to the "weather" of the biome it spawns in
 // Variations in the stats attributed according to level are decided by the type of the mob (zombie, skeleton, creeper, spider, etc...) [To be Implemented...]
 //===========================================================================================================================
-    public MobStats(LivingEntity mob, int weather)
+    public MobStats(LivingEntity mob, int weather, boolean... override_level)
     {
-        this.Level = (int) Math.ceil(((10 * weather) - (random.nextInt(10))) * WeatherForecast.getBiomeModifier(mob));
+        this.Level = (int) Math.ceil(((Balance.BiomeLevelRange * weather) - (random.nextDouble() * Balance.BiomeLevelRange)) * WeatherForecast.getBiomeModifier(mob));
+
+        //override_level changes how the previous paramter is used, instead of acting as the weather of the biome, the value is used directly as the mob's level
+        if (override_level.length > 0 && override_level[0]) {
+            this.Level = weather;
+        }
 
         if ((mob instanceof LivingEntity) && !((mob instanceof Monster) || (mob instanceof Ghast) || (mob instanceof Slime))) {
             this.Level = 1;
@@ -72,12 +74,17 @@ public class MobStats {
             this.Level = Math.max(this.Level, 100);
         }
 
-        this.MaxHealth = 12.0 * this.Level;
+        this.MaxHealth = Balance.mobHP(this.Level);
         this.Health = MaxHealth;
-        this.Attack = 20.0 * (this.Level * 0.3);
-        this.Defense = 25.0 * (this.Level * 0.1);
+        this.Attack = Balance.mobDmg(this.Level);
+        this.Defense = Balance.mobDef(this.Level);
         this.ActiveDefense = this.Defense;
         this.Mob = mob;
+
+        //change creeper's damage equation to better fit its
+        if (mob instanceof Creeper) {
+            this.Attack *= 2;
+        }
 
         this.mult_stat_change = new HashMap<>();
         this.mult_stat_change.put("MaxHealth", 1.0);
@@ -89,6 +96,7 @@ public class MobStats {
         this.lin_stat_change.put("Defense", 0.0);
         this.lin_stat_change.put("Attack", 0.0);
         this.isBoss = false;
+
 
     }
 
@@ -238,6 +246,16 @@ public class MobStats {
                 entity.customName(stats.generateName());
         }
     }
+    public static void giveCustomStatBlock(LivingEntity entity, int lvl) {
+
+        if (!((entity instanceof Player) || !(entity instanceof LivingEntity)) && !(entity instanceof ArmorStand))
+        {
+            MobStats stats = new MobStats(entity, lvl, true);
+            MobUtility.setMobStats(entity, stats);
+            entity.setCustomNameVisible(true);
+            entity.customName(stats.generateName());
+        }
+    }
     public static void giveBossStatBlock(LivingEntity entity, String Boss_Type_String) {
 
         if (!(entity instanceof Player) && !(entity instanceof ArmorStand))
@@ -256,7 +274,6 @@ public class MobStats {
     public void updateStatChanges() {
         setActiveDefense((Defense * mult_stat_change.get("Defense")) - lin_stat_change.get("Defense"));
     }
-
     public boolean damage(PlayerStats playerstats, double remainingmultihit)
     {
         updateStatChanges();
@@ -285,14 +302,17 @@ public class MobStats {
             }
             else {
                 playerstats.useStamina(playerstats.getStaminaCost());
+                playerstats.getPlayer().getWorld().spawnParticle(Particle.CRIT, getMob().getLocation().add(0,1,0), (int) (10 * getMob().getWidth() * getMob().getHeight()), getMob().getWidth() * 0.5, getMob().getHeight() * 0.5, getMob().getWidth() * 0.5);
+
+                updateMobHealthbar();
+
+                if (getHealth() <= 0  && !getMob().isDead() && ((!playerstats.isInBossFight() && !isBoss) || (playerstats.isInBossFight() && isBoss))) {
+                    //"kills" the mob once 0 health is hit and awards EXP and drops
+                    getMob().setHealth(0);
 
 
-                    updateMobHealthbar();
-                    if (getHealth() <= 0 && ((!playerstats.isInBossFight() && !isBoss) || (playerstats.isInBossFight() && isBoss))) {
-                        //"kills" the mob once 0 health is hit and awards EXP and drops
-                        getMob().setHealth(0);
-                        KillReward(playerstats);
-                    }
+                    KillReward(playerstats);
+                }
 
                 return true;
             }
@@ -302,7 +322,6 @@ public class MobStats {
             return false;
         }
     }
-
     public void mobDamage(MobStats mobstats) {
         this.Health -= (0.01 * ((int) (100 *
                 ((mobstats.getAttack() - (mobstats.getAttack() * (getActiveDefense() / (getActiveDefense() + 100))))
@@ -335,7 +354,7 @@ public class MobStats {
 
                 updateMobHealthbar();
 
-                if (getHealth() <= 0 && ((!playerstats.isInBossFight() && !isBoss) || (playerstats.isInBossFight() && isBoss))) {
+                if (getHealth() <= 0 && !getMob().isDead() && ((!playerstats.isInBossFight() && !isBoss) || (playerstats.isInBossFight() && isBoss))) {
                     //"kills" the mob once 0 health is hit and awards EXP and drops
                     getMob().setHealth(0);
                     KillReward(playerstats);
@@ -347,34 +366,35 @@ public class MobStats {
             return false;
         }
     }
-
     public void updateMobHealthbar() {
         if (getHealth() > 0) {
             if (!isBoss && !getMob().isDead()) {
                 getMob().customName(generateName());
                 getMob().setHealth(Math.max(0, getMob().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * (getHealth() / getMaxHealth())));
-            } else if (isBoss && !getMob().isDead()) {
+            }
+            else if (isBoss && !getMob().isDead()) {
                 //this will later change the title on the bossbar instead of the entity itself
                 getMob().customName(updateBossBarName());
                 getMob().setHealth(Math.max(0, getMob().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * (getHealth() / getMaxHealth())));
             }
         }
     }
-
     public void KillReward(PlayerStats stats) {
-        int EXPtoGive = EXPtoGive();
+        int EXPtoGive = EXPtoGive(stats.getLevel());
 
         for (Player p : stats.getParty()) {
             PlayerStats PMemberStats = PlayerUtility.getPlayerStats(p);
-            PMemberStats.gainExperience(EXPtoGive / PMemberStats.getParty().size());
+            PMemberStats.gainExperience((int) Math.round(Math.min((double) EXPtoGive / PMemberStats.getParty().size(), Balance.EXPGainCap * PMemberStats.getLevelCap())));
         }
 
         if (!passiveMob && !isBoss)
         {
-            if (stats.getPlayer().getInventory().firstEmpty() != -1) { //if there's an empty slot to put an item in
-                stats.getPlayer().getInventory().addItem(PlayerEquipment.EquipmentToItem(PlayerEquipment.GenerateRandomEquipment(getMob())));
-            }else{
-                stats.getPlayer().getWorld().dropItem(stats.getPlayer().getLocation().add(0,0.2,0), PlayerEquipment.EquipmentToItem(PlayerEquipment.GenerateRandomEquipment(getMob())));
+            if (this.Level >= stats.EquipmentLevelMinimum) {
+                if (stats.getPlayer().getInventory().firstEmpty() != -1) { //if there's an empty slot to put an item in
+                    stats.getPlayer().getInventory().addItem(PlayerEquipment.EquipmentToItem(PlayerEquipment.GenerateRandomEquipment(getMob())));
+                } else {
+                    stats.getPlayer().getWorld().dropItem(stats.getPlayer().getLocation().add(0, 0.2, 0), PlayerEquipment.EquipmentToItem(PlayerEquipment.GenerateRandomEquipment(getMob())));
+                }
             }
         }
 
@@ -384,16 +404,17 @@ public class MobStats {
             if (rd.nextFloat() < 0.5)
                 getMob().getLocation().getWorld().dropItem(stats.getPlayer().getLocation().add(0,0.2,0), new ItemStack(Material.BLAZE_ROD));
         }
-        if (!isBoss)
+        if (!isBoss) {
             getMob().customName(Component.text("+" + EXPtoGive + "XP" + " - " + stats.getPlayer().getName()));
-        else
+        }
+        else {
             getMob().customName(Component.text("+" + EXPtoGive + "XP" + " - to party"));
-    }
 
-    public int EXPtoGive() {
-        return 50 * ((int) Math.pow(getLevel(), 1.25));
+        }
     }
-
+    public int EXPtoGive(int playerLevel) {
+        return Balance.MobExpRewardCalc(this.Level, playerLevel);
+    }
     public void spell_damage(double amount, Player player)
     {
         PlayerStats playerstats = PlayerUtility.getPlayerStats(player);
@@ -425,14 +446,12 @@ public class MobStats {
 
         }
     }
-
     public Component generateName() {
         return Component.text("Lv" + getLevel() + " " + getMob().getType().toString().toLowerCase()).append(Component.text(" [" + ((int) getHealth()) +"HP]", Style.style(NamedTextColor.RED, TextDecoration.BOLD)));
     }
     public Component updateBossBarName() {
         return Component.text("Lv" + getLevel() + " " + getMob().getType().toString().toLowerCase()).append(Component.text(" [" + ((int) getHealth()) +"HP]", Style.style(NamedTextColor.RED, TextDecoration.BOLD)));
     }
-
     public void AlterMobDefense(double mult, double lin) {
         mult_stat_change.put("Defense", mult_stat_change.get("Defense") * mult);
         lin_stat_change.put("Defense", lin_stat_change.get("Defense") + lin);

@@ -1,8 +1,8 @@
 package me.roupen.firstpluginthree.playerequipment;
 
-import com.destroystokyo.paper.Namespaced;
 import me.roupen.firstpluginthree.FirstPluginThree;
 import me.roupen.firstpluginthree.data.MobStats;
+import me.roupen.firstpluginthree.balance.Balance;
 import me.roupen.firstpluginthree.utility.MobUtility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -214,12 +214,15 @@ public class PlayerEquipment {
     }
     public static PlayerEquipment ItemToEquipment(ItemStack item)
     {
+        if (item.getType() == Material.AIR) {
+            return new PlayerEquipment(0, item.getType(), "");
+        }
         PlayerEquipment NewEquipment;
 
         if (item.getItemMeta().hasCustomModelData())
             NewEquipment = new PlayerEquipment(0, item.getType(), getToolTypeFromModel(item.getItemMeta().getCustomModelData()));
         else
-            NewEquipment = new PlayerEquipment(0, item.getType(), "getToolTypeFromModel(item.getItemMeta().getCustomModelData()");
+            NewEquipment = new PlayerEquipment(0, item.getType(), "");
 
         PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
 
@@ -361,7 +364,7 @@ public class PlayerEquipment {
         ArrayList<Component> LoreSegments = new ArrayList<>();
 
         if (e.getStaminaCost() > 0.0) {
-            LoreSegments.add(Component.text(e.getStaminaCost() + " Cost", Style.style(NamedTextColor.YELLOW)));
+            LoreSegments.add(Component.text((e.getStaminaCost() + 1) + " Cost", Style.style(NamedTextColor.YELLOW))); //the +1 makes it more understandable
             LoreSegments.add(Component.text(""));
         }
 
@@ -556,7 +559,7 @@ public class PlayerEquipment {
                 {Material.LEATHER_CHESTPLATE, Material.CHAINMAIL_CHESTPLATE, Material.IRON_CHESTPLATE, Material.GOLDEN_CHESTPLATE, Material.DIAMOND_CHESTPLATE},
                 {Material.LEATHER_LEGGINGS, Material.CHAINMAIL_LEGGINGS, Material.IRON_LEGGINGS, Material.GOLDEN_LEGGINGS, Material.DIAMOND_LEGGINGS},
                 {Material.LEATHER_BOOTS, Material.CHAINMAIL_BOOTS, Material.IRON_BOOTS, Material.GOLDEN_BOOTS, Material.DIAMOND_BOOTS},
-                {Material.SHIELD}
+                {Material.SHIELD, Material.SHIELD, Material.SHIELD, Material.SHIELD, Material.SHIELD}
         };
 
         String[] RarityNames = {"Common", "Uncommon", "Rare", "Epic", "Legendary"};
@@ -602,7 +605,7 @@ public class PlayerEquipment {
             }
         }else {//Generate an armor piece
             armorType = PlayerEquipment.GenerateArmorType();
-            new_random_equipment = new PlayerEquipment(rarity, ArmorOptions[armorType][0], ArmorNames[armorType]);
+            new_random_equipment = new PlayerEquipment(rarity, ArmorOptions[armorType][rarity], ArmorNames[armorType]);
             new_random_equipment.setLevel(level);
             new_random_equipment.setRarity(rarity);
             new_random_equipment.setName(RarityNames[rarity] + " " + new_random_equipment.toolType);
@@ -619,7 +622,7 @@ public class PlayerEquipment {
         boolean isArmor = false;
 
         for (String armorName : ArmorNames) {
-            if (armorName == ttype) {
+            if (armorName.equals(ttype)) {
                 isArmor = true;
                 break;
             }
@@ -685,42 +688,42 @@ public class PlayerEquipment {
         switch (ttype) {
             case "Dagger":
                 setStaminaCost(3.0);
-                setDamage(Math.round((float) (getLevel())));
+                setDamage(Balance.daggerDmg(this.Level));
                 break;
             case "Longsword":
                 setStaminaCost(5.0);
-                setDamage(Math.round((float) (getLevel() * 1.5)));
+                setDamage(Balance.longswordDmg(this.Level));
                 break;
             case "Greatsword":
                 setStaminaCost(14.0);
-                setDamage(Math.round((float) (getLevel() * 2)));
+                setDamage(Balance.greatswordDmg(this.Level));
                 break;
             case "Shortbow":
                 setStaminaCost(6.0);
-                setDamage(Math.round((float) (getLevel() * 1.8)));
+                setDamage(Balance.shortbowDmg(this.Level));
                 break;
             case "Longbow":
                 setStaminaCost(11.0);
-                setDamage(Math.round((float) (getLevel() * 2.5)));
+                setDamage(Balance.longbowDmg(this.Level));
                 break;
             case "Crossbow":
                 setStaminaCost(7.0);
-                setDamage(Math.round((float) getLevel()) * 2);
+                setDamage(Balance.crossbowDmg(this.Level));
                 break;
             case "Helmet":
-                setDefense(Math.round((float) (getLevel() * 0.6)));
+                setDefense(Balance.helmDef(this.Level));
                 break;
             case "Chestplate":
-                setDefense(Math.round((float) (getLevel() * 1.25)));
+                setDefense(Balance.chestDef(this.Level));
                 break;
             case "Leggings":
-                setDefense(Math.round((float) (getLevel())));
+                setDefense(Balance.legsDef(this.Level));
                 break;
             case "Boots":
-                setDefense(Math.round((float) getLevel() * 0.5));
+                setDefense(Balance.bootsDef(this.Level));
                 break;
             case "Shield":
-                setDefense(Math.round((float) getLevel() * 0.9));
+                setDefense(Balance.shieldDef(this.Level));
                 break;
             default:
         }

@@ -44,4 +44,10 @@ public class MobUtility {
         return mobStatsMap.containsKey(id.toString());
     }
 
+    public static void removeMobStats(Entity e) {
+
+        String uuid = e.getUniqueId().toString();
+        mobStatsMap.remove(uuid);
+    }
+
 }

@@ -29,6 +29,7 @@ public class PyroFireball extends BukkitRunnable {
     private BossBar ChannelTime;
     private wand Wand;
     private boolean SpellHit = false;
+    public static double baseManaCost = 30.0;
     private DecimalFormat NumberFormat = new DecimalFormat("0.0");
 
     private Material[] exempt_blocks = {Material.AIR, Material.GRASS, Material.TALL_GRASS};
@@ -141,7 +142,7 @@ public class PyroFireball extends BukkitRunnable {
     }
 
     public double CasterSpellDamage() {
-        return stats.getWisdom() * Wand.getOffenseSpellPowerModifier();
+        return stats.getCasterSpellDamage() * Wand.getOffenseSpellPowerModifier();
     }
 
     public double SpellAOE() {
@@ -150,7 +151,7 @@ public class PyroFireball extends BukkitRunnable {
 
     public double ManaCostCalc(PlayerStats playerstats)
     {
-        return 40.0 * Wand.getSpellCostModifier();
+        return baseManaCost * Wand.getSpellCostModifier();
     }
 
     public void ParticleSphere(Location loc, double radius, Particle particletype) {

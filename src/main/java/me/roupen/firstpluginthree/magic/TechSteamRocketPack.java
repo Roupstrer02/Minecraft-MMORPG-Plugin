@@ -29,6 +29,7 @@ public class TechSteamRocketPack extends BukkitRunnable {
     private wand Wand;
     private BossBar ChannelTime;
     private DecimalFormat NumberFormat = new DecimalFormat("0.0");
+    public static double baseManaCost = 25.0;
 
     public TechSteamRocketPack(Player caster)
     {
@@ -89,7 +90,7 @@ public class TechSteamRocketPack extends BukkitRunnable {
     }
 
     public double ManaCostCalc() {
-        return 30 * Wand.getSpellCostModifier();
+        return baseManaCost * Wand.getSpellCostModifier();
     }
 
     public int getProgress() {

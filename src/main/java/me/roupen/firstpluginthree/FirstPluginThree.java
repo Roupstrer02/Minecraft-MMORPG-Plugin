@@ -47,6 +47,8 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.event.world.EntitiesLoadEvent;
+import org.bukkit.event.world.EntitiesUnloadEvent;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -107,6 +109,10 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         this.getCommand("sethome").setExecutor(new sethomeCMD());
         this.getCommand("home").setExecutor(new homeCMD());
         this.getCommand("party").setExecutor(new partyCMD());
+        this.getCommand("minimum_loot_level").setExecutor(new minimumLootLevelCMD());
+
+        this.getCommand("enemy_create").setExecutor(new enemyCreateCMD());
+        this.getCommand("player_reset").setExecutor(new playerLevelResetCMD());
 
         myPlugin = this;
 
@@ -217,6 +223,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         Random rd = new Random();
         Player p = event.getPlayer();
         PlayerStats pStats = PlayerUtility.getPlayerStats(p);
+        pStats.setExperience(0);
         String[] FlavorTexts = new String[]
                 {"took an L", "is weak to damage", "involuntarily returned home"};
         int index = rd.nextInt(FlavorTexts.length);
@@ -253,6 +260,8 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         PlayerStats stats = PlayerUtility.getPlayerStats(event.getPlayer());
         stats.respawnStatReset();
+        event.getPlayer().sendMessage(Component.text("\nThe damage you took erased some recent memories...\n", Style.style(NamedTextColor.GRAY, TextDecoration.ITALIC))
+                .append(Component.text("EXP towards your next level has been reset to 0", Style.style(NamedTextColor.GRAY, TextDecoration.ITALIC))));
 
     }
     @EventHandler
@@ -269,6 +278,8 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         ArtisanRestrictions.Interact(event);
         EliteFight.Interact(event);
 
+        misc.BuildCircle(event);
+
         //effects triggered
         if (!(stats.isCastingSpell()) && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) && wand.IsWand(player.getInventory().getItemInOffHand())) {
             //gets Player's spellbook to cast from
@@ -278,13 +289,13 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
                 //tells the game the player's casting a spell
                 if (!(playerSpellbook[0] == null || playerSpellbook[1] == null || playerSpellbook[2] == null || playerSpellbook[3] == null)) {
                     stats.setCastingSpell(true);
-                    //spell selected based off of context of cast
+                    //spell selected based off of context of cast and priority
                     if (player.isSneaking()) {
                         NewSpell.cast(player, playerSpellbook[3]);
-                    } else if (player.isSprinting()) {
-                        NewSpell.cast(player, playerSpellbook[1]);
                     } else if (!player.isOnGround()) {
                         NewSpell.cast(player, playerSpellbook[2]);
+                    } else if (player.isSprinting()) {
+                        NewSpell.cast(player, playerSpellbook[1]);
                     } else {
                         NewSpell.cast(player, playerSpellbook[0]);
                     }
@@ -334,7 +345,6 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
 
         //removing withers from the game
         if (!(ent.hasMetadata("BukkitValues")) && ent instanceof Wither) {
-            Location loc = ent.getLocation();
             event.setCancelled(true);
         }
 
@@ -373,7 +383,10 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
                     ItemStack item = player.getInventory().getItemInMainHand();
                     if (item.getType() != Material.AIR && PlayerEquipment.ItemToEquipment(item).isGreatSword())
                         mob.setVelocity(player.getLocation().getDirection().multiply(0.75).add(new Vector(0, 0.25, 0)));
-
+                    else if (PlayerEquipment.ItemToEquipment(item).isLongSword())
+                        mob.setVelocity(player.getLocation().getDirection().multiply(0.15).add(new Vector(0, 0.1, 0)));
+                    else if (PlayerEquipment.ItemToEquipment(item).isDagger())
+                        mob.setVelocity(player.getLocation().getDirection().multiply(0.05));
                     //mob re-aggro
                     if (event.getEntity() instanceof Creature) {
                         Creature mobC = (Creature) mob;
@@ -571,9 +584,14 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
                 event.setCancelled(true);
             }
         }
+    }
+    @EventHandler
+    public void onEntityUnload(EntitiesUnloadEvent event) {
+        List<Entity> ents = event.getEntities();
 
-
-
+        for (Entity ent : ents) {
+            MobUtility.removeMobStats(ent);
+        }
     }
     @EventHandler
     public void onPlayerConsumeItem(PlayerItemConsumeEvent event) {
@@ -594,14 +612,18 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
            event.setCancelled(true);
        }
     }
+
+
     //MythicMobs Event Listeners
     @EventHandler
     public void onMythicMobEntitySpawn(MythicMobSpawnEvent event) {
         ActiveMob ent = event.getMob();
+
         String MythicMobID = ent.getType().toString();
 
         if (bossIDNames.contains(MythicMobID)) {
             LivingEntity bossEnt = (LivingEntity) event.getEntity();
+            bossEnt.setCollidable(false);
             MobStats.giveBossStatBlock(bossEnt, ent.getType().toString());
         }
 
@@ -620,12 +642,14 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
             p.damage(0);
         }
     }
-
-
-
     @EventHandler
     public void onMythicMobDeath(MythicMobDeathEvent event) {
+
+        //handles loot for roaming elites
         elite.generateRoamingEliteDrops(event);
+
+        //handles
+        elite.generateArenaEliteDrops(event);
     }
     @EventHandler
     public void onMythicEntityDeath(MythicMobDeathEvent event) {

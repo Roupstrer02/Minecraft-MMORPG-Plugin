@@ -16,28 +16,7 @@ import java.util.Collection;
 import static me.roupen.firstpluginthree.magic.spells.*;
 
 public class DivineWeYieldToNone extends BukkitRunnable {
-    /*
-     * Welcome to Zelandris!
-     * I probably asked you to code this as to lower my workload by a tiny bit and have some fun
-     * But most importantly, it's as "they" say: Zelandris was not made in a day, nor by one man.
-     *
-     * Below you'll find everything you need to create a new addition to the grimoire of spells in the arcane compendium of Zelandris
-     *
-     * 1. Spell relevant variables
-     *   1.1 - Spell Parameters
-     *   1.2 - General spell variables
-     * 2. Spell Methods
-     *   2.1 - Calculation Methods
-     *   2.2 - Logic Methods
-     * */
 
-    // 1. Spell relevant variables
-
-    //general note, if any of the variables are highlighted in yellow in their definitions, you can ignore it. It's there because I'm being organized for the sake of the template
-    //rather than optimally organized
-
-    // 1.1 - Spell Parameters
-    //========================================================================================================================================================
     //Progress dictates what stage of the spell has been reached, measured in ticks (20/s -> 20 == 1s)
     private int progress = 0;
 
@@ -48,7 +27,7 @@ public class DivineWeYieldToNone extends BukkitRunnable {
     private int timeOut = 41;
 
     //Base mana cost (without reduction from wand)
-    private int baseManaCost = 200;
+    public static double baseManaCost = 200;
 
     //if you wish to use the standard damage calculation provided, this value is simply a factor towards how much damage the spell deals
     private double spellDamage = 5;
@@ -111,7 +90,7 @@ public class DivineWeYieldToNone extends BukkitRunnable {
 
     //the standard "player spell damage" or "arcane damage potential" is their wisdom level * wand offense affinity --> intended to be used IN the damage calculation, not standalone
     public double CasterSpellPower() {
-        return stats.getWisdom() * Wand.getDefenseSpellPowerModifier();
+        return stats.getCasterSpellDamage() * Wand.getDefenseSpellPowerModifier();
     }
     public double StatIncreaseFactor() { return 1.05 + (CasterSpellPower() / 200 );}
 

@@ -1,5 +1,6 @@
 package me.roupen.firstpluginthree.weather;
 
+import me.roupen.firstpluginthree.balance.Balance;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -67,7 +68,7 @@ public class WeatherForecast {
 
     public static final String[] WeatherDesigns = {
             "Beautiful day", "Pleasant breeze", "Windy", "Strong gusts", "Harsh Rainfall", "Stormy day",
-            "Torrential downpour", "Hurricane", "Poseidon's Wrath", "Zeus's Fury", "Hades' Revenge", "The River Styx cries...",
+            "Torrential Downpour", "Hurricane", "Poseidon's Wrath", "Zeus's Fury", "Hades' Revenge", "The River Styx cries...",
             "The frenzy has begun!"
     };
 
@@ -117,7 +118,7 @@ public class WeatherForecast {
 
     }
 
-    //Make another getWeather function that uses the entities biome and works out the difficulty
+    //Make another getWeather function that uses the entity's biome and works out the difficulty
     public static int getWeather(Entity entity)
     {
         File f = new File(getFolderPath() + "/WeatherForecast.yml");
@@ -177,13 +178,21 @@ public class WeatherForecast {
         }
     }
 
+    public static String getBiomeLevelRange(Player player) {
+        File f = new File(getFolderPath() + "/WeatherForecast.yml");
+        FileConfiguration cfg = YamlConfiguration.loadConfiguration(f);
+        String playerBiome = getPlayerBiome(player);
+        double attenuation = WeatherForecast.getBiomeModifier(player);
+        return " Lv" + ((int) ((((((int) cfg.get(playerBiome)) + 1) * 10) - 9) * attenuation)) + "-" + ((int) ((((int) cfg.get(playerBiome)) + 1) * 10 * attenuation));
+    }
+
     public static void WeatherReport(Player player) {
         File f = new File(getFolderPath() + "/WeatherForecast.yml");
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(f);
         String playerBiome = getPlayerBiome(player);
         double attenuation = WeatherForecast.getBiomeModifier(player);
         player.sendMessage(Component.text(playerBiome + ": ", styles.get( (int) (cfg.get(playerBiome))))
-                .append(Component.text(" Lv" + ((int) ((((((int) cfg.get(playerBiome)) + 1) * 10) - 9) * attenuation)) + "-" + ((int) ((((int) cfg.get(playerBiome)) + 1) * 10 * attenuation)) + "\n\n", Style.style(NamedTextColor.WHITE)))
+                .append(Component.text(" Lv" + ((int) ((((((int) cfg.get(playerBiome)) + 1) * Balance.BiomeLevelRange) - (Balance.BiomeLevelRange - 1)) * attenuation)) + "-" + ((int) ((((int) cfg.get(playerBiome)) + 1) * Balance.BiomeLevelRange * attenuation)) + "\n\n", Style.style(NamedTextColor.WHITE)))
 
         .append(Component.text("Today's Weather Forecast\n", Style.style(NamedTextColor.WHITE, TextDecoration.BOLD))
                 .append(Component.text("In the plains: "))

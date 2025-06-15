@@ -51,7 +51,7 @@ public class NatureNaturesDiversity extends BukkitRunnable {
     private int timeOut = 21;
 
     //Base mana cost (without reduction from wand)
-    private int baseManaCost = 50;
+    public static double baseManaCost = 10;
 
     //if you wish to use the standard damage calculation provided, this value is simply a factor towards how much damage the spell deals
     private double spellDamage = 5;

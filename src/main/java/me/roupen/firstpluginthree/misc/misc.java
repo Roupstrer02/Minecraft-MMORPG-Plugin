@@ -1,10 +1,13 @@
 package me.roupen.firstpluginthree.misc;
 
 import net.kyori.adventure.text.Component;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,7 +45,7 @@ public class misc {
         List<LivingEntity> mobs = world.getLivingEntities();
 
         for (LivingEntity mob : mobs) {
-            if ((mob instanceof Zombie || mob instanceof Skeleton) && ((Monster) mob).isInDaylight()) {
+            if ((mob instanceof Monster) && mob.getWorld().getEnvironment() == World.Environment.NORMAL) {
                 mob.remove();
             }
         }
@@ -112,6 +115,48 @@ public class misc {
                 return true;
         }
 
+    }
+
+    public static void BuildCircle(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        if (player.getName().equals("Roupstrer02")) {
+
+            if (player.getInventory().getItemInMainHand().getType() == Material.STICK) {
+
+                World world = player.getWorld();
+                Location loc = player.getLocation();
+                int X = loc.getBlockX();
+                int Y = loc.getBlockY();
+                int Z = loc.getBlockZ();
+                int Xdirection = 1;
+                int Zdirection = 1;
+                ItemStack config = player.getInventory().getItemInOffHand();
+                int radius = config.getAmount();
+                Material mat = config.getType();
+
+                double lambda = 0.5;
+
+                int[][] map = new int[radius][radius];
+                for (int k = 0; k < 4; k++) {
+                    for (int i = 0; i < radius; i++) {
+                        for (int j = 0; j < radius; j++) {
+                            double radval = Math.sqrt(Math.pow(i+1, 2) + Math.pow(j+1, 2));
+                            if (radval >= (radius - lambda) && radval <= (radius + lambda)) {
+                                //map[i][j] = 1;
+                                world.getBlockAt(X + (i * Xdirection), Y,Z+(j * Zdirection)).setType(mat);
+                            }
+                        }
+                    }
+                    if (k % 2 == 0) {
+                        Xdirection = -Xdirection;
+                    }else{
+                        Zdirection = -Zdirection;
+                    }
+                }
+
+
+            }
+        }
     }
 
 

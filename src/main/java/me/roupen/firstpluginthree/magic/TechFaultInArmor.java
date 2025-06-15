@@ -35,8 +35,9 @@ public class TechFaultInArmor extends BukkitRunnable {
     private wand Wand;
     private boolean spellHit;
     private DecimalFormat NumberFormat = new DecimalFormat("0.0");
+    public static double baseManaCost = 40.0;
 
-    //Need a variable that holds the wand in order to easily apply the modifiers onto the spell (without coupling code)
+
 
     public TechFaultInArmor(Player caster)
     {
@@ -140,7 +141,7 @@ public class TechFaultInArmor extends BukkitRunnable {
     }
 
     public double CasterSpellDamage() {
-        return stats.getWisdom() * Wand.getOffenseSpellPowerModifier();
+        return stats.getCasterSpellDamage() * Wand.getOffenseSpellPowerModifier();
     }
 
     public double FaultInTheArmorDmgCalc(MobStats mobstats)
@@ -154,7 +155,7 @@ public class TechFaultInArmor extends BukkitRunnable {
     }
     public double ManaCostCalc(PlayerStats playerstats)
     {
-        return 60.0 * Wand.getSpellCostModifier();
+        return baseManaCost * Wand.getSpellCostModifier();
     }
     public double spellCooldownTextUpdate(double upperLimit, double currentProgress) {
         double increment = 1.0/upperLimit;

@@ -36,6 +36,7 @@ public class PyroMeteorFall extends BukkitRunnable {
     private boolean SpellHit = false;
     private wand Wand;
     private DecimalFormat NumberFormat = new DecimalFormat("0.0");
+    public static double baseManaCost = 250.0;
 
     //Need a variable that holds the wand in order to easily apply the modifiers onto the spell (without coupling code)
 
@@ -171,7 +172,7 @@ public class PyroMeteorFall extends BukkitRunnable {
         return 7.5 * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
     }
     public double CasterSpellDamage() {
-        return stats.getWisdom() * Wand.getOffenseSpellPowerModifier();
+        return stats.getCasterSpellDamage() * Wand.getOffenseSpellPowerModifier();
     }
 
     public double SpellAOE() {
@@ -180,7 +181,7 @@ public class PyroMeteorFall extends BukkitRunnable {
 
     public double ManaCostCalc(PlayerStats playerstats)
     {
-        return 250.0 * Wand.getSpellCostModifier();
+        return baseManaCost * Wand.getSpellCostModifier();
     }
 
     public void ParticleSphere(Location loc, double radius, Particle particletype) {

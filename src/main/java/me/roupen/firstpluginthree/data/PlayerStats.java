@@ -1,8 +1,8 @@
 package me.roupen.firstpluginthree.data;
 
 
-import io.lumine.mythic.bukkit.utils.lib.jooq.impl.QOM;
 import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
+import me.roupen.firstpluginthree.balance.Balance;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
@@ -15,7 +15,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffectType;
 
-import javax.sound.sampled.Line;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -50,7 +49,7 @@ public class PlayerStats {
 
     //Total Stats (in-game)
 
-    private Player player; //you are a player, I am a developer, we are not the same.
+    private Player player;
     public String currentBiomeGroup = "";
     public List<Double> HomeLocation = null;
     private double ActiveCurrentHealth;
@@ -82,6 +81,7 @@ public class PlayerStats {
 
     //consumable item related variables
     private boolean consumingItem = false;
+    public int EquipmentLevelMinimum = 0;
 
     //stat multipliers
     public Map<String, Double> LinearStatChanges = new HashMap<String, Double>() {{
@@ -383,7 +383,7 @@ public class PlayerStats {
                 }
 
                 //sets stamina cost of attacks
-                else if (AllItems[i] == MainHand) {
+                if (AllItems[i] == MainHand) {
                     equipment.setStaminaCost(TempEquipment.getStaminaCost());
                 }
 
@@ -479,7 +479,7 @@ public class PlayerStats {
     }
     public void gainExperience(int exp) {
         //value subject to change
-        int Levelcap = getLevelCap(this.Level);
+        int Levelcap = getLevelCap();
         this.Experience += exp;
 
         if (this.Experience >= Levelcap)
@@ -488,10 +488,10 @@ public class PlayerStats {
             while (this.Experience >= Levelcap) {
                 this.Experience -= Levelcap;
                 this.Level += 1;
-                Levelcap = getLevelCap(this.Level);
+                Levelcap = getLevelCap();
                 this.SkillPoints += 1;
             }
-            getPlayer().chat("You Leveled up to level " + this.Level + "!");
+            getPlayer().chat(" Leveled up to level " + this.Level + "!");
             player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1, 1);
         }
     }
@@ -508,9 +508,12 @@ public class PlayerStats {
         return ((BaseActiveManaRegen + equipment.getManaRegen()) + LinearStatChanges.get("Mana Regen")) * MultiplicativeStatChanges.get("Mana Regen");
     }
 
+    public double getCasterSpellDamage() {
+        return Balance.spellPowerCalc(this.Wisdom);
+    }
     //Stat calculator for each stat
     public void recalculateMaxHealth() {
-        setActiveMaxHealth(Double.parseDouble(df.format(((100 + (equipment.getMaxHealth() * (1 + (0.01 * getVitality()))) + (getVitality() - 1) * 25) + LinearStatChanges.get("Max HP")) * MultiplicativeStatChanges.get("Max HP"))));
+        setActiveMaxHealth(Double.parseDouble(df.format(((20 + (equipment.getMaxHealth() * (1 + (0.01 * getVitality()))) + (getVitality() - 1) * 25) + LinearStatChanges.get("Max HP")) * MultiplicativeStatChanges.get("Max HP"))));
     }//Vitality
     public void recalculateHealth() {
         if (getActiveCurrentHealth() < getActiveMaxHealth()) {
@@ -522,7 +525,10 @@ public class PlayerStats {
         }
     }
     public void recalculateDamage() {
-        setActiveDamage(Double.parseDouble(df.format(MultiplicativeStatChanges.get("Damage") * ((getStrength() + (equipment.getDamage() * (1 + (0.01 * getStrength())))) + LinearStatChanges.get("Damage")))));
+        if (equipment.getDamage() != 0)
+            setActiveDamage(Double.parseDouble(df.format(MultiplicativeStatChanges.get("Damage") * ((getStrength() + (equipment.getDamage() * (1 + (0.01 * getStrength())))) + LinearStatChanges.get("Damage")))));
+        else
+            setActiveDamage(1);
     }//Strength
     public void recalculateCritDamageMult(){
         setCritDamageMult(Double.parseDouble(df.format(((1.5 + ((0.01 * getStrength()) * equipment.getCritDamageMult())) + LinearStatChanges.get("Crit Damage Mult")) * MultiplicativeStatChanges.get("Crit Damage Mult"))));
@@ -600,11 +606,11 @@ public class PlayerStats {
 
     public void respawnStatReset() {
         setActiveCurrentHealth(getActiveMaxHealth());
-        setActiveCurrentStamina(getActiveMaxStamina());
-        setActiveCurrentMana(getActiveMaxMana());
+        setActiveCurrentStamina(0);
+        setActiveCurrentMana(0);
     }
-    public int getLevelCap(int l) {
-        return 200 * ( (int) Math.pow(l,1.75));
+    public int getLevelCap() {
+        return Balance.PlayerLevelCapEXPCalc(this.Level);
     }
     public void heal(double amount) {
         ActiveCurrentHealth += amount * getHealingReceivedModifier();

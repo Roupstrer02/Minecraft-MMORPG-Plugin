@@ -46,7 +46,7 @@ public class NatureNaturesStorage extends BukkitRunnable {
     private int timeOut = 21;
 
     //Base mana cost (without reduction from wand)
-    private int baseManaCost = 80;
+    public static double baseManaCost = 15.0;
 
     //if you wish to use the standard damage calculation provided, this value is simply a factor towards how much damage the spell deals
     private double spellPower = 2;
@@ -106,7 +106,7 @@ public class NatureNaturesStorage extends BukkitRunnable {
 
     //the standard "player spell damage" or "arcane damage potential" is their wisdom level * wand offense affinity --> intended to be used IN the damage calculation, not standalone
     public double CasterSpellPower() {
-        return stats.getWisdom() * Wand.getDefenseSpellPowerModifier();
+        return stats.getCasterSpellDamage() * Wand.getDefenseSpellPowerModifier();
     }
 
     //used for determining the radius of circular AOE targeting (this considers the wand's properties)

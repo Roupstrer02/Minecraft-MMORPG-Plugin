@@ -1,15 +1,13 @@
 package me.roupen.firstpluginthree.customgui;
 
 import me.roupen.firstpluginthree.data.PlayerStats;
-import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
-import me.roupen.firstpluginthree.playerequipment.Rune;
+import me.roupen.firstpluginthree.magic.*;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
 import me.roupen.firstpluginthree.weather.WeatherForecast;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.block.Biome;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -84,12 +82,12 @@ public class GuiUtility {
         PlayerStats stats = PlayerUtility.getPlayerStats(player);
         GuiUtility gui = new GuiUtility(player, 45, "Player Stats");
 
-        gui.addGuiItem(Material.GRAY_STAINED_GLASS_PANE, "Level " + stats.getLevel(), 3, 0, df.format((((double) stats.getExperience()) / stats.getLevelCap(stats.getLevel())) * 100) + "%");
+        gui.addGuiItem(Material.GRAY_STAINED_GLASS_PANE, "Level " + stats.getLevel(), 3, 0, df.format((((double) stats.getExperience()) / stats.getLevelCap()) * 100) + "%");
         gui.addGuiItem(Material.DIAMOND, "Level Up: ", 8, 0, "Unused Skill Points: " + stats.getSkillPoints());
         gui.addGuiItem(Material.LIME_STAINED_GLASS_PANE, "Resilience ", 10, 0, Component.text("Lv ", Style.style(NamedTextColor.WHITE)).append(Component.text(stats.getResilience(), Style.style(NamedTextColor.GREEN))));
         gui.addGuiItem(Material.BLUE_STAINED_GLASS_PANE, "Intelligence ", 14, 0, Component.text("Lv ", Style.style(NamedTextColor.WHITE)).append(Component.text(stats.getIntelligence(), NamedTextColor.BLUE)));
 
-        gui.addGuiItem(weatherIcons[WeatherForecast.getPlayerWeather(player)], WeatherForecast.WeatherDesigns[WeatherForecast.getPlayerWeather(player)], 17, 0, "W.I.P");
+        gui.addGuiItem(weatherIcons[WeatherForecast.getPlayerWeather(player)], WeatherForecast.WeatherDesigns[WeatherForecast.getPlayerWeather(player)], 17, 0,"");
 
         gui.addGuiItem(Material.RED_STAINED_GLASS_PANE, "Vitality ", 18, 0, Component.text("Lv ", Style.style(NamedTextColor.WHITE)).append(Component.text(stats.getVitality(), NamedTextColor.RED)));
         gui.addGuiItem(Material.ORANGE_STAINED_GLASS_PANE, "Strength ", 20, 0, Component.text("Lv ", Style.style(NamedTextColor.WHITE)).append(Component.text(stats.getStrength(), NamedTextColor.GOLD)));
@@ -147,25 +145,25 @@ public class GuiUtility {
         spellbookgui.addGuiItem(Material.FEATHER, "Aerial Spells", 27, 0, "Midair + Right-Click");
         spellbookgui.addGuiItem(Material.END_CRYSTAL, "Ultimate Spells", 36, 0, "Shift + Right-Click");
 
-        spellbookgui.addGuiItem(Material.FIRE_CHARGE, "Fireball", 10, 0, "Shoots a fireball forward"," ", "explodes on terrain or first entity hit");
-        spellbookgui.addGuiItem(Material.FIRE_CHARGE, "Fiery Step", 19, 0, "Summons a ring of fire around the caster", " ", "Marks enemies in range, ", "making them explode after a few seconds");
-        spellbookgui.addGuiItem(Material.FIRE_CHARGE, "Explosive leap", 28, 0, "Create an explosion launching the caster up", " ", "damages enemies caught in the explosion");
-        spellbookgui.addGuiItem(Material.FIRE_CHARGE, "Meteor Fall", 37, 0, "The world burn in hellfire!", " ", "May you find solace in the flames","for it is all you will see");
+        spellbookgui.addGuiItem(Material.FIRE_CHARGE, "Fireball", 10, 0, PyroFireball.baseManaCost + " mana"," ", "Shoots a fireball forward"," ", "explodes on terrain or first entity hit");
+        spellbookgui.addGuiItem(Material.FIRE_CHARGE, "Fiery Step", 19, 0, PyroFlameDash.baseManaCost + " mana", " ", "Summons a ring of fire around the caster", " ", "Marks enemies in range, ", "making them explode after a few seconds");
+        spellbookgui.addGuiItem(Material.FIRE_CHARGE, "Explosive leap", 28, 0, PyroFlameBooster.baseManaCost + " mana", " ", "Create an explosion launching the caster up", " ", "damages enemies caught in the explosion");
+        spellbookgui.addGuiItem(Material.FIRE_CHARGE, "Meteor Fall", 37, 0, PyroMeteorFall.baseManaCost + " mana", " ", "The world burn in hellfire!", " ", "May you find solace in the flames","for it is all you will see");
 
-        spellbookgui.addGuiItem(Material.REDSTONE, "Snipe", 12, 0, "Shoots an instantly travelling bullet"," ", "Ignores armor of enemy hit");
-        spellbookgui.addGuiItem(Material.REDSTONE, "Fault In The Armor", 21, 0, "Launches the caster forward", " ", "Damages first enemy hit and knocks them back");
-        spellbookgui.addGuiItem(Material.REDSTONE, "Aerial Supremacy", 30, 0, "Caster flies in the direction they're looking");
-        spellbookgui.addGuiItem(Material.REDSTONE, "Chronomancer's prison", 39, 0, "Throws device that creates a time-stopping field upon impact", " ", "Enemies caught in the field have their armor reduced", "and movement frozen");
+        spellbookgui.addGuiItem(Material.REDSTONE, "Snipe", 12, 0, TechSnipe.baseManaCost + " mana", " ", "Shoots an instantly travelling bullet"," ", "Ignores armor of enemy hit");
+        spellbookgui.addGuiItem(Material.REDSTONE, "Fault In The Armor", 21, 0, TechFaultInArmor.baseManaCost + " mana", " ", "Launches the caster forward", " ", "Damages first enemy hit and knocks them back");
+        spellbookgui.addGuiItem(Material.REDSTONE, "Aerial Supremacy", 30, 0, TechSteamRocketPack.baseManaCost + " mana", " ", "Caster flies in the direction they're looking");
+        spellbookgui.addGuiItem(Material.REDSTONE, "Chronomancer's prison", 39, 0, TechChronothief.baseManaCost + " mana", " ", "Throws device that creates a time-stopping field upon impact", " ", "Enemies caught in the field have their armor reduced", "and movement frozen");
 
-        spellbookgui.addGuiItem(Material.NETHER_STAR, "Healing Orb", 14, 0, "Shoots a slow moving orb"," ", "Heals all players in it's vicinity");
-        spellbookgui.addGuiItem(Material.NETHER_STAR, "Strength Of Faith", 23, 0, "Creates an area around the caster"," ", "Strengthens the attacks of allies in range");
-        spellbookgui.addGuiItem(Material.NETHER_STAR, "Angelic Wings", 32, 0, "Teleports caster just in time to save an injured ally"," ", "Target receives minor healing and a temporary defense increase");
-        spellbookgui.addGuiItem(Material.NETHER_STAR, "We Yield To None", 41, 0, "I see no Deities here..."," ", "Other than ME!!!");
+        spellbookgui.addGuiItem(Material.NETHER_STAR, "Healing Orb", 14, 0, DivineHealingOrb.baseManaCost + " mana", " ", "Shoots a slow moving orb"," ", "Heals all players in it's vicinity");
+        spellbookgui.addGuiItem(Material.NETHER_STAR, "Strength Of Faith", 23, 0, DivineStrengthOfFaith.baseManaCost + " mana", " ", "Creates an area around the caster"," ", "Strengthens the attacks of allies in range");
+        spellbookgui.addGuiItem(Material.NETHER_STAR, "Angelic Wings", 32, 0, DivineAngelWings.baseManaCost + " mana", " ", "Teleports caster just in time to save an injured ally"," ", "Target receives minor healing and a temporary defense increase");
+        spellbookgui.addGuiItem(Material.NETHER_STAR, "We Yield To None", 41, 0, DivineWeYieldToNone.baseManaCost + " mana", " ", "I see no Deities here..."," ", "Other than ME!!!");
 
-        spellbookgui.addGuiItem(Material.OAK_WOOD, "Nature's Bounty", 16, 0, "Breaks the first block in front of the player"," ", "Grants EXP when breaking ores. Chance for bonus drops");
-        spellbookgui.addGuiItem(Material.OAK_WOOD, "Nature's Storage", 25, 0, "Breaks the first block in front of the player"," ", "Grants EXP when breaking ores. Chance for bonus drops");
-        spellbookgui.addGuiItem(Material.OAK_WOOD, "Nature's Workbench", 34, 0, "Breaks the first block in front of the player"," ", "Grants EXP when breaking ores. Chance for bonus drops");
-        spellbookgui.addGuiItem(Material.OAK_WOOD, "Nature's Diversity", 43, 0, "Cycles through the block subtypes of the targeted block"," ", "affects saplings, logs, woods and planks");
+        spellbookgui.addGuiItem(Material.OAK_WOOD, "Nature's Bounty", 16, 0, NatureNaturesBounty.baseManaCost + " mana", " ", "Breaks the first block within range in front of the player"," ", "Grants EXP when breaking ores. Chance for bonus drops");
+        spellbookgui.addGuiItem(Material.OAK_WOOD, "Nature's Storage", 25, 0, NatureNaturesStorage.baseManaCost + " mana", " ", "Opens your personal ender chest");
+        spellbookgui.addGuiItem(Material.OAK_WOOD, "Nature's Workbench", 34, 0, NatureNaturesWorkbench.baseManaCost + " mana", " ", "Opens a convenient crafting table wherever you may be");
+        spellbookgui.addGuiItem(Material.OAK_WOOD, "Nature's Diversity", 43, 0, NatureNaturesDiversity.baseManaCost + " mana", " ", "Cycles through the block subtypes of the targeted block"," ", "affects saplings, logs, woods and planks");
 
         spellbookgui.addGuiItem(Material.GRAY_DYE, "Back to profile menu", 49, 0, "");
 

@@ -97,15 +97,20 @@ public class partyCMD implements CommandExecutor {
                             for (Player p : LeavingMemberOGParty) {
                                 if (p != player) {
                                     PlayerStats PartyMemberStats = PlayerUtility.getPlayerStats(p);
-
                                     PartyMemberStats.removeMemberFromParty(player);
                                     LeavingMember.removeMemberFromParty(p);
+                                    p.sendMessage(Component.text(LeavingMember.getPlayer().getName() + " has left the party", Style.style(NamedTextColor.YELLOW, TextDecoration.ITALIC)));
+                                }
+                                else {
+                                    p.sendMessage(Component.text("You have left the party", Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)));
                                 }
                             }
                             break;
 
                         case "help":
                             Component message = Component.text("=================================================\n");
+                            message = message.append(Component.text("All members of a party share all EXP gains equally,\n"));
+                            message = message.append(Component.text("making it easier to fight in groups\n\n"));
                             message = message.append(Component.text("/party - view the list of current party members\n"));
                             message = message.append(Component.text("/party invite <Player> - invites that player to your party\n"));
                             message = message.append(Component.text("/party accept - Accepts most recent invite\n"));

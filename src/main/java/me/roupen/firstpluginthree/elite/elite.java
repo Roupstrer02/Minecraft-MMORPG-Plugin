@@ -38,7 +38,64 @@ public class elite {
         BossName = boss_name;
 
     }
+    public static void generateArenaEliteDrops(MythicMobDeathEvent event) {
+        Random rd = new Random();
+        ActiveMob mmob = event.getMob();
 
+        //drop rates
+
+        //this item always drops, but can be changed later
+        final double NetherStarDropRate = 0.5;
+        final double Tier2RuneDropRate = 1.0;
+        final double Tier1RuneDropRate = 0.25;
+        String mmobName = mmob.getType().toString();
+        int RewardRollCount;
+        switch (mmobName) {
+            case "MythicMob{LarianLow}":
+                RewardRollCount = 1;
+                break;
+            case "MythicMob{LarianMid}":
+                RewardRollCount = 2;
+                break;
+            case "MythicMob{Larian}":
+                RewardRollCount = 3;
+                break;
+            default:
+                RewardRollCount = 0;
+        }
+
+        if (ArenaEliteNames.contains(mmobName)) {
+
+            Entity ent = mmob.getEntity().getBukkitEntity();
+            Location entLoc = ent.getLocation();
+            for (int i = 0; i < RewardRollCount; i++) {
+
+                //rolls for each mob drop
+                for (Player p : FirstPluginThree.PlayersInBossFight) {
+
+                    //Nether Star
+                    if (rd.nextDouble() < NetherStarDropRate) {
+                        if (p.getInventory().firstEmpty() != -1)
+                            p.getInventory().addItem(new ItemStack(Material.NETHER_STAR, 1));
+                        else
+                            p.getWorld().dropItem(entLoc, new ItemStack(Material.NETHER_STAR, 1));
+                    }
+
+                    //tier 2 rune
+                    if (rd.nextDouble() <= Tier2RuneDropRate) {
+
+                        p.getInventory().addItem(Rune.GenerateRandomTier2Rune());
+
+                    }
+
+                    //tier 1 rune
+                    if (rd.nextDouble() < Tier1RuneDropRate) {
+                        p.getInventory().addItem(Rune.GenerateRandomTier1Rune());
+                    }
+                }
+            }
+        }
+    }
     public static void generateRoamingEliteDrops(MythicMobDeathEvent event) {
         Random rd = new Random();
         ActiveMob mmob = event.getMob();
@@ -53,11 +110,11 @@ public class elite {
             Location entLoc = ent.getLocation();
 
             //rolls for each mob drop
-            if (rd.nextDouble() >= runeDropRate) {
+            if (rd.nextDouble() < runeDropRate) {
                 ent.getWorld().dropItem(entLoc, Rune.GenerateRandomTier1Rune());
             }
 
-            if (rd.nextDouble() >= netherStarDropRate) {
+            if (rd.nextDouble() < netherStarDropRate) {
                 ent.getWorld().dropItem(entLoc, new ItemStack(Material.NETHER_STAR));
             }
         }
