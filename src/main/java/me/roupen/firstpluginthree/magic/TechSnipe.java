@@ -34,7 +34,7 @@ public class TechSnipe extends BukkitRunnable {
     private wand Wand;
     private boolean spellHit;
     private Location bulletLoc;
-    private Material[] exempt_blocks = {Material.AIR, Material.GRASS, Material.TALL_GRASS, Material.WATER};
+    private Material[] exempt_blocks = {Material.AIR, Material.GRASS, Material.TALL_GRASS, Material.WATER, Material.CAVE_AIR};
     private DecimalFormat NumberFormat = new DecimalFormat("0.0");
 
     public static double baseManaCost = 30.0;

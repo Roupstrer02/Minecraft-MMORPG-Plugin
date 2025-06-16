@@ -3,6 +3,7 @@ package me.roupen.firstpluginthree.data;
 
 import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
 import me.roupen.firstpluginthree.balance.Balance;
+import me.roupen.firstpluginthree.utility.PlayerUtility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
@@ -147,7 +148,8 @@ public class PlayerStats {
     public Component getViewPartyMessage() {
         Component message = Component.text("Party Members: \n", Style.style(NamedTextColor.GREEN));
         for (Player p : party) {
-            message = message.append(Component.text("- " + p.getName() + "\n", Style.style(NamedTextColor.GREEN)));
+            PlayerStats pStats = PlayerUtility.getPlayerStats(p);
+            message = message.append(Component.text("- " + p.getName() + ": ", Style.style(NamedTextColor.GREEN)).append(Component.text("Level " + pStats.getLevel(), Style.style(NamedTextColor.YELLOW))));
         }
         return message;
     }
