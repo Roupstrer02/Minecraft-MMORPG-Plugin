@@ -361,7 +361,7 @@ public class PlayerStats {
                     TempEquipment.setDamage(0.75 * TempEquipment.getDamage());
                 }
 
-                //Special use case for two-handing Greatswords
+                //Special use case for two-handing a Greatsword
                 else if (TempEquipment.isGreatSword() && OffHand.getType() == Material.AIR) {
                     TempEquipment.setDamage(1.5 * TempEquipment.getDamage());
                 }
@@ -370,6 +370,10 @@ public class PlayerStats {
                 else if (OffHand.getType() == Material.SHIELD && TempEquipment.isLongSword()) {
                     //insufficient buff? they already have a shield with a damage reduction ability
                     TempEquipment.setDamage(1.25 * TempEquipment.getDamage());
+                }
+                else if (TempEquipment.getToolType().equals("Shield") && PlayerEquipment.ItemToEquipment(MainHand).isLongSword()) {
+                    //insufficient buff? they already have a shield with a damage reduction ability
+                    TempEquipment.setDefense(1.1 * TempEquipment.getDefense());
                 }
 
                 //adds offhand stats excluding damage and cost

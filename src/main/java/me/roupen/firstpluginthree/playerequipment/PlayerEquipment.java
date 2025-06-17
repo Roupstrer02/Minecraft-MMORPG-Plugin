@@ -597,11 +597,12 @@ public class PlayerEquipment {
                 new_random_equipment.setLevel(level);
                 new_random_equipment.setRarity(rarity);
                 new_random_equipment.setName(RarityNames[rarity] + " " + new_random_equipment.toolType);
-            }else{ //Generate a Shield
-                new_random_equipment = new PlayerEquipment(rarity, Material.SHIELD, WeaponType);
+            }
+            else{ //Should be impossible, but generates an error item for a player to report it
+                new_random_equipment = new PlayerEquipment(rarity, Material.DEAD_BUSH, WeaponType);
                 new_random_equipment.setLevel(level);
                 new_random_equipment.setRarity(rarity);
-                new_random_equipment.setName(RarityNames[rarity] + " " + new_random_equipment.toolType);
+                new_random_equipment.setName("Item Generation Error " + new_random_equipment.toolType);
             }
         }else {//Generate an armor piece
             armorType = PlayerEquipment.GenerateArmorType();
