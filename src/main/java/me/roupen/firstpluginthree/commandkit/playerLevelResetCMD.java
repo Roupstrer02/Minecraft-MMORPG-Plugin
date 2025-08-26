@@ -48,7 +48,6 @@ public class playerLevelResetCMD implements CommandExecutor {
                     pStats.setWisdom(1);
                     pStats.setArtisan(0);
 
-                    pStats.setLevel(1);
                     pStats.setExperience(0);
                 }
 

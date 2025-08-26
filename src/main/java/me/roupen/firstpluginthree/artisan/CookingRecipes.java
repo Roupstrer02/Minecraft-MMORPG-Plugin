@@ -47,6 +47,7 @@ public class CookingRecipes {
     private ShapelessRecipe newShapelessRecipe;
     private FurnaceRecipe newFurnaceRecipe;
     private SmokingRecipe newSmokingRecipe;
+    private Material consumableMaterialType = Material.GOLDEN_APPLE;
     public CookingRecipes() {
 
         this.Recipes = new HashMap<>();
@@ -203,7 +204,7 @@ public class CookingRecipes {
         newShapelessRecipe.addIngredient(new RecipeChoice.ExactChoice(Items.get("blonde roasted coffee beans")));
         addToMaps(newItemName, newItem, newShapelessRecipe);
         ListOfRecipes.add(newShapelessRecipe);
-        addToLevelLockMap(newItemName, 5);
+        addToLevelLockMap(newItemName, 3);
 
         //blonde roast coffee needs 2 medium roast bean item
         newItem = newCraftableItem(newPotionItem(new PotionData(PotionType.WATER)), 1, "Medium Roast Coffee Mix","An absolute classic!", "just needs to be warmed up...");
@@ -214,7 +215,7 @@ public class CookingRecipes {
         newShapelessRecipe.addIngredient(new RecipeChoice.ExactChoice(Items.get("medium roasted coffee beans")));
         addToMaps(newItemName, newItem, newShapelessRecipe);
         ListOfRecipes.add(newShapelessRecipe);
-        addToLevelLockMap(newItemName, 6);
+        addToLevelLockMap(newItemName, 4);
 
         //blonde roast coffee needs 3 dark roast bean item
         newItem = newCraftableItem(newPotionItem(new PotionData(PotionType.WATER)), 1, "Dark Roast Coffee Mix","A bitter tasting start to a sweet day!", "just needs to be warmed up...");
@@ -226,26 +227,26 @@ public class CookingRecipes {
         newShapelessRecipe.addIngredient(new RecipeChoice.ExactChoice(Items.get("dark roasted coffee beans")));
         addToMaps(newItemName, newItem, newShapelessRecipe);
         ListOfRecipes.add(newShapelessRecipe);
-        addToLevelLockMap(newItemName, 7);
+        addToLevelLockMap(newItemName, 5);
 
         //==========================================================================================================
         //Coffees
 
-        newItem = (newCraftableItem(Material.MILK_BUCKET, 1, "Blonde Roast Coffee","A light start to the day!"));
+        newItem = (newCraftableItem(consumableMaterialType, 1, "Blonde Roast Coffee","A light start to the day!"));
         applyModel(newItem, 1);
         nameKey = makeNameKey("blonderoastcoffee");
         newSmokingRecipe = new SmokingRecipe(nameKey, newItem, new RecipeChoice.ExactChoice(Items.get("Blonde Roast Coffee Mix")), 0F, MinutesToTick(3));
         addToMaps(newItemName, newItem, newSmokingRecipe);
         ListOfRecipes.add(newSmokingRecipe);
 
-        newItem = newCraftableItem(Material.MILK_BUCKET, 1, "Medium Roast Coffee","Good Morning!");
+        newItem = newCraftableItem(consumableMaterialType, 1, "Medium Roast Coffee","Good Morning!");
         applyModel(newItem, 2);
         nameKey = makeNameKey("mediumroastcoffee");
         newSmokingRecipe = new SmokingRecipe(nameKey, newItem, new RecipeChoice.ExactChoice(Items.get("Medium Roast Coffee Mix")), 0F, MinutesToTick(3));
         addToMaps(newItemName, newItem, newSmokingRecipe);
         ListOfRecipes.add(newSmokingRecipe);
 
-        newItem = newCraftableItem(Material.MILK_BUCKET, 1, "Dark Roast Coffee","A bitter taste to start a sweet new day!");
+        newItem = newCraftableItem(consumableMaterialType, 1, "Dark Roast Coffee","A bitter taste to start a sweet new day!");
         nameKey = makeNameKey("darkroastcoffee");
         applyModel(newItem, 3);
         newSmokingRecipe = new SmokingRecipe(nameKey, newItem, new RecipeChoice.ExactChoice(Items.get("Dark Roast Coffee Mix")), 0F, MinutesToTick(3));
@@ -255,7 +256,7 @@ public class CookingRecipes {
         //==========================================================================================================
         //Iced Coffee
 
-        newItem = newCraftableItem(Material.MILK_BUCKET, 1, "Iced Coffee","Wakes you up in more ways than one!");
+        newItem = newCraftableItem(consumableMaterialType, 1, "Iced Coffee","Wakes you up in more ways than one!");
         applyModel(newItem, 4);
         nameKey = makeNameKey("icedcoffee1");
         newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
@@ -277,7 +278,7 @@ public class CookingRecipes {
         newShapelessRecipe.addIngredient(new RecipeChoice.ExactChoice(Items.get("Dark Roast Coffee Mix")));
         addToMaps(newItemName + "3", newItem, newShapelessRecipe);
         ListOfRecipes.add(newShapelessRecipe);
-        addToLevelLockMap(newItemName, 12);
+        addToLevelLockMap(newItemName, 8);
 
         //==========================================================================================================
         //Espresso
@@ -289,7 +290,7 @@ public class CookingRecipes {
         newShapelessRecipe.addIngredient(9, Items.get("blonde roasted coffee beans"));
         addToMaps(newItemName, newItem, newShapelessRecipe);
         ListOfRecipes.add(newShapelessRecipe);
-        addToLevelLockMap(newItemName, 15);
+        addToLevelLockMap(newItemName, 12);
 
         //Espresso mix
         newItem = giveEnchantedLook(newCraftableItem(newPotionItem(new PotionData(PotionType.AWKWARD)), 1, "Espresso Mix","More Caffeine!!"));
@@ -299,10 +300,10 @@ public class CookingRecipes {
         newShapelessRecipe.addIngredient(newPotionItem(new PotionData(PotionType.WATER)));
         addToMaps(newItemName, newItem, newShapelessRecipe);
         ListOfRecipes.add(newShapelessRecipe);
-        addToLevelLockMap(newItemName, 15);
+        addToLevelLockMap(newItemName, 12);
 
         //Final item: Espresso
-        newItem = newCraftableItem(Material.MILK_BUCKET, 1, "Espresso","I'M AWAKE!!! O_O");
+        newItem = newCraftableItem(consumableMaterialType, 1, "Espresso","I'M AWAKE!!! O_O");
         applyModel(newItem, 5);
         nameKey = makeNameKey("espresso");
 
@@ -321,10 +322,10 @@ public class CookingRecipes {
         newShapelessRecipe.addIngredient(Material.MILK_BUCKET);
         addToMaps(newItemName, newItem, newShapelessRecipe);
         ListOfRecipes.add(newShapelessRecipe);
-        addToLevelLockMap(newItemName, 16);
+        addToLevelLockMap(newItemName, 14);
 
         //Final item: Latte
-        newItem = newCraftableItem(Material.MILK_BUCKET, 1, "Latte", "You must like this a latte?","...");
+        newItem = newCraftableItem(consumableMaterialType, 1, "Latte", "You must like this a latte?","...");
         applyModel(newItem, 6);
         nameKey = makeNameKey("latte");
 
@@ -342,7 +343,7 @@ public class CookingRecipes {
         newShapelessRecipe.addIngredient(Material.MILK_BUCKET);
         addToMaps(newItemName, newItem, newShapelessRecipe);
         ListOfRecipes.add(newShapelessRecipe);
-        addToLevelLockMap(newItemName, 18);
+        addToLevelLockMap(newItemName, 16);
 
         //Cappucino mix
         newItem = newCraftableItem(newPotionItem(new PotionData(PotionType.AWKWARD)), 1, "Cappucino Mix","It's pretty much in the name");
@@ -352,10 +353,10 @@ public class CookingRecipes {
         newShapelessRecipe.addIngredient(Items.get("Milk Froth"));
         addToMaps(newItemName, newItem, newShapelessRecipe);
         ListOfRecipes.add(newShapelessRecipe);
-        addToLevelLockMap(newItemName, 18);
+        addToLevelLockMap(newItemName, 16);
 
         //Final item: Cappucino
-        newItem = newCraftableItem(Material.MILK_BUCKET, 1, "Cappucino","Caffeine but more posh!");
+        newItem = newCraftableItem(consumableMaterialType, 1, "Cappucino","Caffeine but more posh!");
         applyModel(newItem, 7);
         nameKey = makeNameKey("cappucino");
 
@@ -377,7 +378,7 @@ public class CookingRecipes {
 
         //French Vanilla
         //Espresso + French Syrup => French vanilla "Finalement, quelque chose de bon!"
-        newItem = newCraftableItem(Material.MILK_BUCKET, 1, "French Vanilla","Finalement, quelque chose de bon!");
+        newItem = newCraftableItem(consumableMaterialType, 1, "French Vanilla","Finalement, quelque chose de bon!");
         applyModel(newItem, 8);
         nameKey = makeNameKey("frenchvanilla");
         newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
@@ -389,7 +390,7 @@ public class CookingRecipes {
         //==========================================================================================================
         //Chai Tea Latte
         //Milk Froth + tea(?)
-        newItem = newCraftableItem(Material.MILK_BUCKET, 1, "Chai Tea Latte","The Tea of Tea");
+        newItem = newCraftableItem(consumableMaterialType, 1, "Chai Tea Latte","The Tea of Tea");
         applyModel(newItem, 9);
         nameKey = makeNameKey("chaitealatte");
         newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
@@ -413,7 +414,7 @@ public class CookingRecipes {
         addToLevelLockMap(newItemName, 21);
 
         //pumpkin spice + espresso mix + milk froth = Pumpkin Spice Latte
-        newItem = newCraftableItem(Material.MILK_BUCKET, 1, "Pumpkin Spice Latte","\"Yes, you are a basic b****\"", "- Dakoda");
+        newItem = newCraftableItem(consumableMaterialType, 1, "Pumpkin Spice Latte","\"Yes, you are a basic b****\"", "- Dakoda");
         applyModel(newItem, 10);
         nameKey = makeNameKey("pumpkinspicelatte");
         newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
@@ -430,7 +431,7 @@ public class CookingRecipes {
     private void initCookingItemRecipes(ArrayList<Recipe> ListOfRecipes) {
 
         //==========================================================================================================
-        //Unfermented Mead [Artisan lv 5 locked]
+        //Unfermented Mead [Artisan lv 10 locked]
 
         newItem = newCraftableItem(Material.HONEY_BOTTLE, 1, "Unfermented Mead", "The Precursor to a Dwarven Celebration");
         nameKey = makeNameKey("unfermentedmead");
@@ -446,12 +447,12 @@ public class CookingRecipes {
 
         addToMaps(newItemName, newItem, newShapedRecipe);
         ListOfRecipes.add(newShapedRecipe);
-        addToLevelLockMap(newItemName, 5);
+        addToLevelLockMap(newItemName, 10);
 
         //==========================================================================================================
         //Thorylin Mead
 
-        newItem = newCraftableItem(Material.MILK_BUCKET, 1, "Thorylin Mead","Brothers of the Mine Rejoice!");
+        newItem = newCraftableItem(consumableMaterialType, 1, "Thorylin Mead","Brothers of the Mine Rejoice!");
         applyModel(newItem, 11);
         newItemMeta = newItem.getItemMeta();
         newItemMeta.addEnchant(Enchantment.DURABILITY, 1, true);
@@ -500,7 +501,7 @@ public class CookingRecipes {
         //==========================================================================================================
         // Bottle Of Wine
 
-        newItem = newCraftableItem(Material.MILK_BUCKET, 1, "Bottle Of Wine","Enjoyed by the upper class all around Zelandris");
+        newItem = newCraftableItem(consumableMaterialType, 1, "Bottle Of Wine","Enjoyed by the upper class all around Zelandris");
         applyModel(newItem, 12);
         nameKey = makeNameKey("bottleofwine");
         newSmokingRecipe = new SmokingRecipe(nameKey, newItem, new RecipeChoice.ExactChoice(Items.get("Grape Juice")), 0F, MinutesToTick(20));
@@ -529,7 +530,7 @@ public class CookingRecipes {
         //==========================================================================================================
         // 8x Glass Of Wine
 
-        newItem = newCraftableItem(Material.MILK_BUCKET, 8, "Glass Of Wine", "The perfect accompaniment to a fancy night out");
+        newItem = newCraftableItem(consumableMaterialType, 8, "Glass Of Wine", "The perfect accompaniment to a fancy night out");
 
         applyModel(newItem, 14);
         nameKey = makeNameKey("glassofwine");
@@ -576,7 +577,7 @@ public class CookingRecipes {
         //==========================================================================================================
         // Lunaris-Shine
 
-        newItem = newCraftableItem(Material.MILK_BUCKET, 1, "Lunaris-Shine","Named for the celestial body in the sky you will surely see", "during the long process of making this drink");
+        newItem = newCraftableItem(consumableMaterialType, 1, "Lunaris-Shine","Named for the celestial body in the sky you will surely see", "during the long process of making this drink");
         applyModel(newItem, 15);
         giveEnchantedLook(newItem);
         nameKey = makeNameKey("lunarisshine");
@@ -601,7 +602,7 @@ public class CookingRecipes {
         //==========================================================================================================
         //Embermoorian Beer
 
-        newItem = newCraftableItem(Material.MILK_BUCKET, 1, "Embermoorian Beer","A favorite amongst the workers of the Engine!");
+        newItem = newCraftableItem(consumableMaterialType, 1, "Embermoorian Beer","A favorite amongst the workers of the Engine!");
         applyModel(newItem, 16);
         newItem = giveEnchantedLook(newItem);
         nameKey = makeNameKey("embermoorianbeer");
@@ -644,7 +645,7 @@ public class CookingRecipes {
         //==========================================================================================================
         //Ithilian Pine Blend
 
-        newItem = newCraftableItem(Material.MILK_BUCKET, 1, "Ithilian Pine Blend","A drink fit for stargazing in Iliasing");
+        newItem = newCraftableItem(consumableMaterialType, 1, "Ithilian Pine Blend","A drink fit for stargazing in Iliasing");
         applyModel(newItem, 17);
         newItem = giveEnchantedLook(newItem);
         nameKey = makeNameKey("ithilianpineblend");
@@ -652,7 +653,7 @@ public class CookingRecipes {
 
         addToMaps(newItemName, newItem, newSmokingRecipe);
         ListOfRecipes.add(newSmokingRecipe);
-        addToLevelLockMap(newItemName, 10);
+        addToLevelLockMap(newItemName, 8);
 
         initCoffeeRecipes(ListOfRecipes);
     }

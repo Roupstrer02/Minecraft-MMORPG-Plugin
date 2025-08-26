@@ -3,6 +3,7 @@ package me.roupen.firstpluginthree.CraftingRecipes;
 import io.lumine.mythic.bukkit.utils.adventure.text.format.NamedTextColor;
 import io.lumine.mythic.bukkit.utils.adventure.text.format.Style;
 import me.roupen.firstpluginthree.FirstPluginThree;
+import me.roupen.firstpluginthree.balance.Balance;
 import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -133,7 +134,7 @@ public class BasicTools {
         //==================================================================================================================
         //Wooden Sword
         newEquip = new PlayerEquipment(0, Material.WOODEN_SWORD, "");
-        newEquip.setDamage(1.0);
+        newEquip.setDamage(Balance.craftedSwordDmg(2));
         newEquip.setStaminaCost(4.0);
         newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Common Sword");
         nameKey = makeNameKey("basic-wooden-sword");
@@ -151,7 +152,7 @@ public class BasicTools {
         //==================================================================================================================
         //Stone Sword
         newEquip = new PlayerEquipment(0, Material.STONE_SWORD, "");
-        newEquip.setDamage(2.5);
+        newEquip.setDamage(Balance.craftedSwordDmg(5));
         newEquip.setStaminaCost(4.0);
         newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Common Sword");
         nameKey = makeNameKey("basic-stone-sword");
@@ -169,7 +170,7 @@ public class BasicTools {
         //==================================================================================================================
         //Gold Sword
         newEquip = new PlayerEquipment(0, Material.GOLDEN_SWORD, "");
-        newEquip.setDamage(1.0);
+        newEquip.setDamage(Balance.craftedSwordDmg(1));
         newEquip.setStaminaCost(4.0);
         newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Common Sword");
         nameKey = makeNameKey("basic-golden-sword");
@@ -187,7 +188,7 @@ public class BasicTools {
         //==================================================================================================================
         //Iron Sword
         newEquip = new PlayerEquipment(0, Material.IRON_SWORD, "");
-        newEquip.setDamage(5.0);
+        newEquip.setDamage(Balance.craftedSwordDmg(10));
         newEquip.setStaminaCost(4.0);
         newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Common Sword");
         nameKey = makeNameKey("basic-iron-sword");
@@ -205,7 +206,7 @@ public class BasicTools {
         //==================================================================================================================
         //Diamond Sword
         newEquip = new PlayerEquipment(0, Material.DIAMOND_SWORD, "");
-        newEquip.setDamage(7.0);
+        newEquip.setDamage(Balance.craftedSwordDmg(15));
         newEquip.setStaminaCost(4.0);
         newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Common Sword");
         nameKey = makeNameKey("basic-diamond-sword");
@@ -223,7 +224,7 @@ public class BasicTools {
         //==================================================================================================================
         //Netherite Sword
         newEquip = new PlayerEquipment(0, Material.NETHERITE_SWORD, "");
-        newEquip.setDamage(15.0);
+        newEquip.setDamage(Balance.craftedSwordDmg(25));
         newEquip.setStaminaCost(4.0);
         newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Common Sword");
         nameKey = makeNameKey("basic-netherite-sword");
@@ -241,7 +242,7 @@ public class BasicTools {
         //==================================================================================================================
         //Wooden Axe
         newEquip = new PlayerEquipment(0, Material.WOODEN_AXE, "");
-        newEquip.setDamage(2.0);
+        newEquip.setDamage(Balance.craftedAxeDmg(2));
         newEquip.setStaminaCost(7.0);
         newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Common Axe");
 
@@ -264,7 +265,7 @@ public class BasicTools {
         //==================================================================================================================
         //Stone Axe
         newEquip = new PlayerEquipment(0, Material.STONE_AXE, "");
-        newEquip.setDamage(5.0);
+        newEquip.setDamage(Balance.craftedAxeDmg(5));
         newEquip.setStaminaCost(7.0);
         newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Common Axe");
 
@@ -287,7 +288,7 @@ public class BasicTools {
         //==================================================================================================================
         //Iron Axe
         newEquip = new PlayerEquipment(0, Material.IRON_AXE, "");
-        newEquip.setDamage(10.0);
+        newEquip.setDamage(Balance.craftedAxeDmg(10));
         newEquip.setStaminaCost(7.0);
         newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Common Axe");
 
@@ -310,7 +311,7 @@ public class BasicTools {
         //==================================================================================================================
         //Golden Axe
         newEquip = new PlayerEquipment(0, Material.GOLDEN_AXE, "");
-        newEquip.setDamage(2.0);
+        newEquip.setDamage(Balance.craftedAxeDmg(1));
         newEquip.setStaminaCost(7.0);
         newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Common Axe");
 
@@ -333,7 +334,7 @@ public class BasicTools {
         //==================================================================================================================
         //Diamond Axe
         newEquip = new PlayerEquipment(0, Material.DIAMOND_AXE, "");
-        newEquip.setDamage(14.0);
+        newEquip.setDamage(Balance.craftedAxeDmg(15));
         newEquip.setStaminaCost(7.0);
         newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Common Axe");
 
@@ -356,7 +357,7 @@ public class BasicTools {
         //==================================================================================================================
         //Netherite Axe
         newEquip = new PlayerEquipment(0, Material.NETHERITE_AXE, "");
-        newEquip.setDamage(30.0);
+        newEquip.setDamage(Balance.craftedAxeDmg(25));
         newEquip.setStaminaCost(7.0);
         newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Common Axe");
 
@@ -379,7 +380,7 @@ public class BasicTools {
         //==================================================================================================================
         //Bow
         newEquip = new PlayerEquipment(0, Material.BOW, "");
-        newEquip.setDamage(8.0);
+        newEquip.setDamage(Balance.craftedRangedWeaponDmg(7));
         newEquip.setStaminaCost(5.0);
         newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Common Bow");
 
@@ -402,7 +403,7 @@ public class BasicTools {
         //==================================================================================================================
         //Crossbow
         newEquip = new PlayerEquipment(0, Material.CROSSBOW, "");
-        newEquip.setDamage(8.0);
+        newEquip.setDamage(Balance.craftedRangedWeaponDmg(7));
         newEquip.setStaminaCost(5.0);
         newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Common Crossbow");
 
@@ -485,13 +486,13 @@ public class BasicTools {
 
         newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
 
-        newShapelessRecipe.addIngredient(1, Material.GOLD_INGOT);
+        newShapelessRecipe.addIngredient(2, Material.GOLD_INGOT);
 
         addToMaps(newItem.toString(), newItem, newShapelessRecipe);
         ListOfRecipes.add(newShapelessRecipe);
 
         //==================================================================================================================
-        //
+        //Final Remaining Brain Cell
 
         newItem = new ItemStack(Material.DEAD_BUSH, 1);
         itemMeta = newItem.getItemMeta();
@@ -511,6 +512,332 @@ public class BasicTools {
 
         addToMaps(newItemName, newItem, newShapedRecipe);
         ListOfRecipes.add(newShapedRecipe);
+
+        //==================================================================================================================
+        //Leather Armor
+
+        //Helmet
+        newEquip = new PlayerEquipment(0, Material.LEATHER_HELMET, "Helmet");
+        newEquip.setDefense(Balance.helmDef(2));
+        newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Basic Leather Helmet");
+
+        nameKey = makeNameKey("basic-leather-helmet");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("LLL","L-L","---");
+        newShapedRecipe.setIngredient('L', Material.LEATHER);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        nameKey = makeNameKey("basic-leather-helmet2");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("---","LLL","L-L");
+        newShapedRecipe.setIngredient('L', Material.LEATHER);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        //Chestplate
+        newEquip = new PlayerEquipment(0, Material.LEATHER_CHESTPLATE, "Chestplate");
+        newEquip.setDefense(Balance.chestDef(2));
+        newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Basic Leather Chestplate");
+
+        nameKey = makeNameKey("basic-leather-chestplate");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("L-L","LLL","LLL");
+        newShapedRecipe.setIngredient('L', Material.LEATHER);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        //Leggings
+        newEquip = new PlayerEquipment(0, Material.LEATHER_LEGGINGS, "Leggings");
+        newEquip.setDefense(Balance.legsDef(2));
+        newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Basic Leather Leggings");
+
+        nameKey = makeNameKey("basic-leather-leggings");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("LLL","L-L","L-L");
+        newShapedRecipe.setIngredient('L', Material.LEATHER);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        //Boots
+        newEquip = new PlayerEquipment(0, Material.LEATHER_BOOTS, "Boots");
+        newEquip.setDefense(Balance.bootsDef(2));
+        newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Basic Leather Boots");
+
+        nameKey = makeNameKey("basic-leather-boots");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("L-L","L-L","---");
+        newShapedRecipe.setIngredient('L', Material.LEATHER);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        nameKey = makeNameKey("basic-leather-boots2");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("---","L-L","L-L");
+        newShapedRecipe.setIngredient('L', Material.LEATHER);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        //==================================================================================================================
+        //Gold Armor
+
+        //Helmet
+        newEquip = new PlayerEquipment(0, Material.GOLDEN_HELMET, "Helmet");
+        newEquip.setDefense(Balance.helmDef(2));
+        newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Basic Golden Helmet");
+
+        nameKey = makeNameKey("basic-golden-helmet");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("LLL","L-L","---");
+        newShapedRecipe.setIngredient('L', Material.GOLD_INGOT);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        nameKey = makeNameKey("basic-golden-helmet2");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("---","LLL","L-L");
+        newShapedRecipe.setIngredient('L', Material.GOLD_INGOT);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        //Chestplate
+        newEquip = new PlayerEquipment(0, Material.GOLDEN_CHESTPLATE, "Chestplate");
+        newEquip.setDefense(Balance.chestDef(2));
+        newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Basic Golden Chestplate");
+
+        nameKey = makeNameKey("basic-golden-chestplate");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("L-L","LLL","LLL");
+        newShapedRecipe.setIngredient('L', Material.GOLD_INGOT);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        //Leggings
+        newEquip = new PlayerEquipment(0, Material.GOLDEN_LEGGINGS, "Leggings");
+        newEquip.setDefense(Balance.legsDef(2));
+        newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Basic Golden Leggings");
+
+        nameKey = makeNameKey("basic-golden-leggings");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("LLL","L-L","L-L");
+        newShapedRecipe.setIngredient('L', Material.GOLD_INGOT);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        //Boots
+        newEquip = new PlayerEquipment(0, Material.GOLDEN_BOOTS, "Boots");
+        newEquip.setDefense(Balance.bootsDef(2));
+        newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Basic Golden Boots");
+
+        nameKey = makeNameKey("basic-golden-boots");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("L-L","L-L","---");
+        newShapedRecipe.setIngredient('L', Material.GOLD_INGOT);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        nameKey = makeNameKey("basic-golden-boots2");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("---","L-L","L-L");
+        newShapedRecipe.setIngredient('L', Material.GOLD_INGOT);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        //==================================================================================================================
+        //Iron Armor
+
+        //Helmet
+        newEquip = new PlayerEquipment(0, Material.IRON_HELMET, "Helmet");
+        newEquip.setDefense(Balance.helmDef(8));
+        newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Basic Iron Helmet");
+
+        nameKey = makeNameKey("basic-iron-helmet");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("LLL","L-L","---");
+        newShapedRecipe.setIngredient('L', Material.IRON_INGOT);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        nameKey = makeNameKey("basic-iron-helmet2");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("---","LLL","L-L");
+        newShapedRecipe.setIngredient('L', Material.IRON_INGOT);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        //Chestplate
+        newEquip = new PlayerEquipment(0, Material.IRON_CHESTPLATE, "Chestplate");
+        newEquip.setDefense(Balance.chestDef(8));
+        newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Basic Iron Chestplate");
+
+        nameKey = makeNameKey("basic-iron-chestplate");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("L-L","LLL","LLL");
+        newShapedRecipe.setIngredient('L', Material.IRON_INGOT);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        //Leggings
+        newEquip = new PlayerEquipment(0, Material.IRON_LEGGINGS, "Leggings");
+        newEquip.setDefense(Balance.legsDef(8));
+        newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Basic Iron Leggings");
+
+        nameKey = makeNameKey("basic-iron-leggings");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("LLL","L-L","L-L");
+        newShapedRecipe.setIngredient('L', Material.IRON_INGOT);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        //Boots
+        newEquip = new PlayerEquipment(0, Material.IRON_BOOTS, "Boots");
+        newEquip.setDefense(Balance.bootsDef(8));
+        newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Basic Iron Boots");
+
+        nameKey = makeNameKey("basic-iron-boots");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("L-L","L-L","---");
+        newShapedRecipe.setIngredient('L', Material.IRON_INGOT);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        nameKey = makeNameKey("basic-iron-boots2");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("---","L-L","L-L");
+        newShapedRecipe.setIngredient('L', Material.IRON_INGOT);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        //==================================================================================================================
+        //Diamond Armor
+
+        //Helmet
+        newEquip = new PlayerEquipment(0, Material.DIAMOND_HELMET, "Helmet");
+        newEquip.setDefense(Balance.helmDef(15));
+        newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Basic Diamond Helmet");
+
+        nameKey = makeNameKey("basic-diamond-helmet");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("LLL","L-L","---");
+        newShapedRecipe.setIngredient('L', Material.DIAMOND);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        nameKey = makeNameKey("basic-diamond-helmet2");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("---","LLL","L-L");
+        newShapedRecipe.setIngredient('L', Material.DIAMOND);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        //Chestplate
+        newEquip = new PlayerEquipment(0, Material.DIAMOND_CHESTPLATE, "Chestplate");
+        newEquip.setDefense(Balance.chestDef(15));
+        newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Basic Diamond Chestplate");
+
+        nameKey = makeNameKey("basic-diamond-chestplate");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("L-L","LLL","LLL");
+        newShapedRecipe.setIngredient('L', Material.DIAMOND);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        //Leggings
+        newEquip = new PlayerEquipment(0, Material.DIAMOND_LEGGINGS, "Leggings");
+        newEquip.setDefense(Balance.legsDef(15));
+        newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Basic Diamond Leggings");
+
+        nameKey = makeNameKey("basic-diamond-leggings");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("LLL","L-L","L-L");
+        newShapedRecipe.setIngredient('L', Material.DIAMOND);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        //Boots
+        newEquip = new PlayerEquipment(0, Material.DIAMOND_BOOTS, "Boots");
+        newEquip.setDefense(Balance.bootsDef(15));
+        newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Basic Diamond Boots");
+
+        nameKey = makeNameKey("basic-diamond-boots");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("L-L","L-L","---");
+        newShapedRecipe.setIngredient('L', Material.DIAMOND);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        nameKey = makeNameKey("basic-diamond-boots2");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("---","L-L","L-L");
+        newShapedRecipe.setIngredient('L', Material.DIAMOND);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        //==================================================================================================================
+        //Netherite Armor
+
+        //Helmet
+        newEquip = new PlayerEquipment(0, Material.NETHERITE_HELMET, "Helmet");
+        newEquip.setDefense(Balance.helmDef(25));
+        newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Basic Netherite Helmet");
+
+        nameKey = makeNameKey("basic-netherite-helmet");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("LLL","L-L","---");
+        newShapedRecipe.setIngredient('L', Material.NETHERITE_INGOT);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        nameKey = makeNameKey("basic-netherite-helmet2");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("---","LLL","L-L");
+        newShapedRecipe.setIngredient('L', Material.NETHERITE_INGOT);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        //Chestplate
+        newEquip = new PlayerEquipment(0, Material.NETHERITE_CHESTPLATE, "Chestplate");
+        newEquip.setDefense(Balance.chestDef(25));
+        newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Basic Netherite Chestplate");
+
+        nameKey = makeNameKey("basic-netherite-chestplate");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("L-L","LLL","LLL");
+        newShapedRecipe.setIngredient('L', Material.NETHERITE_INGOT);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        //Leggings
+        newEquip = new PlayerEquipment(0, Material.NETHERITE_LEGGINGS, "Leggings");
+        newEquip.setDefense(Balance.legsDef(25));
+        newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Basic Netherite Leggings");
+
+        nameKey = makeNameKey("basic-netherite-leggings");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("LLL","L-L","L-L");
+        newShapedRecipe.setIngredient('L', Material.NETHERITE_INGOT);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        //Boots
+        newEquip = new PlayerEquipment(0, Material.NETHERITE_BOOTS, "Boots");
+        newEquip.setDefense(Balance.bootsDef(25));
+        newItem = newCraftableItem(PlayerEquipment.EquipmentToItem(newEquip), 1, "Basic Netherite Boots");
+
+        nameKey = makeNameKey("basic-netherite-boots");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("L-L","L-L","---");
+        newShapedRecipe.setIngredient('L', Material.NETHERITE_INGOT);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
+        nameKey = makeNameKey("basic-netherite-boots2");
+        newShapedRecipe = new ShapedRecipe(nameKey, newItem);
+        newShapedRecipe.shape("---","L-L","L-L");
+        newShapedRecipe.setIngredient('L', Material.NETHERITE_INGOT);
+        addToMaps(newItemName, newItem, newShapedRecipe);
+        ListOfRecipes.add(newShapedRecipe);
+
     }
 
 

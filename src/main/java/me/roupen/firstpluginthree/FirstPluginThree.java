@@ -1,21 +1,16 @@
 package me.roupen.firstpluginthree;
 
-import io.lumine.mythic.api.adapters.AbstractEntity;
-import io.lumine.mythic.api.adapters.AbstractLocation;
 import io.lumine.mythic.api.exceptions.InvalidMobTypeException;
-import io.lumine.mythic.api.holograms.IHologram;
 import io.lumine.mythic.bukkit.BukkitAPIHelper;
-import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.bukkit.events.MythicDamageEvent;
 import io.lumine.mythic.bukkit.events.MythicMobDeathEvent;
 import io.lumine.mythic.bukkit.events.MythicMobSpawnEvent;
-import io.lumine.mythic.bukkit.utils.holograms.Hologram;
-import io.lumine.mythic.bukkit.utils.holograms.HologramFactory;
-import io.lumine.mythic.core.holograms.HologramManager;
 import io.lumine.mythic.core.mobs.ActiveMob;
 import me.roupen.firstpluginthree.CraftingRecipes.BasicTools;
+import me.roupen.firstpluginthree.CraftingRecipes.SmithingRecipes;
 import me.roupen.firstpluginthree.PlayerInteractions.*;
 import me.roupen.firstpluginthree.PlayerInteractions.RuneForge;
+import me.roupen.firstpluginthree.artifacts.dreamerFriend;
 import me.roupen.firstpluginthree.artisan.Consumable;
 import me.roupen.firstpluginthree.artisan.CookingRecipes;
 import me.roupen.firstpluginthree.commandkit.*;
@@ -28,7 +23,6 @@ import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
 import me.roupen.firstpluginthree.misc.misc;
 import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
-import me.roupen.firstpluginthree.utility.ConsumableUtility;
 import me.roupen.firstpluginthree.utility.MobUtility;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
 import me.roupen.firstpluginthree.wands.wand;
@@ -47,7 +41,6 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.event.world.EntitiesLoadEvent;
 import org.bukkit.event.world.EntitiesUnloadEvent;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.inventory.ItemStack;
@@ -95,9 +88,11 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
     }
     private static CookingRecipes cookingrecipes;
     private static BasicTools basictoolrecipes;
+    private static SmithingRecipes smithingrecipes;
     public static ArrayList<Player> PlayersInBossFight = new ArrayList<>();
 
     public static CookingRecipes getCookingrecipes() {return cookingrecipes;}
+    public static CookingRecipes getSmithingrecipes() {return cookingrecipes;}
 
     @Override
     public void onEnable() {
@@ -112,7 +107,9 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         this.getCommand("minimum_loot_level").setExecutor(new minimumLootLevelCMD());
 
         this.getCommand("enemy_create").setExecutor(new enemyCreateCMD());
+        this.getCommand("item_create").setExecutor(new itemCreateCMD());
         this.getCommand("player_reset").setExecutor(new playerLevelResetCMD());
+        this.getCommand("player_set_level").setExecutor(new playerSetLevelCMD());
 
         myPlugin = this;
 
@@ -120,8 +117,10 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         BukkitTask playeractionbar = new actionbardisplay().runTaskTimer(this, 0L, 5);
         cookingrecipes = new CookingRecipes();
         basictoolrecipes = new BasicTools();
+        smithingrecipes = new SmithingRecipes();
         cookingrecipes.initRecipes();
         basictoolrecipes.initRecipes();
+        smithingrecipes.initRecipes();
 
     }
    @EventHandler
@@ -223,7 +222,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         Random rd = new Random();
         Player p = event.getPlayer();
         PlayerStats pStats = PlayerUtility.getPlayerStats(p);
-        pStats.setExperience(0);
+        pStats.setExperience((int) Math.round(pStats.getExperience() / 2.0));
         String[] FlavorTexts = new String[]
                 {"took an L", "is weak to damage", "involuntarily returned home"};
         int index = rd.nextInt(FlavorTexts.length);
@@ -261,7 +260,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         PlayerStats stats = PlayerUtility.getPlayerStats(event.getPlayer());
         stats.respawnStatReset();
         event.getPlayer().sendMessage(Component.text("\nThe damage you took erased some recent memories...\n", Style.style(NamedTextColor.GRAY, TextDecoration.ITALIC))
-                .append(Component.text("EXP towards your next level has been reset to 0", Style.style(NamedTextColor.GRAY, TextDecoration.ITALIC))));
+                .append(Component.text("EXP towards your next level has been cut in half", Style.style(NamedTextColor.GRAY, TextDecoration.ITALIC))));
 
     }
     @EventHandler
@@ -279,6 +278,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         EliteFight.Interact(event);
 
         misc.BuildCircle(event);
+        misc.LongRangeBuild(event);
 
         //effects triggered
         if (!(stats.isCastingSpell()) && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) && wand.IsWand(player.getInventory().getItemInOffHand())) {
@@ -359,7 +359,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         boolean DamagerIsBossMob = false;
         if (MobUtility.hasMobStats(event.getDamager().getUniqueId())) {
             MobStats Mstats = MobUtility.getMobStats(event.getDamager());
-            if (Mstats.isBoss) {
+            if (Mstats.isArenaBoss) {
                 DamagerIsBossMob = true;
             }
 
@@ -379,15 +379,15 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
 
                 if (mobstats.damage(playerstats, playerstats.getMultihit()))
                 {
-                    //greatsword knockback
+                    // knockback
                     ItemStack item = player.getInventory().getItemInMainHand();
                     if (item.getType() != Material.AIR && PlayerEquipment.ItemToEquipment(item).isGreatSword())
                         mob.setVelocity(player.getLocation().getDirection().multiply(0.75).add(new Vector(0, 0.25, 0)));
                     else if (PlayerEquipment.ItemToEquipment(item).isLongSword())
-                        mob.setVelocity(player.getLocation().getDirection().multiply(0.15).add(new Vector(0, 0.1, 0)));
+                        mob.setVelocity(player.getLocation().getDirection().multiply(0.35).add(new Vector(0, 0.1, 0)));
                     else if (PlayerEquipment.ItemToEquipment(item).isDagger())
-                        mob.setVelocity(player.getLocation().getDirection().multiply(0.05));
-                    //mob re-aggro
+                        mob.setVelocity(player.getLocation().getDirection().multiply(0.1));
+                    // mob re-aggro
                     if (event.getEntity() instanceof Creature) {
                         Creature mobC = (Creature) mob;
                         mobC.setTarget(player);
@@ -598,10 +598,14 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
         Player p = event.getPlayer();
 
         ItemStack consumedItem = event.getItem();
-        Consumable c = new Consumable(event.getItem());
+        ItemStack testItem = event.getItem();
+        testItem.setAmount(1);
 
-       if (getCookingrecipes().getItems().containsValue(consumedItem)) {
+       if (getCookingrecipes().getItems().containsValue(testItem)) {
+
+           Consumable c = new Consumable(event.getItem());
            PlayerStats pStats = PlayerUtility.getPlayerStats(p);
+
            if (!pStats.hasConsumedItem()) {
                pStats.setConsumingItem(true);
                c.ConsumeItem(p);
@@ -632,7 +636,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
     public void onMythicMobDamage(MythicDamageEvent event) {
         if (PlayerUtility.hasPlayerStats(event.getTarget().getUniqueId())) {
 
-            //the "damage" dealt by the damage skill is used as the factor towards the damage taken by the connecting of the skill
+            //the "damage" dealt by the damage skill is used as the factor towards the total damage dealt by the skill
             double damageMult = event.getDamageMetadata().getAmount();
 
             Player p = (Player) event.getTarget().getBukkitEntity();

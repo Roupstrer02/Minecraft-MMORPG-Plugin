@@ -27,7 +27,6 @@ public class minimumLootLevelCMD implements CommandExecutor {
             try {
                 if (args.length == 1 && Integer.parseInt(args[0]) >= 0) {
                     pStats.EquipmentLevelMinimum = Integer.parseInt(args[0]);
-                    p.sendMessage(Component.text(pStats.EquipmentLevelMinimum));
                 }else {
                     validUse = false;
                 }

@@ -186,15 +186,27 @@ public class WeatherForecast {
         return " Lv" + ((int) ((((((int) cfg.get(playerBiome)) + 1) * 10) - 9) * attenuation)) + "-" + ((int) ((((int) cfg.get(playerBiome)) + 1) * 10 * attenuation));
     }
 
-    public static void WeatherReport(Player player) {
+    public static String getLevelRangeDisplayName(Player player) {
         File f = new File(getFolderPath() + "/WeatherForecast.yml");
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(f);
         String playerBiome = getPlayerBiome(player);
         double attenuation = WeatherForecast.getBiomeModifier(player);
-        player.sendMessage(Component.text(playerBiome + ": ", styles.get( (int) (cfg.get(playerBiome))))
-                .append(Component.text(" Lv" + ((int) ((((((int) cfg.get(playerBiome)) + 1) * Balance.BiomeLevelRange) - (Balance.BiomeLevelRange - 1)) * attenuation)) + "-" + ((int) ((((int) cfg.get(playerBiome)) + 1) * Balance.BiomeLevelRange * attenuation)) + "\n\n", Style.style(NamedTextColor.WHITE)))
 
-        .append(Component.text("Today's Weather Forecast\n", Style.style(NamedTextColor.WHITE, TextDecoration.BOLD))
+        return " Lv" + (
+                (int) Math.ceil(((((cfg.getInt(playerBiome)) + 1) * Balance.BiomeLevelRange) - (Balance.BiomeLevelRange - 1)) * attenuation)) +
+                "-" +
+                ((int) Math.ceil(((cfg.getInt(playerBiome)) + 1) * Balance.BiomeLevelRange * attenuation));
+
+    }
+
+    public static void WeatherReport(Player player) {
+        File f = new File(getFolderPath() + "/WeatherForecast.yml");
+        FileConfiguration cfg = YamlConfiguration.loadConfiguration(f);
+        String playerBiome = getPlayerBiome(player);
+        player.sendMessage(Component.text(playerBiome + ": ", styles.get( (int) (cfg.get(playerBiome))))
+                .append(Component.text(getLevelRangeDisplayName(player) + "\n\n", Style.style(NamedTextColor.WHITE)))
+
+                .append(Component.text("Today's Weather Forecast\n", Style.style(NamedTextColor.WHITE, TextDecoration.BOLD))
                 .append(Component.text("In the plains: "))
                 .append(Component.text(WeatherDesigns[(int) cfg.get("plains")] + '\n', styles.get( (int) (cfg.get("plains")))))
                 .append(Component.text("In the sands: "))

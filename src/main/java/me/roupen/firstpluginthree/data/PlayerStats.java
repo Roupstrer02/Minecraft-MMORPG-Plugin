@@ -69,7 +69,7 @@ public class PlayerStats {
 
     //update & regen values
     private double ActiveStaminaRegen = 0.5;
-    private double BaseActiveHealthRegen = 0.25;
+
     private double BaseActiveManaRegen = 0.125;
     private double baseActiveStaminaRegen = 0.5;
 
@@ -282,12 +282,7 @@ public class PlayerStats {
     public void setActiveStaminaRegen(double activeStaminaRegen) {
         ActiveStaminaRegen = activeStaminaRegen;
     }
-    public double getBaseActiveHealthRegen() {
-        return BaseActiveHealthRegen;
-    }
-    public void setBaseActiveHealthRegen(double baseActiveHealthRegen) {
-        BaseActiveHealthRegen = baseActiveHealthRegen;
-    }
+
     public double getBaseActiveManaRegen() {
         return BaseActiveManaRegen;
     }
@@ -368,11 +363,11 @@ public class PlayerStats {
 
                 //Special use case for sword and shield
                 else if (OffHand.getType() == Material.SHIELD && TempEquipment.isLongSword()) {
-                    //insufficient buff? they already have a shield with a damage reduction ability
-                    TempEquipment.setDamage(1.25 * TempEquipment.getDamage());
+
+                    TempEquipment.setDamage(1.4 * TempEquipment.getDamage());
                 }
                 else if (TempEquipment.getToolType().equals("Shield") && PlayerEquipment.ItemToEquipment(MainHand).isLongSword()) {
-                    //insufficient buff? they already have a shield with a damage reduction ability
+
                     TempEquipment.setDefense(1.1 * TempEquipment.getDefense());
                 }
 
@@ -391,9 +386,19 @@ public class PlayerStats {
                 //sets stamina cost of attacks
                 if (AllItems[i] == MainHand) {
                     equipment.setStaminaCost(TempEquipment.getStaminaCost());
+                    if (MainHand.getType() != Material.SHIELD) {
+                        TempEquipment.setDefense(0.0);
+                    }
                 }
 
-                TempEquipment.applyRunes();
+                if (AllItems[i] == MainHand || AllItems[i] == OffHand) {
+                    //holding armor shouldn't help at all
+                    if (TempEquipment.getToolType().equals("Helmet") || TempEquipment.getToolType().equals("Chestplate") || TempEquipment.getToolType().equals("Leggings") || TempEquipment.getToolType().equals("Boots")) {
+                        TempEquipment = new PlayerEquipment(0, Material.AIR, "");
+                    }
+                }
+
+                TempEquipment = TempEquipment.applyRunes();
                 AddEquipmentStats(TempEquipment);
             }
 
@@ -490,7 +495,7 @@ public class PlayerStats {
 
         if (this.Experience >= Levelcap)
         {
-            //Make this a while loop so the player can level up multiple times in one go if necessary
+
             while (this.Experience >= Levelcap) {
                 this.Experience -= Levelcap;
                 this.Level += 1;
@@ -507,7 +512,7 @@ public class PlayerStats {
     }
 
     public double getActiveHealthRegen() {
-        return (((BaseActiveHealthRegen + ((Resilience - 1) * 0.05) + equipment.getHealthRegen()) + LinearStatChanges.get("HP Regen")) * MultiplicativeStatChanges.get("HP Regen")) * getHealingReceivedModifier();
+        return (((((ActiveMaxHealth / 80.0) + (Resilience - 1) * (ActiveMaxHealth / 2800.0)) + equipment.getHealthRegen()) + LinearStatChanges.get("HP Regen")) * MultiplicativeStatChanges.get("HP Regen")) * getHealingReceivedModifier();
     }
 
     public double getActiveManaRegen() {
@@ -519,7 +524,7 @@ public class PlayerStats {
     }
     //Stat calculator for each stat
     public void recalculateMaxHealth() {
-        setActiveMaxHealth(Double.parseDouble(df.format(((20 + (equipment.getMaxHealth() * (1 + (0.01 * getVitality()))) + (getVitality() - 1) * 25) + LinearStatChanges.get("Max HP")) * MultiplicativeStatChanges.get("Max HP"))));
+        setActiveMaxHealth(Double.parseDouble(df.format((1 + (0.01 * (getVitality() - 1))) * ((Balance.playerBaseHealthAtLevel(getLevel()) + equipment.getMaxHealth()) + LinearStatChanges.get("Max HP")) * MultiplicativeStatChanges.get("Max HP"))));
     }//Vitality
     public void recalculateHealth() {
         if (getActiveCurrentHealth() < getActiveMaxHealth()) {
@@ -534,7 +539,8 @@ public class PlayerStats {
         if (equipment.getDamage() != 0)
             setActiveDamage(Double.parseDouble(df.format(MultiplicativeStatChanges.get("Damage") * ((getStrength() + (equipment.getDamage() * (1 + (0.01 * getStrength())))) + LinearStatChanges.get("Damage")))));
         else
-            setActiveDamage(1);
+            setActiveDamage(0.2);
+
     }//Strength
     public void recalculateCritDamageMult(){
         setCritDamageMult(Double.parseDouble(df.format(((1.5 + ((0.01 * getStrength()) * equipment.getCritDamageMult())) + LinearStatChanges.get("Crit Damage Mult")) * MultiplicativeStatChanges.get("Crit Damage Mult"))));

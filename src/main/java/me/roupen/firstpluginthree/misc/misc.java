@@ -8,9 +8,12 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.BlockIterator;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class misc {
@@ -158,6 +161,96 @@ public class misc {
             }
         }
     }
+    public static void LongRangeBuild(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
 
+        if (player.getName().equals("Roupstrer02")) {
+
+
+            if (player.getInventory().getItemInMainHand().getType() == Material.BLAZE_ROD) {
+                World world = player.getWorld();
+                Location loc = player.getLocation();
+                loc.add(0,player.getEyeHeight(),0);
+                ItemStack config = player.getInventory().getItemInOffHand();
+                Material mat = config.getType();
+                Block currentBlock;
+
+                BlockIterator iter = new BlockIterator(player, 100);
+                BlockIterator iterOneBehind = new BlockIterator(player, 100);
+                iter.next();
+                Block previousBlock = iterOneBehind.next();
+                while (iter.hasNext()) {
+                    currentBlock = iter.next();
+
+                    if (currentBlock.getType() != Material.AIR) {
+                        previousBlock.setType(mat);
+                    }
+                    iterOneBehind.next();
+                }
+            }
+        }
+    }
+    public static String IntToRomanInteger(int num) {
+        num += 1;
+        StringBuilder newRomanNum = new StringBuilder();
+
+        while (num > 0) {
+
+            if (num >= 100) {
+                num -= 100;
+                newRomanNum.append("C");
+            }
+            else if (num >= 90) {
+                num -= 90;
+                newRomanNum.append("XC");
+            }
+            else if (num >= 50) {
+                num -= 50;
+                newRomanNum.append("L");
+            }
+            else if (num >= 40) {
+                num -= 40;
+                newRomanNum.append("XL");
+            }
+            else if (num >= 10) {
+                num -= 10;
+                newRomanNum.append("X");
+            }
+            else if (num >= 9) {
+                num -= 9;
+                newRomanNum.append("IX");
+            }
+            else if (num >= 5) {
+                num -= 5;
+                newRomanNum.append("V");
+            }
+            else if (num >= 4) {
+                num -= 4;
+                newRomanNum.append("IV");
+            }
+            else {
+                num -= 1;
+                newRomanNum.append("I");
+            }
+        }
+
+
+        return newRomanNum.toString();
+
+    }
+
+    public static String getplayerHPDisplay(double HP_Value) {
+
+        String str = "";
+
+        if (HP_Value > 10000) {
+            HP_Value /= 1000;
+            str += ((int) Math.round(HP_Value)) + "k";
+
+        }else{
+            str += ((int) Math.round(HP_Value));
+        }
+        return str;
+    }
 
 }

@@ -1,9 +1,15 @@
 package me.roupen.firstpluginthree.artisan;
 
+import me.roupen.firstpluginthree.balance.Balance;
 import me.roupen.firstpluginthree.data.PlayerStats;
+import me.roupen.firstpluginthree.misc.misc;
 import me.roupen.firstpluginthree.utility.ConsumableUtility;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
 import net.kyori.adventure.text.Component;
+
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -26,6 +32,7 @@ public class Consumable extends BukkitRunnable {
 
     int progress = 0;
     int duration;
+
     PlayerStats pStats;
     //potion effect storage
     private Map<String, PotionEffectType> PotionNameToEffect = new HashMap<String, PotionEffectType>() {{
@@ -158,6 +165,7 @@ public class Consumable extends BukkitRunnable {
             Integer[] effectParams = ConsumablePotionEffects.get(potionEffectName);
             if (effectParams[0] != null && effectParams[1] != null) {
                 p.addPotionEffect(new PotionEffect(PotionNameToEffect.get(potionEffectName), effectParams[0], effectParams[1]));
+                p.sendMessage(Component.text(potionEffectName + " " + misc.IntToRomanInteger(effectParams[1]), Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)));
             }
         }
 
@@ -165,12 +173,43 @@ public class Consumable extends BukkitRunnable {
             Double[] linstatChangeParams = LinearStatChanges.get(statName);
             Double[] multstatChangeParams = MultiplicativeStatChanges.get(statName);
             if (linstatChangeParams[0] != null && linstatChangeParams[1] != null) {
+                if (statName.equals("Max HP"))
+                    linstatChangeParams[1] *= Math.round(Balance.mobDmg(pStats.getLevel()));
+                else if (statName.equals("HP Regen"))
+                    linstatChangeParams[1] *= Math.round(Balance.mobDmg(pStats.getLevel()) / 40);
+
                 pStats.changeLinearStats(statName, linstatChangeParams[1]);
+
                 duration = Math.max(duration,  (int) Math.round(linstatChangeParams[0]));
+
+                switch (statName) {
+                    case "Max HP":
+                    case "Defense":
+                    case "Max Mana":
+                    case "Stamina Cap":
+                    case "Damage":
+                        p.sendMessage(Component.text(statName + ": +" + linstatChangeParams[1], Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)));
+                        break;
+                    case "HP Regen":
+                    case "Mana Regen":
+                    case "Stamina Regen":
+                        p.sendMessage(Component.text(statName + ": +" + (4 * linstatChangeParams[1]) + "/s", Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)));
+                        break;
+                    case "Multi Hit":
+                    case "Crit Chance":
+                    case "Crit Damage Mult":
+                        p.sendMessage(Component.text(statName + ": +" + (100 * linstatChangeParams[1]), Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)));
+                        break;
+                    case "Movement Speed":
+                        p.sendMessage(Component.text(statName + ": +" + (500 * linstatChangeParams[1]) + "%", Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)));
+                        break;
+                }
+
             }
             if (multstatChangeParams[0] != null && multstatChangeParams[1] != null) {
                 pStats.changeMultiplicativeStats(statName, multstatChangeParams[1]);
                 duration = Math.max(duration,  (int) Math.round(multstatChangeParams[0]));
+                p.sendMessage(Component.text(statName + ": " + multstatChangeParams[1] + "x", Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)));
             }
         }
     }

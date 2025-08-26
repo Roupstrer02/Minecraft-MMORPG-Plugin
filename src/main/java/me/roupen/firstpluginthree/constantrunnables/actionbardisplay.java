@@ -83,7 +83,8 @@ public class actionbardisplay extends BukkitRunnable {
                 }
                 else
                 {
-                    player.setHealth(Math.min(20, Math.round(20 * (stats.getActiveCurrentHealth() / stats.getActiveMaxHealth()))));
+                    player.setHealth(
+                            Math.max(1, Math.min(20, Math.round(20 * (stats.getActiveCurrentHealth() / stats.getActiveMaxHealth())))));
                 }
 
                 if (stats.hasConsumedItem()) {
@@ -99,13 +100,16 @@ public class actionbardisplay extends BukkitRunnable {
                 String playerBiome = WeatherForecast.getPlayerBiome(player);
                 if (!playerBiome.equals(stats.currentBiomeGroup)) {
                     stats.currentBiomeGroup = playerBiome;
-                    player.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title "+ player.getName() + " title [\"\",{\"text\":\"" + WeatherForecast.getPlayerBiome(player) + "\",\"color\":\"" + "white" + "\",\"bold\":true}]");
-                    player.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title "+ player.getName() + " subtitle [\"\",{\"text\":\"" + WeatherForecast.WeatherDesigns[WeatherForecast.getPlayerWeather(player)] + "\",\"color\":\"" + WeatherForecast.colorNames[WeatherForecast.getPlayerWeather(player)] + "\",\"bold\":false}]");
+                    player.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title "+ player.getName() + " title [\"\",{\"text\":\"\"}]");
+                    player.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title "+ player.getName() +
+                            " subtitle [\"\"," +
+                            "{\"text\":\"" + WeatherForecast.WeatherDesigns[WeatherForecast.getPlayerWeather(player)] + "\",\"color\":\"" + WeatherForecast.colorNames[WeatherForecast.getPlayerWeather(player)] + "\",\"bold\":false}," +
+                            "{\"text\":\"" + WeatherForecast.getLevelRangeDisplayName(player) + "\",\"color\":\"none\",\"bold\":false}]");
 
                 }
 
                 player.sendActionBar(Component.text()
-                        .append(Component.text((int) Math.floor(stats.getActiveCurrentHealth()) + "/" + (int) stats.getActiveMaxHealth(), styleHealth)
+                        .append(Component.text(misc.getplayerHPDisplay(stats.getActiveCurrentHealth())  + "/" + misc.getplayerHPDisplay(stats.getActiveMaxHealth()), styleHealth)
                         .append(Component.text(" | ", Style.style(NamedTextColor.GOLD, TextDecoration.BOLD)))
                         .append(Component.text(misc.round(stats.getActiveCurrentStamina()) + "/" + stats.getActiveMaxStamina(), styleStamina)))
                         .append(Component.text(" | ", Style.style(NamedTextColor.GREEN, TextDecoration.BOLD)))

@@ -1,6 +1,5 @@
 package me.roupen.firstpluginthree.magic;
 
-import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
 import me.roupen.firstpluginthree.wands.wand;
@@ -15,8 +14,6 @@ import org.bukkit.util.Vector;
 import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.Random;
-
-import static me.roupen.firstpluginthree.magic.spells.*;
 
 public class DivineHealingOrb extends BukkitRunnable {
 
@@ -63,6 +60,7 @@ public class DivineHealingOrb extends BukkitRunnable {
 
     //If your spell requires to damage the target(s) only once, set this flag in your logic
     private boolean SpellHit = false;
+    private double maxHealthPerTick = 0.04;
 
     //Constructor
     //Should any of the initial values for the spell variables mentioned below need to change, this is where you'd change them
@@ -85,7 +83,7 @@ public class DivineHealingOrb extends BukkitRunnable {
 
     //the standard "player spell damage" or "arcane damage potential" is their wisdom level * wand offense affinity --> intended to be used IN the damage calculation, not standalone
     public double CasterSpellPower() {
-        return stats.getCasterSpellDamage() * Wand.getDefenseSpellPowerModifier();
+        return stats.getWisdom() * Wand.getDefenseSpellPowerModifier();
     }
 
     //used for determining the radius of circular AOE targeting (this considers the wand's properties)
@@ -99,10 +97,10 @@ public class DivineHealingOrb extends BukkitRunnable {
         return baseManaCost * Wand.getSpellCostModifier();
     }
     //Create the damage formula for your spell, alternate versions can be created for spells with multiple hitboxes/damage ranges
-    public double HealCalc()
+    public double HealCalc(PlayerStats pStats)
     {
         //if a spell has multiple components dealing different damage counts, many of these can be created or switch cased through
-        return spellPower * CasterSpellPower();
+        return ((maxHealthPerTick + CasterSpellPower() / 1000) * spellPower) * pStats.getActiveMaxHealth();
     }
     //======================================================================================================================================================
 
@@ -119,7 +117,7 @@ public class DivineHealingOrb extends BukkitRunnable {
     public void spellPerTick() {
         //any code written here will **attempt** to run every tick
         if (progress < spellCooldown) {
-            loc.add(spellDir.multiply(0.25));
+            loc.add(spellDir.multiply(0.25 * Wand.getUtilitySpellPowerModifier()));
             spellDir.multiply(4);
             ParticleSphere(loc, SpellAOE(1), Particle.ELECTRIC_SPARK);
             //stats.heal(HealCalc());
@@ -136,8 +134,8 @@ public class DivineHealingOrb extends BukkitRunnable {
         for (Player player: Targets) {
             if (!player.getName().equals(origin.getName())) {
                 TargetStats = PlayerUtility.getPlayerStats(player);
-                TargetStats.heal(HealCalc());
-                player.sendMessage("" + HealCalc());
+                TargetStats.heal(HealCalc(TargetStats));
+                player.sendMessage("" + HealCalc(TargetStats));
             }
 
         }

@@ -1,7 +1,9 @@
 package me.roupen.firstpluginthree.data;
 
+import me.roupen.firstpluginthree.elite.elite;
 import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
 import me.roupen.firstpluginthree.balance.Balance;
+import me.roupen.firstpluginthree.utility.EliteUtility;
 import me.roupen.firstpluginthree.utility.MobUtility;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
 import me.roupen.firstpluginthree.weather.WeatherForecast;
@@ -12,9 +14,13 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.*;
 
 import org.bukkit.attribute.Attribute;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -30,8 +36,12 @@ public class MobStats {
     private HashMap<String, Double> mult_stat_change;
     private HashMap<String, Double> lin_stat_change;
     private boolean passiveMob;
-    public boolean isBoss = false;
+    public boolean isArenaBoss = false;
+    public boolean isRoamingBoss = false;
     private final Random random = new Random();
+    private double MaxHealthMod;
+    private double DefenseMod;
+    private double AttackMod;
 
     private final Particle.DustOptions dust = new Particle.DustOptions(
             Color.fromRGB((int) (0.9 * 255), (int) (0.1 * 255), (int) (0.1 * 255)), 1);
@@ -43,9 +53,11 @@ public class MobStats {
 //===========================================================================================================================
     public MobStats(LivingEntity mob, int weather, boolean... override_level)
     {
-        this.Level = (int) Math.ceil(((Balance.BiomeLevelRange * weather) - (random.nextDouble() * Balance.BiomeLevelRange)) * WeatherForecast.getBiomeModifier(mob));
-
-        //override_level changes how the previous paramter is used, instead of acting as the weather of the biome, the value is used directly as the mob's level
+        if (!mob.getEntitySpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER))
+            this.Level = (int) Math.ceil(((Balance.BiomeLevelRange * weather) - (random.nextDouble() * Balance.BiomeLevelRange)) * WeatherForecast.getBiomeModifier(mob));
+        else
+            this.Level = 1;
+        //override_level changes how the previous parameter is used, instead of acting as the weather of the biome, the value is used directly as the mob's level
         if (override_level.length > 0 && override_level[0]) {
             this.Level = weather;
         }
@@ -63,15 +75,15 @@ public class MobStats {
         }
         else if (mob instanceof Warden)
         {
-            this.Level = Math.max(this.Level, 80);
+            this.Level = Math.max(this.Level, 50);
         }
         else if (mob instanceof Wither)
         {
-            this.Level = Math.max(this.Level, 90);
+            this.Level = Math.max(this.Level, 60);
         }
         else if (mob instanceof EnderDragon)
         {
-            this.Level = Math.max(this.Level, 100);
+            this.Level = Math.max(this.Level, 70);
         }
 
         this.MaxHealth = Balance.mobHP(this.Level);
@@ -95,7 +107,8 @@ public class MobStats {
         this.lin_stat_change.put("MaxHealth", 0.0);
         this.lin_stat_change.put("Defense", 0.0);
         this.lin_stat_change.put("Attack", 0.0);
-        this.isBoss = false;
+        this.isArenaBoss = false;
+        this.isRoamingBoss = false;
 
 
     }
@@ -103,67 +116,64 @@ public class MobStats {
     public MobStats(LivingEntity mob, String bossType) {
 
         this.passiveMob = false;
-
+        File f = new File(EliteUtility.getFolderPath());
+        FileConfiguration cfg = YamlConfiguration.loadConfiguration(f);
         //=======================================================
         //Abyss Watcher
         if (bossType.equals("MythicMob{AbyssWatcherTest}")) {
             this.Level = 5;
-            this.MaxHealth = 150 * this.Level;
-            this.Health = MaxHealth;
-            this.Attack = 500;
-            this.Defense = 125;
-            this.ActiveDefense = this.Defense;
-            this.Mob = mob;
+            this.MaxHealthMod = 1;
+            this.DefenseMod = 1;
+            this.AttackMod = 1;
         }
         //=======================================================
         //Arcane Golem
         else if (bossType.equals("MythicMob{ArcaneGolem}")) {
-            this.Level = 120;
-            this.MaxHealth = 50 * this.Level;
-            this.Health = MaxHealth;
-            this.Attack = 200;
-            this.Defense = 300;
-            this.ActiveDefense = this.Defense;
-            this.Mob = mob;
+
+
+            this.Level = cfg.getInt("ArcaneGolem.Level");
+            this.MaxHealthMod = cfg.getDouble("ArcaneGolem.Modifiers.MaxHealth");
+            this.DefenseMod = cfg.getDouble("ArcaneGolem.Modifiers.Defense");
+            this.AttackMod = cfg.getDouble("ArcaneGolem.Modifiers.Attack");
+            this.isRoamingBoss = true;
         }
         //=======================================================
         //QuakeFish
         if (bossType.equals("MythicMob{Quakefish}")) {
-            this.Level = 120;
-            this.MaxHealth = 100 * this.Level;
-            this.Health = MaxHealth;
-            this.Attack = 250;
-            this.Defense = 75;
-            this.ActiveDefense = this.Defense;
-            this.Mob = mob;
+            this.Level = cfg.getInt("Quakefish.Level");
+            this.MaxHealthMod = cfg.getDouble("Quakefish.Modifiers.MaxHealth");
+            this.DefenseMod = cfg.getDouble("Quakefish.Modifiers.Defense");
+            this.AttackMod = cfg.getDouble("Quakefish.Modifiers.Attack");
+            this.isRoamingBoss = true;
         }
         //=======================================================
         //Lunaris Stag
         if (bossType.equals("MythicMob{LunarisStag}")) {
-            this.Level = 120;
-            this.MaxHealth = 85 * this.Level;
-            this.Health = MaxHealth;
-            this.Attack = 150;
-            this.Defense = 90;
-            this.ActiveDefense = this.Defense;
-            this.Mob = mob;
+            this.Level = cfg.getInt("LunarisStag.Level");
+            this.MaxHealthMod = cfg.getDouble("LunarisStag.Modifiers.MaxHealth");
+            this.DefenseMod = cfg.getDouble("LunarisStag.Modifiers.Defense");
+            this.AttackMod = cfg.getDouble("LunarisStag.Modifiers.Attack");
+            this.isRoamingBoss = true;
         }
         //=======================================================
         //Larian the Nightmare
         if (bossType.equals("MythicMob{LarianLow}") || bossType.equals("MythicMob{LarianMid}") || bossType.equals("MythicMob{Larian}")) {
-            this.Level = 200;
-            this.MaxHealth = 100 * this.Level;
-            this.Health = MaxHealth;
-            this.Attack = 250;
-            this.Defense = 100;
-            this.ActiveDefense = this.Defense;
-            this.Mob = mob;
-            this.isBoss = true;
-
+            this.Level = cfg.getInt("Larian.Level");
+            this.MaxHealthMod = cfg.getDouble("Larian.Modifiers.MaxHealth");
+            this.DefenseMod = cfg.getDouble("Larian.Modifiers.Defense");
+            this.AttackMod = cfg.getDouble("Larian.Modifiers.Attack");
+            this.isArenaBoss = true;
         }
 
         //=======================================================
         //universal across all bosses
+
+        this.MaxHealth = MaxHealthMod * Balance.mobHP(this.Level);
+        this.Health = MaxHealth;
+        this.Attack = AttackMod * Balance.mobDmg(this.Level);
+        this.Defense = DefenseMod * Balance.mobDef(this.Level);
+        this.ActiveDefense = this.Defense;
+        this.Mob = mob;
 
         this.mult_stat_change = new HashMap<>();
         this.mult_stat_change.put("MaxHealth", 1.0);
@@ -306,7 +316,7 @@ public class MobStats {
 
                 updateMobHealthbar();
 
-                if (getHealth() <= 0  && !getMob().isDead() && ((!playerstats.isInBossFight() && !isBoss) || (playerstats.isInBossFight() && isBoss))) {
+                if (getHealth() <= 0  && !getMob().isDead() && ((!playerstats.isInBossFight() && !isArenaBoss) || (playerstats.isInBossFight() && isArenaBoss))) {
                     //"kills" the mob once 0 health is hit and awards EXP and drops
                     getMob().setHealth(0);
 
@@ -323,7 +333,8 @@ public class MobStats {
         }
     }
     public void mobDamage(MobStats mobstats) {
-        this.Health -= (0.01 * ((int) (100 *
+        if (!isRoamingBoss)
+            this.Health -= (0.01 * ((int) (100 *
                 ((mobstats.getAttack() - (mobstats.getAttack() * (getActiveDefense() / (getActiveDefense() + 100))))
                 ))));
     }
@@ -354,7 +365,7 @@ public class MobStats {
 
                 updateMobHealthbar();
 
-                if (getHealth() <= 0 && !getMob().isDead() && ((!playerstats.isInBossFight() && !isBoss) || (playerstats.isInBossFight() && isBoss))) {
+                if (getHealth() <= 0 && !getMob().isDead() && ((!playerstats.isInBossFight() && !isArenaBoss) || (playerstats.isInBossFight() && isArenaBoss))) {
                     //"kills" the mob once 0 health is hit and awards EXP and drops
                     getMob().setHealth(0);
                     KillReward(playerstats);
@@ -368,11 +379,11 @@ public class MobStats {
     }
     public void updateMobHealthbar() {
         if (getHealth() > 0) {
-            if (!isBoss && !getMob().isDead()) {
+            if (!isArenaBoss && !getMob().isDead()) {
                 getMob().customName(generateName());
                 getMob().setHealth(Math.max(0, getMob().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * (getHealth() / getMaxHealth())));
             }
-            else if (isBoss && !getMob().isDead()) {
+            else if (isArenaBoss && !getMob().isDead()) {
                 //this will later change the title on the bossbar instead of the entity itself
                 getMob().customName(updateBossBarName());
                 getMob().setHealth(Math.max(0, getMob().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * (getHealth() / getMaxHealth())));
@@ -380,14 +391,27 @@ public class MobStats {
         }
     }
     public void KillReward(PlayerStats stats) {
-        int EXPtoGive = EXPtoGive(stats.getLevel());
+        int EXPtoGive;
+
+        EXPtoGive = EXPtoGive(stats.getLevel());
+
 
         for (Player p : stats.getParty()) {
             PlayerStats PMemberStats = PlayerUtility.getPlayerStats(p);
-            PMemberStats.gainExperience((int) Math.round(Math.min((double) EXPtoGive / PMemberStats.getParty().size(), Balance.EXPGainCap * PMemberStats.getLevelCap())));
+
+            if (!(isArenaBoss || isRoamingBoss))
+                PMemberStats.gainExperience(
+                    (int)
+                            Math.ceil(
+                                    Math.min(
+                                            (double) EXPtoGive / PMemberStats.getParty().size(),
+                                            Balance.EXPGainCap * PMemberStats.getLevelCap())));
+            else
+                // bosses drop 100x the exp
+                PMemberStats.gainExperience((int) Math.ceil(100.0 * EXPtoGive / PMemberStats.getParty().size()));
         }
 
-        if (!passiveMob && !isBoss)
+        if (!passiveMob && !isArenaBoss)
         {
             if (this.Level >= stats.EquipmentLevelMinimum) {
                 if (stats.getPlayer().getInventory().firstEmpty() != -1) { //if there's an empty slot to put an item in
@@ -404,7 +428,7 @@ public class MobStats {
             if (rd.nextFloat() < 0.5)
                 getMob().getLocation().getWorld().dropItem(stats.getPlayer().getLocation().add(0,0.2,0), new ItemStack(Material.BLAZE_ROD));
         }
-        if (!isBoss) {
+        if (!isArenaBoss) {
             getMob().customName(Component.text("+" + EXPtoGive + "XP" + " - " + stats.getPlayer().getName()));
         }
         else {
@@ -413,7 +437,11 @@ public class MobStats {
         }
     }
     public int EXPtoGive(int playerLevel) {
-        return Balance.MobExpRewardCalc(this.Level, playerLevel);
+        if (!passiveMob)
+            return Balance.MobExpRewardCalc(this.Level, playerLevel);
+        else
+            return 0;
+
     }
     public void spell_damage(double amount, Player player)
     {
@@ -435,7 +463,7 @@ public class MobStats {
                 updateMobHealthbar();
 
                 PlayerStats Pstats = PlayerUtility.getPlayerStats(player);
-                if (getHealth() <= 0 && ((!playerstats.isInBossFight() && !isBoss) || (playerstats.isInBossFight() && isBoss))) {
+                if (getHealth() <= 0 && ((!playerstats.isInBossFight() && !isArenaBoss) || (playerstats.isInBossFight() && isArenaBoss))) {
                     if (!getMob().isDead()) {
                         KillReward(Pstats);
                     }

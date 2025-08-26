@@ -5,7 +5,6 @@ import io.lumine.mythic.bukkit.events.MythicMobDeathEvent;
 import io.lumine.mythic.core.mobs.ActiveMob;
 import me.roupen.firstpluginthree.FirstPluginThree;
 import me.roupen.firstpluginthree.playerequipment.Rune;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -21,13 +20,20 @@ public class elite {
     private World world;
 
 
-    public static ArrayList<String> roamingEliteNames = new ArrayList<String>() {{
+    public static ArrayList<String> roamingEliteTypes = new ArrayList<String>() {{
         add("MythicMob{ArcaneGolem}");
         add("MythicMob{Quakefish}");
         add("MythicMob{LunarisStag}");
     }};
 
-    public static ArrayList<String> ArenaEliteNames = new ArrayList<String>() {{
+    public static final ArrayList<String> roamingEliteNames = new ArrayList<String>() {{
+        add("Arcane Golem");
+        add("Quake Fish");
+        add("Lunaris Stag");
+    }};
+
+
+    public static ArrayList<String> ArenaEliteTypes = new ArrayList<String>() {{
         add("MythicMob{LarianLow}");
         add("MythicMob{LarianMid}");
         add("MythicMob{Larian}");
@@ -64,7 +70,7 @@ public class elite {
                 RewardRollCount = 0;
         }
 
-        if (ArenaEliteNames.contains(mmobName)) {
+        if (ArenaEliteTypes.contains(mmobName)) {
 
             Entity ent = mmob.getEntity().getBukkitEntity();
             Location entLoc = ent.getLocation();
@@ -104,14 +110,16 @@ public class elite {
         final double runeDropRate = 0.3;
         final double netherStarDropRate = 0.25;
 
-        if (roamingEliteNames.contains(mmob.getType().toString())) {
+        if (roamingEliteTypes.contains(mmob.getType().toString())) {
 
             Entity ent = mmob.getEntity().getBukkitEntity();
             Location entLoc = ent.getLocation();
 
-            //rolls for each mob drop
-            if (rd.nextDouble() < runeDropRate) {
-                ent.getWorld().dropItem(entLoc, Rune.GenerateRandomTier1Rune());
+            for (int i = 0; i < 4; i++) {
+                //rolls for each mob drop
+                if (rd.nextDouble() < runeDropRate) {
+                    ent.getWorld().dropItem(entLoc, Rune.GenerateRandomTier1Rune());
+                }
             }
 
             if (rd.nextDouble() < netherStarDropRate) {

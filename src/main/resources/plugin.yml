@@ -52,8 +52,20 @@ commands:
     permission: FirstPluginThree.enemy_create
     permission-message: Sorry! You don't have permission to execute that command.
 
+  item_create:
+    description: Debug command for use by admins only
+    usage: /<command> <level> <rarity> <MOBTYPE> <tooltype>
+    permission: FirstPluginThree.item_create
+    permission-message: Sorry! You don't have permission to execute that command.
+
   player_reset:
     description: Debug command for use by admins only
     usage: /<command> <player>
     permission: FirstPluginThree.player_reset
+    permission-message: Sorry! You don't have permission to execute that command.
+
+  player_set_level:
+    description: Debug command for use by admins only
+    usage: /<command> <player> [<level> | <vitality> <resilience> <strength> <dexterity> <intelligence> <wisdom> <artisan>]
+    permission: FirstPluginThree.player_set_level
     permission-message: Sorry! You don't have permission to execute that command.

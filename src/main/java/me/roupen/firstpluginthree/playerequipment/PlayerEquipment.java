@@ -10,7 +10,10 @@ import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.*;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -40,9 +43,18 @@ public class PlayerEquipment {
     private boolean isMagic = false;
     private String toolType;
     private Rune[] runes;
-    private static final String[] ArmorNames = {"Helmet", "Chestplate", "Leggings", "Boots", "Shield"};
+    public static final String[] ArmorNames = {"Helmet", "Chestplate", "Leggings", "Boots", "Shield"};
     private static final String[] WeaponTypeOptions = {"Dagger", "Longsword", "Greatsword","Shortbow", "Longbow", "Crossbow"};
+    private static final String[] RarityNames = {"Common", "Uncommon", "Rare", "Epic", "Legendary"};
     int model;
+
+    public static Material[][] ArmorOptions = {
+            {Material.LEATHER_HELMET, Material.CHAINMAIL_HELMET, Material.IRON_HELMET, Material.GOLDEN_HELMET, Material.DIAMOND_HELMET},
+            {Material.LEATHER_CHESTPLATE, Material.CHAINMAIL_CHESTPLATE, Material.IRON_CHESTPLATE, Material.GOLDEN_CHESTPLATE, Material.DIAMOND_CHESTPLATE},
+            {Material.LEATHER_LEGGINGS, Material.CHAINMAIL_LEGGINGS, Material.IRON_LEGGINGS, Material.GOLDEN_LEGGINGS, Material.DIAMOND_LEGGINGS},
+            {Material.LEATHER_BOOTS, Material.CHAINMAIL_BOOTS, Material.IRON_BOOTS, Material.GOLDEN_BOOTS, Material.DIAMOND_BOOTS},
+            {Material.SHIELD, Material.SHIELD, Material.SHIELD, Material.SHIELD, Material.SHIELD}
+    };
 
     //Constructor
     public PlayerEquipment(int rarity, Material itemType, String tool_type)
@@ -77,6 +89,32 @@ public class PlayerEquipment {
                 this.model = 0;
                 break;
         }
+
+    }
+
+    public PlayerEquipment(PlayerEquipment other)
+    {
+         this.MaxHealth = other.getMaxHealth();
+         this.HealthRegen = other.getHealthRegen();
+         this.Defense = other.getDefense();
+         this.Damage = other.getDamage();
+         this.MaxMana = other.getMaxMana();
+         this.ManaRegen = other.getManaRegen();
+         this.MaxStamina = other.getMaxStamina();
+         this.StaminaRegen = other.getStaminaRegen();
+         this.MovementSpeed = other.getMovementSpeed();
+         this.MultiHit = other.getMultiHit();
+         this.CritChance = other.getCritChance();
+         this.CritDamageMult = other.getCritDamageMult();
+         this.ItemType = other.getItemType();
+         this.Name = other.getCanonName();
+         this.Rarity = other.getRarity();
+         this.StaminaCost = other.getStaminaCost();
+         this.Level = other.getLevel();
+         this.isMagic = other.isMagic();
+         this.toolType = other.getToolType();
+         this.runes = other.getRunes();
+         this.model = other.model;
     }
 
     //Getters and Setters
@@ -111,10 +149,9 @@ public class PlayerEquipment {
         StaminaCost = staminaCost;
     }
     public String getName() {
-        if (getRunes() != null)
+        if (getRunes() != null && getRunes().length > 0)
         {
             return "Lv" + getLevel() + " " + getRunes()[0].getPrefix() + " " + Name + " " + getRunes()[0].getSuffix();
-
         }
         else
         {
@@ -284,18 +321,19 @@ public class PlayerEquipment {
         return NewEquipment;
     }
 
-    public void applyRunes()
+    public PlayerEquipment applyRunes()
     {
+     PlayerEquipment EquipWithRunes = new PlayerEquipment(this);
         //adds the effects of runes into the stats of the equipment and returns it as a new playerequipment
-        if (runes != null)
+        if (EquipWithRunes.runes != null)
         {
             Material[] colors = new Material[4];
             List<Material> ColorCount = new ArrayList<>();
 
             //fills the list with color counts
-            for (int i = 0; i < runes.length; i++) {
-                colors[2*i] = runes[i].getColor();
-                colors[2*i+1] = runes[i].getSecondaryColor();
+            for (int i = 0; i < EquipWithRunes.runes.length; i++) {
+                colors[2*i] = EquipWithRunes.runes[i].getColor();
+                colors[2*i+1] = EquipWithRunes.runes[i].getSecondaryColor();
             }
             Collections.addAll(ColorCount, colors);
 
@@ -308,30 +346,31 @@ public class PlayerEquipment {
             int PurpleCount = Collections.frequency(ColorCount, Material.PURPLE_DYE);
 
             //for red runes
-            setDamage(getDamage() * (1 + (RedCount * 0.15)));
-            setCritDamageMult(getCritDamageMult() + (0.05 * RedCount));
+            EquipWithRunes.setDamage(EquipWithRunes.getDamage() * (1 + (RedCount * 0.15)));
+            EquipWithRunes.setCritDamageMult(EquipWithRunes.getCritDamageMult() + (0.2 * RedCount));
 
             //for orange runes
-            setCritChance(getCritChance() + (0.06 * OrangeCount));
-            setMultiHit(getMultiHit() + (0.12 * OrangeCount));
+            EquipWithRunes.setCritChance(EquipWithRunes.getCritChance() + (0.08 * OrangeCount));
+            EquipWithRunes.setMultiHit(EquipWithRunes.getMultiHit() + (0.12 * OrangeCount));
 
             //for yellow runes
-            setMaxStamina(getMaxStamina() + (0.75 * YellowCount));
-            setStaminaRegen(getStaminaRegen() + (0.25 * YellowCount));
+            EquipWithRunes.setMaxStamina(EquipWithRunes.getMaxStamina() + (1.0 * YellowCount));
+            EquipWithRunes.setStaminaRegen(EquipWithRunes.getStaminaRegen() + (0.25 * YellowCount));
 
             //for green runes
-            setMaxHealth(getMaxHealth() * (1 + (GreenCount * 0.10)));
-            setHealthRegen(getHealthRegen() * (1 + (GreenCount * 0.20)));
-            setDefense(getDefense() * (1 + (GreenCount * 0.05)));
+            EquipWithRunes.setMaxHealth(EquipWithRunes.getMaxHealth() * (1 + (GreenCount * 0.10)));
+            EquipWithRunes.setHealthRegen(EquipWithRunes.getHealthRegen() * (1 + (GreenCount * 0.25)));
+            EquipWithRunes.setDefense(EquipWithRunes.getDefense() * (1 + (GreenCount * 0.05)));
 
             //for blue runes
-            setMaxMana(getMaxMana() * (1 + (BlueCount * 0.15)));
-            setManaRegen(getManaRegen() + (BlueCount * 0.5));
+            EquipWithRunes.setMaxMana(EquipWithRunes.getMaxMana() * (1 + (BlueCount * 0.20)));
+            EquipWithRunes.setManaRegen(EquipWithRunes.getManaRegen() + (BlueCount * 0.25));
 
             //for purple runes
-            setMovementSpeed(getMovementSpeed() * (1 + (PurpleCount * 0.005)) + (0.005 * PurpleCount));
+            EquipWithRunes.setMovementSpeed(EquipWithRunes.getMovementSpeed() * (1 + PurpleCount));
 
         }
+        return EquipWithRunes;
     }
 
     public static ItemStack EquipmentToItem(PlayerEquipment e)
@@ -341,6 +380,9 @@ public class PlayerEquipment {
         PersistentDataContainer data = meta.getPersistentDataContainer();
         Style style;
         DecimalFormat df = new DecimalFormat("0.00");
+
+        PlayerEquipment e_WithRunes;
+        e_WithRunes = e.applyRunes();
 
         data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "damage"), PersistentDataType.DOUBLE, e.getDamage());
         data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "defense"), PersistentDataType.DOUBLE, e.getDefense());
@@ -363,55 +405,60 @@ public class PlayerEquipment {
 
         ArrayList<Component> LoreSegments = new ArrayList<>();
 
-        if (e.getStaminaCost() > 0.0) {
-            LoreSegments.add(Component.text((e.getStaminaCost() + 1) + " Cost", Style.style(NamedTextColor.YELLOW))); //the +1 makes it more understandable
+        if (e_WithRunes.getStaminaCost() > 0.0) {
+            LoreSegments.add(Component.text((e_WithRunes.getStaminaCost() + 1) + " Cost", Style.style(NamedTextColor.YELLOW))); //the +1 makes it more understandable
             LoreSegments.add(Component.text(""));
         }
 
-        if (e.getDamage() > 0.0)
-            LoreSegments.add(Component.text(df.format(e.getDamage()) + " Damage", Style.style(NamedTextColor.RED)));
+        if (e_WithRunes.getDamage() > 0.0)
+            LoreSegments.add(Component.text(df.format(e_WithRunes.getDamage()) + " Damage", Style.style(NamedTextColor.RED)));
 
-        if (e.getDefense() > 0.0)
-            LoreSegments.add(Component.text(df.format(e.getDefense()) + " Defense", Style.style(NamedTextColor.GREEN)));
+        if (e_WithRunes.getDefense() > 0.0)
+            LoreSegments.add(Component.text(df.format(e_WithRunes.getDefense()) + " Defense", Style.style(NamedTextColor.GREEN)));
 
-        if (e.getMaxHealth() > 0.0)
-            LoreSegments.add(Component.text(df.format(e.getMaxHealth()) + " Max Health", Style.style(NamedTextColor.DARK_RED)));
+        if (e_WithRunes.getMaxHealth() > 0.0)
+            LoreSegments.add(Component.text(df.format(e_WithRunes.getMaxHealth()) + " Max Health", Style.style(NamedTextColor.DARK_RED)));
 
-        if (e.getMaxStamina() > 0.0)
-            LoreSegments.add(Component.text(df.format(e.getMaxStamina()) + " Max Stamina", Style.style(NamedTextColor.YELLOW)));
+        if (e_WithRunes.getMaxStamina() > 0.0)
+            LoreSegments.add(Component.text(df.format(e_WithRunes.getMaxStamina()) + " Max Stamina", Style.style(NamedTextColor.YELLOW)));
 
-        if (e.getMaxMana() > 0.0)
-            LoreSegments.add(Component.text(df.format(e.getMaxMana()) + " Max Mana", Style.style(NamedTextColor.AQUA)));
+        if (e_WithRunes.getMaxMana() > 0.0)
+            LoreSegments.add(Component.text(df.format(e_WithRunes.getMaxMana()) + " Max Mana", Style.style(NamedTextColor.AQUA)));
 
-        if (e.getHealthRegen() > 0.0)
-            LoreSegments.add(Component.text(df.format(e.getHealthRegen() * 4) + " Health/s", Style.style(NamedTextColor.DARK_RED, TextDecoration.ITALIC)));
+        if (e_WithRunes.getHealthRegen() > 0.0)
+            LoreSegments.add(Component.text(df.format(e_WithRunes.getHealthRegen() * 4) + " Health/s", Style.style(NamedTextColor.DARK_RED, TextDecoration.ITALIC)));
 
-        if (e.getStaminaRegen() > 0.0)
-            LoreSegments.add(Component.text(df.format(e.getStaminaRegen() * 4) + " Stamina/s", Style.style(NamedTextColor.YELLOW, TextDecoration.ITALIC)));
+        if (e_WithRunes.getStaminaRegen() > 0.0)
+            LoreSegments.add(Component.text(df.format(e_WithRunes.getStaminaRegen() * 4) + " Stamina/s", Style.style(NamedTextColor.YELLOW, TextDecoration.ITALIC)));
 
-        if (e.getManaRegen() > 0.0)
-            LoreSegments.add(Component.text(df.format(e.getManaRegen() * 4) + " Mana/s", Style.style(NamedTextColor.AQUA, TextDecoration.ITALIC)));
+        if (e_WithRunes.getManaRegen() > 0.0)
+            LoreSegments.add(Component.text(df.format(e_WithRunes.getManaRegen() * 4) + " Mana/s", Style.style(NamedTextColor.AQUA, TextDecoration.ITALIC)));
 
-        if (e.getMultiHit() > 0.0)
-            LoreSegments.add(Component.text(df.format(100 * e.getMultiHit()) + "% Multi-Hit", Style.style(NamedTextColor.WHITE)));
+        if (e_WithRunes.getMultiHit() > 0.0)
+            LoreSegments.add(Component.text(df.format(100 * e_WithRunes.getMultiHit()) + "% Multi-Hit", Style.style(NamedTextColor.WHITE)));
 
-        if (e.getCritChance() > 0.0)
-            LoreSegments.add(Component.text(df.format(100 * e.getCritChance()) + "% Crit-Chance", Style.style(NamedTextColor.LIGHT_PURPLE)));
+        if (e_WithRunes.getCritChance() > 0.0)
+            LoreSegments.add(Component.text(df.format(100 * e_WithRunes.getCritChance()) + "% Crit-Chance", Style.style(NamedTextColor.LIGHT_PURPLE)));
 
-        if (e.getCritDamageMult() > 0.0)
-            LoreSegments.add(Component.text(df.format(100 * e.getCritDamageMult()) + "% Crit-Damage", Style.style(NamedTextColor.DARK_PURPLE)));
+        if (e_WithRunes.getCritDamageMult() > 0.0)
+            LoreSegments.add(Component.text(df.format(100 * e_WithRunes.getCritDamageMult()) + "% Crit-Damage", Style.style(NamedTextColor.DARK_PURPLE)));
 
-        if (e.getMovementSpeed() != 0.0)
-            LoreSegments.add(Component.text(df.format(1000 * e.getMovementSpeed()) + "% Movement Speed", Style.style(NamedTextColor.GRAY)));
+        if (e_WithRunes.getMovementSpeed() != 0.0)
+            LoreSegments.add(Component.text(df.format(1000 * e_WithRunes.getMovementSpeed()) + "% Movement Speed", Style.style(NamedTextColor.GRAY)));
 
         List<Component> lore = LoreSegments;
 
-        if (e.getRunes() != null) {style = e.getRunes()[0].style;}
+        if (e_WithRunes.getRunes() != null) {style = e_WithRunes.getRunes()[0].style;}
         else {style = Style.style(NamedTextColor.WHITE);}
 
-        meta.displayName(Component.text(e.getName(), style));
-        meta.setCustomModelData(e.model);
+        meta.displayName(Component.text(e_WithRunes.getName(), style));
+        meta.setCustomModelData(e_WithRunes.model);
         meta.lore(lore);
+
+        AttributeModifier attackSpeedModifier = new AttributeModifier(UUID.randomUUID(), String.valueOf(UUID.randomUUID()), 10f, AttributeModifier.Operation.ADD_NUMBER);
+
+        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, attackSpeedModifier);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 
         item.setItemMeta(meta);
 
@@ -554,15 +601,7 @@ public class PlayerEquipment {
     public static PlayerEquipment GenerateRandomEquipment(LivingEntity mob)
     {
 
-        Material[][] ArmorOptions = {
-                {Material.LEATHER_HELMET, Material.CHAINMAIL_HELMET, Material.IRON_HELMET, Material.GOLDEN_HELMET, Material.DIAMOND_HELMET},
-                {Material.LEATHER_CHESTPLATE, Material.CHAINMAIL_CHESTPLATE, Material.IRON_CHESTPLATE, Material.GOLDEN_CHESTPLATE, Material.DIAMOND_CHESTPLATE},
-                {Material.LEATHER_LEGGINGS, Material.CHAINMAIL_LEGGINGS, Material.IRON_LEGGINGS, Material.GOLDEN_LEGGINGS, Material.DIAMOND_LEGGINGS},
-                {Material.LEATHER_BOOTS, Material.CHAINMAIL_BOOTS, Material.IRON_BOOTS, Material.GOLDEN_BOOTS, Material.DIAMOND_BOOTS},
-                {Material.SHIELD, Material.SHIELD, Material.SHIELD, Material.SHIELD, Material.SHIELD}
-        };
 
-        String[] RarityNames = {"Common", "Uncommon", "Rare", "Epic", "Legendary"};
 
         MobStats mobstats = MobUtility.getMobStats(mob);
         int level = mobstats.getLevel();
@@ -580,29 +619,36 @@ public class PlayerEquipment {
         if (chosenOption <= 0.5)
         { //Generate a Weapon
             WeaponType = WeaponTypeOptions[GenerateWeaponType()];
-            if (WeaponType.equals("Dagger") || WeaponType.equals("Longsword") || WeaponType.equals("Greatsword")) {
-                new_random_equipment = new PlayerEquipment(rarity, Material.WOODEN_SWORD, WeaponType);
-                new_random_equipment.setLevel(level);
-                new_random_equipment.setRarity(rarity);
-                new_random_equipment.setName(RarityNames[rarity] + " " + new_random_equipment.toolType);
+            switch (WeaponType) {
+                case "Dagger":
+                case "Longsword":
+                case "Greatsword":
+                    new_random_equipment = new PlayerEquipment(rarity, Material.WOODEN_SWORD, WeaponType);
+                    new_random_equipment.setLevel(level);
+                    new_random_equipment.setRarity(rarity);
+                    new_random_equipment.setName(RarityNames[rarity] + " " + new_random_equipment.toolType);
 
-            }else if (WeaponType.equals("Shortbow") || WeaponType.equals("Longbow")) {
-                new_random_equipment = new PlayerEquipment(rarity, Material.BOW, WeaponType);
-                new_random_equipment.setLevel(level);
-                new_random_equipment.setRarity(rarity);
-                new_random_equipment.setName(RarityNames[rarity] + " " + new_random_equipment.toolType);
+                    break;
+                case "Shortbow":
+                case "Longbow":
+                    new_random_equipment = new PlayerEquipment(rarity, Material.BOW, WeaponType);
+                    new_random_equipment.setLevel(level);
+                    new_random_equipment.setRarity(rarity);
+                    new_random_equipment.setName(RarityNames[rarity] + " " + new_random_equipment.toolType);
 
-            }else if (WeaponType.equals("Crossbow")) {
-                new_random_equipment = new PlayerEquipment(rarity, Material.CROSSBOW, WeaponType);
-                new_random_equipment.setLevel(level);
-                new_random_equipment.setRarity(rarity);
-                new_random_equipment.setName(RarityNames[rarity] + " " + new_random_equipment.toolType);
-            }
-            else{ //Should be impossible, but generates an error item for a player to report it
-                new_random_equipment = new PlayerEquipment(rarity, Material.DEAD_BUSH, WeaponType);
-                new_random_equipment.setLevel(level);
-                new_random_equipment.setRarity(rarity);
-                new_random_equipment.setName("Item Generation Error " + new_random_equipment.toolType);
+                    break;
+                case "Crossbow":
+                    new_random_equipment = new PlayerEquipment(rarity, Material.CROSSBOW, WeaponType);
+                    new_random_equipment.setLevel(level);
+                    new_random_equipment.setRarity(rarity);
+                    new_random_equipment.setName(RarityNames[rarity] + " " + new_random_equipment.toolType);
+                    break;
+                default:  //Should be impossible, but generates an error item for a player to report it
+                    new_random_equipment = new PlayerEquipment(rarity, Material.DEAD_BUSH, WeaponType);
+                    new_random_equipment.setLevel(level);
+                    new_random_equipment.setRarity(rarity);
+                    new_random_equipment.setName("Item Generation Error " + new_random_equipment.toolType);
+                    break;
             }
         }else {//Generate an armor piece
             armorType = PlayerEquipment.GenerateArmorType();
@@ -612,7 +658,7 @@ public class PlayerEquipment {
             new_random_equipment.setName(RarityNames[rarity] + " " + new_random_equipment.toolType);
         }
 
-            new_random_equipment.LevelUp(mob);
+            new_random_equipment.LevelUp(mob.getType().toString());
 
         return new_random_equipment;
     }
@@ -636,22 +682,22 @@ public class PlayerEquipment {
                 index = rd.nextInt(6);
                 switch (index) {
                     case 0:
-                        setMaxHealth(getMaxHealth() + 50);
+                        setMaxHealth(getMaxHealth() + (Math.round(Balance.mobDmg(this.Level) / (Math.floor(this.Level / 10.0)))));
                         break;
                     case 1:
-                        setHealthRegen(getHealthRegen() + 0.25);
+                        setHealthRegen(getHealthRegen() + Math.round(Balance.mobDmg(this.Level)) * 0.02 / 4); // every roll gives enough regen to heal 0.5% of an equal level mob attack per tick
                         break;
                     case 2:
-                        setDefense(getDefense() + 10);
+                        setMaxMana(getMaxMana() + 20.0);
                         break;
                     case 3:
-                        setMaxMana(getMaxMana() + 20);
-                        break;
-                    case 4:
                         setManaRegen(getManaRegen() + 0.25);
                         break;
-                    case 5:
+                    case 4:
                         setMaxStamina(getMaxStamina() + 2.0);
+                        break;
+                    case 5:
+                        setMovementSpeed(getMovementSpeed() + 0.003);
                         break;
                     default:
                 }
@@ -671,6 +717,9 @@ public class PlayerEquipment {
                     case 3:
                         setCritDamageMult(getCritDamageMult() + 0.1);
                         break;
+                    case 4:
+                        setMovementSpeed(getMovementSpeed() + 0.003);
+                        break;
                     default:
                 }
             }
@@ -680,7 +729,7 @@ public class PlayerEquipment {
 
     }
 
-    public void LevelUp(LivingEntity mob) {
+    public void LevelUp(String mob) {
 
         String ttype = getToolType();
 
@@ -729,29 +778,94 @@ public class PlayerEquipment {
             default:
         }
         //add mob based modifers, amplified by the rarity
-        if (mob instanceof Zombie) {
-            setDamage(getDamage() * (1.1 + (getRarity() * 0.05)));
-            setMovementSpeed(getMovementSpeed() - (0.008 - (getRarity() * 0.002)));
+        switch (mob) {
+            case "ZOMBIE":
+                //+Damage | -MoveSpeed
+                setDamage(getDamage() * (1.1 + (getRarity() * 0.05)));
+                setMovementSpeed(getMovementSpeed() - (0.008 - (getRarity() * 0.002)));
 
-        }else if (mob instanceof Skeleton) {
-            setDefense(getDefense() * 1.1);
-            setCritChance(getCritChance() * (1.0 + (getRarity() * 0.05)));
+                break;
+            case "SKELETON":
+                // +Defense | +CritChance
+                setDefense(getDefense() * (1.1 + (getRarity() * 0.1)));
+                setCritChance(getCritChance() * (1.1 + (getRarity() * 0.1)));
 
-        } else if (mob instanceof Creeper) {
-            setCritDamageMult(getCritDamageMult() * 1.1);
-            setStaminaRegen(getStaminaRegen() * (1.0 + (getRarity() * 0.05)));
+                break;
+            case "CREEPER":
+                // +CritDamage | -Defense
+                setCritDamageMult(getCritDamageMult() * (1.1 + (getRarity() * 0.1)));
+                setDefense(getDefense() * (0.8 + (getRarity() * 0.05)));
 
-        }else if (mob instanceof Spider) {
-            setMovementSpeed(getMovementSpeed() + (0.01 + (getRarity() * 0.002)));
-            setMaxMana(getMaxMana() * (1.1 + (getRarity() * 0.05)));
+                break;
+            case "SPIDER":
+                // +MoveSpeed | +MaxStamina
+                setMovementSpeed(getMovementSpeed() * (1 + (getRarity() * 0.25)));
+                setMaxStamina(getMaxStamina() * (1.1 + (getRarity() * 0.1)));
 
-        }else if (mob instanceof Enderman) {
-            setManaRegen(getManaRegen() * (1.1 + getRarity() * 0.05));
-            setMaxHealth(getMaxHealth() * (1.1 + getRarity() * 0.05));
+                break;
+            case "ENDERMAN":
+                // +MaxMana | +MaxHealth
+                setMaxMana(getMaxMana() * (1.1 + getRarity() * 0.1));
+                setMaxHealth(getMaxHealth() * (1.1 + getRarity() * 0.1));
+                break;
+            case "BLAZE":
+                // +MultiHit | +ManaRegen
+                setMultiHit(getMultiHit() * (1.1 + getRarity() * 0.1));
+                setManaRegen(getManaRegen() * (1.1 + getRarity() * 0.1));
 
+                break;
+            case "GHAST":
+                // +Stamina Regen
+                setStaminaRegen(getStaminaRegen() + (0.025 + (0.025 * getRarity())));
+                break;
+            case "WITCH":
+                // +HealthRegen | +ManaRegen
+                setHealthRegen(getHealthRegen() * (1.1 + getRarity() * 0.1));
+                setManaRegen(getManaRegen() * (1.1 + getRarity() * 0.1));
+                break;
+        }
+    }
+
+    public static PlayerEquipment GenerateSpecificEquipment(int level, int rarity, String mobType, String toolType) {
+        PlayerEquipment new_e = new PlayerEquipment(rarity, Material.AIR, toolType);
+
+        new_e.setLevel(level);
+        new_e.setName(RarityNames[rarity] + " " + new_e.toolType);
+        switch (toolType){
+            case "Dagger":
+            case "Longsword":
+            case "Greatsword":
+                new_e.setItemType(Material.WOODEN_SWORD);
+                break;
+            case "Shortbow":
+            case "Longbow":
+                new_e.setItemType(Material.BOW);
+                break;
+            case "Crossbow":
+                new_e.setItemType(Material.CROSSBOW);
+                break;
+            case "Helmet":
+                new_e.setItemType(ArmorOptions[0][rarity]);
+                break;
+            case "Chestplate":
+                new_e.setItemType(ArmorOptions[1][rarity]);
+                break;
+            case "Leggings":
+                new_e.setItemType(ArmorOptions[2][rarity]);
+                break;
+            case "Boots":
+                new_e.setItemType(ArmorOptions[3][rarity]);
+                break;
+            case "Shield":
+                new_e.setItemType(Material.SHIELD);
+                break;
         }
 
+        new_e.LevelUp(mobType);
+
+        return new_e;
     }
+
 
     public static boolean isEquip(ItemStack item)
     {
