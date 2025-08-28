@@ -169,7 +169,7 @@ public class PyroMeteorFall extends BukkitRunnable {
 
     public double MeteorDmgCalc(MobStats mobstats)
     {
-        return 7.5 * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
+        return 5 * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
     }
     public double CasterSpellDamage() {
         return stats.getCasterSpellDamage() * Wand.getOffenseSpellPowerModifier();

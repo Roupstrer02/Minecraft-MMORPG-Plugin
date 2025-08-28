@@ -35,7 +35,7 @@ public class TechFaultInArmor extends BukkitRunnable {
     private wand Wand;
     private boolean spellHit;
     private DecimalFormat NumberFormat = new DecimalFormat("0.0");
-    public static double baseManaCost = 40.0;
+    public static double baseManaCost = 60.0;
 
 
 
@@ -147,7 +147,7 @@ public class TechFaultInArmor extends BukkitRunnable {
     public double FaultInTheArmorDmgCalc(MobStats mobstats)
     {
         double loweredDefense = mobstats.getDefense() * 0.5;
-        return 3.5 * (CasterSpellDamage() - (CasterSpellDamage() * (loweredDefense / (loweredDefense + 100))));
+        return 10 * (CasterSpellDamage() - (CasterSpellDamage() * (loweredDefense / (loweredDefense + 100))));
     }
 
     public double SpellAOE() {

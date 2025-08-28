@@ -59,7 +59,7 @@ public class Balance {
     // player modifiers
 
     public static double playerBaseHealthAtLevel(int level) {
-        return 3.4 * Math.pow(diffMultiplierAtLevelDelta, ((double) level) / (levelDelta)) * mobDmgFactor - 1;
+        return 3.4 * Math.pow(diffMultiplierAtLevelDelta, ((double) level) / levelDelta) * mobDmgFactor - 1;
     }
 
     public static double mobDmg(int level) {
@@ -121,6 +121,6 @@ public class Balance {
         return (int) Math.round((Math.pow(diffMultiplierAtLevelDelta,((double) level+1)/levelDelta) - Math.pow(diffMultiplierAtLevelDelta,((double) level)/levelDelta)) * XPFactor);
     }
     public static int MobExpRewardCalc(int mobLevel, int playerLevel){
-        return (int) Math.round(((Math.pow(diffMultiplierAtLevelDelta,((double) mobLevel+1)/levelDelta) - Math.pow(diffMultiplierAtLevelDelta,((double) mobLevel)/levelDelta)) * XPFactor / numOfMobsOfSameLevelToSlayForLvlUp) * Math.pow(((double) mobLevel)/playerLevel,XPFromMobMod));
+        return (int) Math.round(((Math.pow(diffMultiplierAtLevelDelta,((double) mobLevel+1)/levelDelta) - Math.pow(diffMultiplierAtLevelDelta,((double) mobLevel)/levelDelta)) * XPFactor / (numOfMobsOfSameLevelToSlayForLvlUp * (1 + playerLevel / 100.0))) * Math.pow(((double) mobLevel)/playerLevel,XPFromMobMod));
     }
 }

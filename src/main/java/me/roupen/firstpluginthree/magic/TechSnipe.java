@@ -37,7 +37,7 @@ public class TechSnipe extends BukkitRunnable {
     private Material[] exempt_blocks = {Material.AIR, Material.GRASS, Material.TALL_GRASS, Material.WATER, Material.CAVE_AIR};
     private DecimalFormat NumberFormat = new DecimalFormat("0.0");
 
-    public static double baseManaCost = 30.0;
+    public static double baseManaCost = 80.0;
 
     public TechSnipe(Player caster)
     {
@@ -169,7 +169,7 @@ public class TechSnipe extends BukkitRunnable {
     }
     public double TechSnipeDmgCalc(MobStats mobstats)
     {
-        return 3.5 * CasterSpellDamage();
+        return 21 * CasterSpellDamage();
     }
     public double ManaCostCalc(PlayerStats playerstats)
     {

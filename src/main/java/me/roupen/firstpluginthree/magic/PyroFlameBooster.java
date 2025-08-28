@@ -130,7 +130,7 @@ public class PyroFlameBooster extends BukkitRunnable {
 
     public double FlameBoosterDamageCalc(MobStats mobstats)
     {
-        return 5 * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
+        return 15 * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
     }
     public double SpellAOE() {
         return 2.5 * Wand.getUtilitySpellPowerModifier();

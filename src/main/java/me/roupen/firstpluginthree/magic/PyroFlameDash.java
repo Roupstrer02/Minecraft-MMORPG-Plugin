@@ -133,7 +133,7 @@ public class PyroFlameDash extends BukkitRunnable {
     public void incrementProgress() {this.progress = getProgress() + 1;}
 
     public double FlameDashDamageCalc(MobStats mobstats) {
-        return 0.15 * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
+        return 1 * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
     }
 
     public double CasterSpellDamage()

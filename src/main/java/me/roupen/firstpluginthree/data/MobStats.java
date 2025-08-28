@@ -408,7 +408,7 @@ public class MobStats {
                                             Balance.EXPGainCap * PMemberStats.getLevelCap())));
             else
                 // bosses drop 100x the exp
-                PMemberStats.gainExperience((int) Math.ceil(100.0 * EXPtoGive / PMemberStats.getParty().size()));
+                PMemberStats.gainExperience((int) Math.ceil(4.0 * EXPtoGive / PMemberStats.getParty().size()));
         }
 
         if (!passiveMob && !isArenaBoss)

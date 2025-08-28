@@ -117,10 +117,12 @@ public class DivineHealingOrb extends BukkitRunnable {
     public void spellPerTick() {
         //any code written here will **attempt** to run every tick
         if (progress < spellCooldown) {
+            spellDir = spellDir.normalize();
+            spellDir.multiply(2);
             loc.add(spellDir.multiply(0.25 * Wand.getUtilitySpellPowerModifier()));
-            spellDir.multiply(4);
+
             ParticleSphere(loc, SpellAOE(1), Particle.ELECTRIC_SPARK);
-            //stats.heal(HealCalc());
+
             if (progress % 10 == 0) {
                 healNearby();
             }

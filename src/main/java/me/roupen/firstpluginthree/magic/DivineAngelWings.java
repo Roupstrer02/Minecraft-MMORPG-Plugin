@@ -1,8 +1,6 @@
 package me.roupen.firstpluginthree.magic;
 
-import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
-import me.roupen.firstpluginthree.utility.MobUtility;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
 import me.roupen.firstpluginthree.wands.wand;
 import org.bukkit.boss.BossBar;
@@ -11,12 +9,9 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.*;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 
 import java.text.DecimalFormat;
 import java.util.Collection;
-
-import static me.roupen.firstpluginthree.magic.spells.*;
 
 public class DivineAngelWings extends BukkitRunnable {
 
@@ -63,6 +58,7 @@ public class DivineAngelWings extends BukkitRunnable {
     //If your spell requires to damage the target(s) only once, set this flag in your logic
     private boolean SpellHit = false;
     private DecimalFormat NumberFormat = new DecimalFormat("0.0");
+    private double maxHPPercentHealed = 10;
 
     //Constructor
     //Should any of the initial values for the spell variables mentioned below need to change, this is where you'd change them
@@ -104,10 +100,10 @@ public class DivineAngelWings extends BukkitRunnable {
         return baseManaCost * Wand.getSpellCostModifier();
     }
     //Create the damage formula for your spell, alternate versions can be created for spells with multiple hitboxes/damage ranges
-    public double HealCalc()
+    public double HealCalc(PlayerStats pStats)
     {
         //if a spell has multiple components dealing different damage counts, many of these can be created or switch cased through
-        return spellPower * CasterSpellPower();
+        return ((maxHPPercentHealed + CasterSpellPower() / 1000) * spellPower) * pStats.getActiveMaxHealth();
     }
 
     public double DefenseIncreaseFactor() { return 1.10 + (CasterSpellPower() / 200 );}
@@ -141,7 +137,7 @@ public class DivineAngelWings extends BukkitRunnable {
         if (Targets.size() > 1) {
             targetStats = PlayerUtility.getPlayerStats(TPTarget);
             origin.teleport(TPTarget);
-            targetStats.heal(HealCalc());
+            targetStats.heal(HealCalc(targetStats));
             targetStats.changeMultiplicativeStats("Defense", DefenseIncreaseFactor());
         }
 

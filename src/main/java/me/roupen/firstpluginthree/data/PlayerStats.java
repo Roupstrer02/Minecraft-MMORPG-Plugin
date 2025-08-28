@@ -149,7 +149,7 @@ public class PlayerStats {
         Component message = Component.text("Party Members: \n", Style.style(NamedTextColor.GREEN));
         for (Player p : party) {
             PlayerStats pStats = PlayerUtility.getPlayerStats(p);
-            message = message.append(Component.text("- " + p.getName() + ": ", Style.style(NamedTextColor.GREEN)).append(Component.text("Level " + pStats.getLevel(), Style.style(NamedTextColor.YELLOW))));
+            message = message.append(Component.text("- " + p.getName() + ": ", Style.style(NamedTextColor.GREEN)).append(Component.text("Level " + pStats.getLevel() + "\n", Style.style(NamedTextColor.YELLOW))));
         }
         return message;
     }
@@ -369,6 +369,7 @@ public class PlayerStats {
                 else if (TempEquipment.getToolType().equals("Shield") && PlayerEquipment.ItemToEquipment(MainHand).isLongSword()) {
 
                     TempEquipment.setDefense(1.1 * TempEquipment.getDefense());
+
                 }
 
                 //adds offhand stats excluding damage and cost
@@ -512,7 +513,7 @@ public class PlayerStats {
     }
 
     public double getActiveHealthRegen() {
-        return (((((ActiveMaxHealth / 80.0) + (Resilience - 1) * (ActiveMaxHealth / 2800.0)) + equipment.getHealthRegen()) + LinearStatChanges.get("HP Regen")) * MultiplicativeStatChanges.get("HP Regen")) * getHealingReceivedModifier();
+        return (((((ActiveMaxHealth / 80.0) + (Resilience - 1) * (ActiveMaxHealth / 11200.0)) + equipment.getHealthRegen()) + LinearStatChanges.get("HP Regen")) * MultiplicativeStatChanges.get("HP Regen"));
     }
 
     public double getActiveManaRegen() {
@@ -583,7 +584,9 @@ public class PlayerStats {
         setActiveMaxStamina(Double.parseDouble(df.format(MultiplicativeStatChanges.get("Stamina Cap") * (20.0 + equipment.getMaxStamina() + LinearStatChanges.get("Stamina Cap")))));
     }//None
     public void recalculateMultihit(){
-        setMultihit(Double.parseDouble(df.format(((0.01 * getDexterity()) + equipment.getMultiHit() + LinearStatChanges.get("Multi Hit")) * MultiplicativeStatChanges.get("Multi Hit"))));
+        setMultihit(
+                Double.parseDouble(df.format(
+                        ((0.01 * getDexterity()) + equipment.getMultiHit() + LinearStatChanges.get("Multi Hit")) * MultiplicativeStatChanges.get("Multi Hit"))));
     } //Dexterity
     public void recalculateCritChance(){
         setCritChance(Double.parseDouble(df.format((0.01 + equipment.getCritChance() + LinearStatChanges.get("Crit Chance")) * MultiplicativeStatChanges.get("Crit Chance"))));
