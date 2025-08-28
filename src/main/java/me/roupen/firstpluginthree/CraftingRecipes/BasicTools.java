@@ -1,20 +1,16 @@
 package me.roupen.firstpluginthree.CraftingRecipes;
 
-import io.lumine.mythic.bukkit.utils.adventure.text.format.NamedTextColor;
-import io.lumine.mythic.bukkit.utils.adventure.text.format.Style;
-import me.roupen.firstpluginthree.FirstPluginThree;
+import me.roupen.firstpluginthree.Zelandris;
 import me.roupen.firstpluginthree.balance.Balance;
 import me.roupen.firstpluginthree.playerequipment.PlayerEquipment;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Item;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
-import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,7 +63,7 @@ public class BasicTools {
         ItemLevelLock.put(key, minLevel);
     }
     private NamespacedKey makeNameKey(String keyName) {
-        return new NamespacedKey(FirstPluginThree.getMyPlugin(), keyName);
+        return new NamespacedKey(Zelandris.getMyPlugin(), keyName);
     }
     private void addToMaps(String name, ItemStack item, Recipe recipe) {
         Items.put(name, item);
@@ -853,7 +849,7 @@ public class BasicTools {
 
         //Adding all the recipes defined above into the server
         for (Recipe recipe : ListOfRecipes) {
-            FirstPluginThree.getMyPlugin().getServer().addRecipe(recipe);
+            Zelandris.getMyPlugin().getServer().addRecipe(recipe);
         }
 
     }

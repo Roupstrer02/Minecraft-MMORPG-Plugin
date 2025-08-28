@@ -3,7 +3,7 @@ package me.roupen.firstpluginthree.elite;
 import io.lumine.mythic.api.exceptions.InvalidMobTypeException;
 import io.lumine.mythic.bukkit.events.MythicMobDeathEvent;
 import io.lumine.mythic.core.mobs.ActiveMob;
-import me.roupen.firstpluginthree.FirstPluginThree;
+import me.roupen.firstpluginthree.Zelandris;
 import me.roupen.firstpluginthree.playerequipment.Rune;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -77,7 +77,7 @@ public class elite {
             for (int i = 0; i < RewardRollCount; i++) {
 
                 //rolls for each mob drop
-                for (Player p : FirstPluginThree.PlayersInBossFight) {
+                for (Player p : Zelandris.PlayersInBossFight) {
 
                     //Nether Star
                     if (rd.nextDouble() < NetherStarDropRate) {
@@ -134,16 +134,16 @@ public class elite {
     public void spawn(Location spawnLoc) throws InvalidMobTypeException {
         switch (BossName) {
             case "Abyss Watcher":
-                FirstPluginThree.getMMHelper().spawnMythicMob("AbyssWatcherTest", spawnLoc);
+                Zelandris.getMMHelper().spawnMythicMob("AbyssWatcherTest", spawnLoc);
                 break;
             case "Larian the Night Hunter":
-                FirstPluginThree.getMMHelper().spawnMythicMob("LarianLow", spawnLoc);
+                Zelandris.getMMHelper().spawnMythicMob("LarianLow", spawnLoc);
                 break;
             case "Larian the Berserker":
-                FirstPluginThree.getMMHelper().spawnMythicMob("LarianMid", spawnLoc);
+                Zelandris.getMMHelper().spawnMythicMob("LarianMid", spawnLoc);
                 break;
             case "Larian the Nightmare":
-                FirstPluginThree.getMMHelper().spawnMythicMob("Larian", spawnLoc);
+                Zelandris.getMMHelper().spawnMythicMob("Larian", spawnLoc);
                 break;
         }
     }

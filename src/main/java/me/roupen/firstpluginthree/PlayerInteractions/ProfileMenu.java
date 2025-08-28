@@ -1,6 +1,6 @@
 package me.roupen.firstpluginthree.PlayerInteractions;
 
-import me.roupen.firstpluginthree.FirstPluginThree;
+import me.roupen.firstpluginthree.Zelandris;
 import me.roupen.firstpluginthree.customgui.GuiUtility;
 import me.roupen.firstpluginthree.data.PlayerStats;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
@@ -13,9 +13,6 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.PlayerInventory;
-
-import java.util.Objects;
 
 public class ProfileMenu {
 
@@ -42,7 +39,7 @@ public class ProfileMenu {
                 event.setCancelled(true);
             }
             else if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.AMETHYST_BLOCK) {
-                if (FirstPluginThree.PlayersInBossFight.contains(player)) {
+                if (Zelandris.PlayersInBossFight.contains(player)) {
                     player.sendMessage(Component.text("You should've thought of that before challenging an Elite", Style.style(NamedTextColor.RED, TextDecoration.ITALIC)));
                     player.playSound(player.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1.0f, 0.8f);
                 }else {

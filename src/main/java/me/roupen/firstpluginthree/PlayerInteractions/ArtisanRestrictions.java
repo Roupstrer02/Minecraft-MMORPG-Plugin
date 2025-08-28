@@ -1,19 +1,17 @@
 package me.roupen.firstpluginthree.PlayerInteractions;
 
-import me.roupen.firstpluginthree.FirstPluginThree;
+import me.roupen.firstpluginthree.Zelandris;
 import me.roupen.firstpluginthree.artisan.CookingRecipes;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -64,7 +62,7 @@ public class ArtisanRestrictions {
             InventoryType invType = event.getClickedInventory().getType();
             InventoryType.SlotType slotType = event.getSlotType();
             ItemStack clickedItem = event.getCurrentItem();
-            CookingRecipes cookingRecipes = FirstPluginThree.getCookingrecipes();
+            CookingRecipes cookingRecipes = Zelandris.getCookingrecipes();
             int ArtisanLevel = PlayerUtility.getPlayerStats(player).getArtisan();
 
             //Artisan restrictions for crafting table

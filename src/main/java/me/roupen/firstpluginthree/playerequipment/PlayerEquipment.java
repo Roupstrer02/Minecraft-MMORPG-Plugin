@@ -1,6 +1,6 @@
 package me.roupen.firstpluginthree.playerequipment;
 
-import me.roupen.firstpluginthree.FirstPluginThree;
+import me.roupen.firstpluginthree.Zelandris;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.balance.Balance;
 import me.roupen.firstpluginthree.utility.MobUtility;
@@ -263,59 +263,59 @@ public class PlayerEquipment {
 
         PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
 
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "damage"), PersistentDataType.DOUBLE))
-            NewEquipment.setDamage(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "damage"), PersistentDataType.DOUBLE));
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "damage"), PersistentDataType.DOUBLE))
+            NewEquipment.setDamage(data.get(new NamespacedKey(Zelandris.getMyPlugin(), "damage"), PersistentDataType.DOUBLE));
 
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "defense"), PersistentDataType.DOUBLE))
-            NewEquipment.setDefense(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "defense"), PersistentDataType.DOUBLE));
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "defense"), PersistentDataType.DOUBLE))
+            NewEquipment.setDefense(data.get(new NamespacedKey(Zelandris.getMyPlugin(), "defense"), PersistentDataType.DOUBLE));
 
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "maxhealth"), PersistentDataType.DOUBLE))
-            NewEquipment.setMaxHealth(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "maxhealth"), PersistentDataType.DOUBLE));
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "maxhealth"), PersistentDataType.DOUBLE))
+            NewEquipment.setMaxHealth(data.get(new NamespacedKey(Zelandris.getMyPlugin(), "maxhealth"), PersistentDataType.DOUBLE));
 
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "maxstamina"), PersistentDataType.DOUBLE))
-            NewEquipment.setMaxStamina(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "maxstamina"), PersistentDataType.DOUBLE));
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "maxstamina"), PersistentDataType.DOUBLE))
+            NewEquipment.setMaxStamina(data.get(new NamespacedKey(Zelandris.getMyPlugin(), "maxstamina"), PersistentDataType.DOUBLE));
 
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "maxmana"), PersistentDataType.DOUBLE))
-            NewEquipment.setMaxMana(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "maxmana"), PersistentDataType.DOUBLE));
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "maxmana"), PersistentDataType.DOUBLE))
+            NewEquipment.setMaxMana(data.get(new NamespacedKey(Zelandris.getMyPlugin(), "maxmana"), PersistentDataType.DOUBLE));
 
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "healthregen"), PersistentDataType.DOUBLE))
-            NewEquipment.setHealthRegen(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "healthregen"), PersistentDataType.DOUBLE));
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "healthregen"), PersistentDataType.DOUBLE))
+            NewEquipment.setHealthRegen(data.get(new NamespacedKey(Zelandris.getMyPlugin(), "healthregen"), PersistentDataType.DOUBLE));
 
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "staminaregen"), PersistentDataType.DOUBLE))
-            NewEquipment.setStaminaRegen(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "staminaregen"), PersistentDataType.DOUBLE));
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "staminaregen"), PersistentDataType.DOUBLE))
+            NewEquipment.setStaminaRegen(data.get(new NamespacedKey(Zelandris.getMyPlugin(), "staminaregen"), PersistentDataType.DOUBLE));
 
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "manaregen"), PersistentDataType.DOUBLE))
-            NewEquipment.setManaRegen(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "manaregen"), PersistentDataType.DOUBLE));
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "manaregen"), PersistentDataType.DOUBLE))
+            NewEquipment.setManaRegen(data.get(new NamespacedKey(Zelandris.getMyPlugin(), "manaregen"), PersistentDataType.DOUBLE));
 
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "multihit"), PersistentDataType.DOUBLE))
-            NewEquipment.setMultiHit(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "multihit"), PersistentDataType.DOUBLE));
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "multihit"), PersistentDataType.DOUBLE))
+            NewEquipment.setMultiHit(data.get(new NamespacedKey(Zelandris.getMyPlugin(), "multihit"), PersistentDataType.DOUBLE));
 
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "critchance"), PersistentDataType.DOUBLE))
-            NewEquipment.setCritChance(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "critchance"), PersistentDataType.DOUBLE));
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "critchance"), PersistentDataType.DOUBLE))
+            NewEquipment.setCritChance(data.get(new NamespacedKey(Zelandris.getMyPlugin(), "critchance"), PersistentDataType.DOUBLE));
 
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "critdamagemult"), PersistentDataType.DOUBLE))
-            NewEquipment.setCritDamageMult(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "critdamagemult"), PersistentDataType.DOUBLE));
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "critdamagemult"), PersistentDataType.DOUBLE))
+            NewEquipment.setCritDamageMult(data.get(new NamespacedKey(Zelandris.getMyPlugin(), "critdamagemult"), PersistentDataType.DOUBLE));
 
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "movementspeed"), PersistentDataType.DOUBLE))
-            NewEquipment.setMovementSpeed(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "movementspeed"), PersistentDataType.DOUBLE));
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "movementspeed"), PersistentDataType.DOUBLE))
+            NewEquipment.setMovementSpeed(data.get(new NamespacedKey(Zelandris.getMyPlugin(), "movementspeed"), PersistentDataType.DOUBLE));
 
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "name"), PersistentDataType.STRING))
-            NewEquipment.setName(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "name"), PersistentDataType.STRING));
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "name"), PersistentDataType.STRING))
+            NewEquipment.setName(data.get(new NamespacedKey(Zelandris.getMyPlugin(), "name"), PersistentDataType.STRING));
 
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "rarity"), PersistentDataType.INTEGER))
-            NewEquipment.setRarity(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "rarity"), PersistentDataType.INTEGER));
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "rarity"), PersistentDataType.INTEGER))
+            NewEquipment.setRarity(data.get(new NamespacedKey(Zelandris.getMyPlugin(), "rarity"), PersistentDataType.INTEGER));
 
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "staminacost"), PersistentDataType.DOUBLE))
-            NewEquipment.setStaminaCost(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "staminacost"), PersistentDataType.DOUBLE));
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "staminacost"), PersistentDataType.DOUBLE))
+            NewEquipment.setStaminaCost(data.get(new NamespacedKey(Zelandris.getMyPlugin(), "staminacost"), PersistentDataType.DOUBLE));
 
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "runes"), PersistentDataType.STRING))
-            NewEquipment.setRunes(NewEquipment.StringToRunes(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "runes"), PersistentDataType.STRING)));
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "runes"), PersistentDataType.STRING))
+            NewEquipment.setRunes(NewEquipment.StringToRunes(data.get(new NamespacedKey(Zelandris.getMyPlugin(), "runes"), PersistentDataType.STRING)));
 
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "tooltype"), PersistentDataType.STRING))
-            NewEquipment.setToolType(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "tooltype"), PersistentDataType.STRING));
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "tooltype"), PersistentDataType.STRING))
+            NewEquipment.setToolType(data.get(new NamespacedKey(Zelandris.getMyPlugin(), "tooltype"), PersistentDataType.STRING));
 
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "level"), PersistentDataType.INTEGER))
-            NewEquipment.setLevel(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "level"), PersistentDataType.INTEGER));
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "level"), PersistentDataType.INTEGER))
+            NewEquipment.setLevel(data.get(new NamespacedKey(Zelandris.getMyPlugin(), "level"), PersistentDataType.INTEGER));
 
 
         return NewEquipment;
@@ -384,24 +384,24 @@ public class PlayerEquipment {
         PlayerEquipment e_WithRunes;
         e_WithRunes = e.applyRunes();
 
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "damage"), PersistentDataType.DOUBLE, e.getDamage());
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "defense"), PersistentDataType.DOUBLE, e.getDefense());
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "maxhealth"), PersistentDataType.DOUBLE, e.getMaxHealth());
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "maxstamina"), PersistentDataType.DOUBLE, e.getMaxStamina());
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "maxmana"), PersistentDataType.DOUBLE, e.getMaxMana());
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "healthregen"), PersistentDataType.DOUBLE, e.getHealthRegen());
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "staminaregen"), PersistentDataType.DOUBLE, e.getStaminaRegen());
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "manaregen"), PersistentDataType.DOUBLE, e.getManaRegen());
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "multihit"), PersistentDataType.DOUBLE, e.getMultiHit());
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "critchance"), PersistentDataType.DOUBLE, e.getCritChance());
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "critdamagemult"), PersistentDataType.DOUBLE, e.getCritDamageMult());
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "movementspeed"), PersistentDataType.DOUBLE, e.getMovementSpeed());
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "name"), PersistentDataType.STRING, e.getCanonName());
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "rarity"), PersistentDataType.INTEGER, e.getRarity());
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "staminacost"), PersistentDataType.DOUBLE, e.getStaminaCost());
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "runes"), PersistentDataType.STRING, e.RunesToString());
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "tooltype"), PersistentDataType.STRING, e.getToolType());
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "level"), PersistentDataType.INTEGER, e.getLevel());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "damage"), PersistentDataType.DOUBLE, e.getDamage());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "defense"), PersistentDataType.DOUBLE, e.getDefense());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "maxhealth"), PersistentDataType.DOUBLE, e.getMaxHealth());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "maxstamina"), PersistentDataType.DOUBLE, e.getMaxStamina());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "maxmana"), PersistentDataType.DOUBLE, e.getMaxMana());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "healthregen"), PersistentDataType.DOUBLE, e.getHealthRegen());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "staminaregen"), PersistentDataType.DOUBLE, e.getStaminaRegen());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "manaregen"), PersistentDataType.DOUBLE, e.getManaRegen());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "multihit"), PersistentDataType.DOUBLE, e.getMultiHit());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "critchance"), PersistentDataType.DOUBLE, e.getCritChance());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "critdamagemult"), PersistentDataType.DOUBLE, e.getCritDamageMult());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "movementspeed"), PersistentDataType.DOUBLE, e.getMovementSpeed());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "name"), PersistentDataType.STRING, e.getCanonName());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "rarity"), PersistentDataType.INTEGER, e.getRarity());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "staminacost"), PersistentDataType.DOUBLE, e.getStaminaCost());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "runes"), PersistentDataType.STRING, e.RunesToString());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "tooltype"), PersistentDataType.STRING, e.getToolType());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "level"), PersistentDataType.INTEGER, e.getLevel());
 
         ArrayList<Component> LoreSegments = new ArrayList<>();
 
@@ -872,7 +872,7 @@ public class PlayerEquipment {
         if (item == null) {return false;}
         PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
 
-        return data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "name"), PersistentDataType.STRING);
+        return data.has(new NamespacedKey(Zelandris.getMyPlugin(), "name"), PersistentDataType.STRING);
     }
 
     private static String getToolTypeFromModel(int modelID) {

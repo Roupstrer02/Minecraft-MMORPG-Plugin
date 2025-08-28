@@ -1,6 +1,5 @@
 package me.roupen.firstpluginthree.constantrunnables;
 
-import me.roupen.firstpluginthree.FirstPluginThree;
 import me.roupen.firstpluginthree.misc.misc;
 import me.roupen.firstpluginthree.weather.WeatherForecast;
 import org.bukkit.Bukkit;

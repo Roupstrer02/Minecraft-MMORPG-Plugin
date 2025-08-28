@@ -1,10 +1,9 @@
 package me.roupen.firstpluginthree.magic;
 
-import me.roupen.firstpluginthree.FirstPluginThree;
+import me.roupen.firstpluginthree.Zelandris;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -27,58 +26,58 @@ public class spellcasting {
             {
                 //Pyromancy
                 case "Fireball":
-                    castedSpell = new PyroFireball(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
+                    castedSpell = new PyroFireball(caster).runTaskTimer(Zelandris.getMyPlugin(), delay, period);
                     break;
                 case "Flame Dash":
-                    castedSpell = new PyroFlameDash(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
+                    castedSpell = new PyroFlameDash(caster).runTaskTimer(Zelandris.getMyPlugin(), delay, period);
                     break;
                 case "Flame Booster":
-                    castedSpell = new PyroFlameBooster(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
+                    castedSpell = new PyroFlameBooster(caster).runTaskTimer(Zelandris.getMyPlugin(), delay, period);
                     break;
                 case "Meteor Fall":
-                    castedSpell = new PyroMeteorFall(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
+                    castedSpell = new PyroMeteorFall(caster).runTaskTimer(Zelandris.getMyPlugin(), delay, period);
                     break;
 
                 //Technomancy
                 case "Steam Rocket Pack":
-                    castedSpell = new TechSteamRocketPack(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
+                    castedSpell = new TechSteamRocketPack(caster).runTaskTimer(Zelandris.getMyPlugin(), delay, period);
                     break;
                 case "Chrono Thief":
-                    castedSpell = new TechChronothief(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
+                    castedSpell = new TechChronothief(caster).runTaskTimer(Zelandris.getMyPlugin(), delay, period);
                     break;
                 case "Fault In The Armor":
-                    castedSpell = new TechFaultInArmor(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
+                    castedSpell = new TechFaultInArmor(caster).runTaskTimer(Zelandris.getMyPlugin(), delay, period);
                     break;
                 case "Snipe":
-                    castedSpell = new TechSnipe(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
+                    castedSpell = new TechSnipe(caster).runTaskTimer(Zelandris.getMyPlugin(), delay, period);
                     break;
 
                 //Divinity
                 case "Healing Orb":
-                    castedSpell = new DivineHealingOrb(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
+                    castedSpell = new DivineHealingOrb(caster).runTaskTimer(Zelandris.getMyPlugin(), delay, period);
                     break;
                 case "Strength Of Faith":
-                    castedSpell = new DivineStrengthOfFaith(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
+                    castedSpell = new DivineStrengthOfFaith(caster).runTaskTimer(Zelandris.getMyPlugin(), delay, period);
                     break;
                 case "Angel Wings":
-                    castedSpell = new DivineAngelWings(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
+                    castedSpell = new DivineAngelWings(caster).runTaskTimer(Zelandris.getMyPlugin(), delay, period);
                     break;
                 case "We Yield To None":
-                    castedSpell = new DivineWeYieldToNone(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
+                    castedSpell = new DivineWeYieldToNone(caster).runTaskTimer(Zelandris.getMyPlugin(), delay, period);
                     break;
 
                 //Naturemancy
                 case "Nature's Bounty":
-                    castedSpell = new NatureNaturesBounty(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
+                    castedSpell = new NatureNaturesBounty(caster).runTaskTimer(Zelandris.getMyPlugin(), delay, period);
                     break;
                 case "Nature's Diversity":
-                    castedSpell = new NatureNaturesDiversity(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
+                    castedSpell = new NatureNaturesDiversity(caster).runTaskTimer(Zelandris.getMyPlugin(), delay, period);
                     break;
                 case "Nature's Workbench":
-                    castedSpell = new NatureNaturesWorkbench(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
+                    castedSpell = new NatureNaturesWorkbench(caster).runTaskTimer(Zelandris.getMyPlugin(), delay, period);
                     break;
                 case "Nature's Storage":
-                    castedSpell = new NatureNaturesStorage(caster).runTaskTimer(FirstPluginThree.getMyPlugin(), delay, period);
+                    castedSpell = new NatureNaturesStorage(caster).runTaskTimer(Zelandris.getMyPlugin(), delay, period);
                     break;
             }
         } catch (NoClassDefFoundError e) {

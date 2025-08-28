@@ -3,7 +3,7 @@ package me.roupen.firstpluginthree.PlayerInteractions;
 import io.lumine.mythic.api.exceptions.InvalidMobTypeException;
 import io.lumine.mythic.bukkit.events.MythicMobDeathEvent;
 import io.lumine.mythic.core.mobs.ActiveMob;
-import me.roupen.firstpluginthree.FirstPluginThree;
+import me.roupen.firstpluginthree.Zelandris;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
 import me.roupen.firstpluginthree.elite.EliteArenaLeaveCountdown;
@@ -20,30 +20,27 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static me.roupen.firstpluginthree.customgui.GuiUtility.CreateRuneGui;
-
 public class EliteFight {
 
     //determines the location of the Arena Fight Starting Buttons, editing these changes where the button is supposed to be
-    private static final Location ArenaInteractLoc1 = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), 42,-12,1273);
-    private static final Location ArenaInteractLoc2 = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), 43,-12,1274);
+    private static final Location ArenaInteractLoc1 = new Location(Zelandris.getMyPlugin().getServer().getWorld("world"), 42,-12,1273);
+    private static final Location ArenaInteractLoc2 = new Location(Zelandris.getMyPlugin().getServer().getWorld("world"), 43,-12,1274);
     private static final ArrayList<Location> LarianLowInteracts = new ArrayList<>(Arrays.asList(ArenaInteractLoc1, ArenaInteractLoc2));
-    private static final Location ArenaInteractLoc3 = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), 24,-12,1291);
-    private static final Location ArenaInteractLoc4 = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), 25,-12,1292);
+    private static final Location ArenaInteractLoc3 = new Location(Zelandris.getMyPlugin().getServer().getWorld("world"), 24,-12,1291);
+    private static final Location ArenaInteractLoc4 = new Location(Zelandris.getMyPlugin().getServer().getWorld("world"), 25,-12,1292);
     private static final ArrayList<Location> LarianMidInteracts = new ArrayList<>(Arrays.asList(ArenaInteractLoc3, ArenaInteractLoc4));
-    private static final Location ArenaInteractLoc5 = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), 43,-12,1291);
-    private static final Location ArenaInteractLoc6 = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), 42,-12,1292);
+    private static final Location ArenaInteractLoc5 = new Location(Zelandris.getMyPlugin().getServer().getWorld("world"), 43,-12,1291);
+    private static final Location ArenaInteractLoc6 = new Location(Zelandris.getMyPlugin().getServer().getWorld("world"), 42,-12,1292);
     private static final ArrayList<Location> LarianInteracts = new ArrayList<>(Arrays.asList(ArenaInteractLoc5, ArenaInteractLoc6));
-    private static final Location spawnLoc = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), -30, -41, 1167);
-    private static final Location teleportLoc = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), -30, -41, 1185);
-    private static final Location BossEndLocation = new Location(FirstPluginThree.getMyPlugin().getServer().getWorld("world"), -275,73,354);
+    private static final Location spawnLoc = new Location(Zelandris.getMyPlugin().getServer().getWorld("world"), -30, -41, 1167);
+    private static final Location teleportLoc = new Location(Zelandris.getMyPlugin().getServer().getWorld("world"), -30, -41, 1185);
+    private static final Location BossEndLocation = new Location(Zelandris.getMyPlugin().getServer().getWorld("world"), -275,73,354);
     private static final ArrayList<String> eliteEntTypes = new ArrayList<String>() {{
         add("MythicMob{AbyssWatcherTest}");
         add("MythicMob{LarianLow}");
@@ -70,7 +67,7 @@ public class EliteFight {
         (
             event.getAction() == Action.RIGHT_CLICK_BLOCK &&
             event.getClickedBlock().getType().equals(Material.STONE_BUTTON) &&
-            FirstPluginThree.PlayersInBossFight.isEmpty() &&
+            Zelandris.PlayersInBossFight.isEmpty() &&
             player.getWorld().getEnvironment() == World.Environment.NORMAL
         )
         {
@@ -79,7 +76,7 @@ public class EliteFight {
             {
                 PlayerStats pStats = PlayerUtility.getPlayerStats(player);
                 ArrayList<Player> party = new ArrayList<>(pStats.getParty());
-                FirstPluginThree.PlayersInBossFight = party;
+                Zelandris.PlayersInBossFight = party;
 
                 player.getWorld().sendMessage(Component.text("An Elite of Zelandris has been Challenged", Style.style(NamedTextColor.GOLD, TextDecoration.BOLD)));
                 for (Player p : party) {
@@ -120,7 +117,7 @@ public class EliteFight {
             event.getEntity().getWorld().sendMessage(Component.text("An Elite of Zelandris has been Defeated", Style.style(NamedTextColor.GOLD)));
 
             //else if another boss -> drop its loot instead
-            for (Player p : FirstPluginThree.PlayersInBossFight) {
+            for (Player p : Zelandris.PlayersInBossFight) {
                 Entity bukkitEnt = ent.getEntity().getBukkitEntity();
                 LivingEntity bossEnt = (LivingEntity) bukkitEnt;
 
@@ -141,7 +138,7 @@ public class EliteFight {
                 }
 
                 EliteArenaLeaveCountdown countDown = new EliteArenaLeaveCountdown(BossEndLocation);
-                countDown.runTaskTimer(FirstPluginThree.getMyPlugin(), 0, 20);
+                countDown.runTaskTimer(Zelandris.getMyPlugin(), 0, 20);
             }
         }
 

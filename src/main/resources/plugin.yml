@@ -1,6 +1,6 @@
-name: FirstPluginThree
+name: Zelandris
 version: '${project.version}'
-main: me.roupen.firstpluginthree.FirstPluginThree
+main: me.roupen.firstpluginthree.Zelandris
 api-version: 1.19
 load: STARTUP
 commands:
@@ -49,23 +49,23 @@ commands:
   enemy_create:
     description: Debug command for use by admins only
     usage: /<command> <level> <mobCount>
-    permission: FirstPluginThree.enemy_create
+    permission: Zelandris.enemy_create
     permission-message: Sorry! You don't have permission to execute that command.
 
   item_create:
     description: Debug command for use by admins only
     usage: /<command> <level> <rarity> <MOBTYPE> <tooltype>
-    permission: FirstPluginThree.item_create
+    permission: Zelandris.item_create
     permission-message: Sorry! You don't have permission to execute that command.
 
   player_reset:
     description: Debug command for use by admins only
     usage: /<command> <player>
-    permission: FirstPluginThree.player_reset
+    permission: Zelandris.player_reset
     permission-message: Sorry! You don't have permission to execute that command.
 
   player_set_level:
     description: Debug command for use by admins only
     usage: /<command> <player> [<level> | <vitality> <resilience> <strength> <dexterity> <intelligence> <wisdom> <artisan>]
-    permission: FirstPluginThree.player_set_level
+    permission: Zelandris.player_set_level
     permission-message: Sorry! You don't have permission to execute that command.

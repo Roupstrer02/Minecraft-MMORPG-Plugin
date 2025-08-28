@@ -1,6 +1,6 @@
 package me.roupen.firstpluginthree.artifacts;
 
-import me.roupen.firstpluginthree.FirstPluginThree;
+import me.roupen.firstpluginthree.Zelandris;
 import me.roupen.firstpluginthree.data.PlayerStats;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -25,7 +25,7 @@ public class dreamerFriend {
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer data = meta.getPersistentDataContainer();
 
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "stattoremove"), PersistentDataType.STRING, statToRemove);
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "stattoremove"), PersistentDataType.STRING, statToRemove);
 
         List<Component> lore = new ArrayList<Component>() {{
             add(Component.text("A taste so terrible it's worth forgetting:"));

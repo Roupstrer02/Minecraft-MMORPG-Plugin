@@ -1,14 +1,9 @@
 package me.roupen.firstpluginthree.magic;
 
 //i wish i could import roupen irl D: -Armen
-import me.roupen.firstpluginthree.FirstPluginThree;
-import me.roupen.firstpluginthree.magic.*;
 import me.roupen.firstpluginthree.wands.wand;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import java.text.DecimalFormat;

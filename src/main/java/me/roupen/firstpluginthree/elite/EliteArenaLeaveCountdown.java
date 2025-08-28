@@ -1,6 +1,6 @@
 package me.roupen.firstpluginthree.elite;
 
-import me.roupen.firstpluginthree.FirstPluginThree;
+import me.roupen.firstpluginthree.Zelandris;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -30,32 +30,32 @@ public class EliteArenaLeaveCountdown extends BukkitRunnable {
 
         switch (progress) {
             case 5:
-                for (Player p : FirstPluginThree.PlayersInBossFight) {
+                for (Player p : Zelandris.PlayersInBossFight) {
                     p.sendMessage(FirstMessage);
                 }
                 break;
             case 3:
-                for (Player p : FirstPluginThree.PlayersInBossFight) {
+                for (Player p : Zelandris.PlayersInBossFight) {
                     p.sendMessage(SecondMessage);
                 }
                 break;
             case 2:
-                for (Player p : FirstPluginThree.PlayersInBossFight) {
+                for (Player p : Zelandris.PlayersInBossFight) {
                     p.sendMessage(ThirdMessage);
                 }
                 break;
             case 1:
-                for (Player p : FirstPluginThree.PlayersInBossFight) {
+                for (Player p : Zelandris.PlayersInBossFight) {
                     p.sendMessage(FourthMessage);
                 }
                 break;
             case 0:
-                for (Player p : FirstPluginThree.PlayersInBossFight) {
+                for (Player p : Zelandris.PlayersInBossFight) {
                     p.teleport(Destination);
                     p.setGameMode(GameMode.SURVIVAL);
                     PlayerUtility.getPlayerStats(p).setInBossFight(false);
                 }
-                FirstPluginThree.PlayersInBossFight.clear();
+                Zelandris.PlayersInBossFight.clear();
                 this.cancel();
         }
 

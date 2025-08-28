@@ -1,22 +1,16 @@
 package me.roupen.firstpluginthree.playerequipment;
 
-import me.roupen.firstpluginthree.FirstPluginThree;
+import me.roupen.firstpluginthree.Zelandris;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Item;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -173,10 +167,10 @@ public class Rune {
 
         meta.displayName(Component.text(name, style));
         meta.setCustomModelData(ModelIDMap.get(item.getType()));
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "maincolor"), PersistentDataType.STRING, getColor().toString());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "maincolor"), PersistentDataType.STRING, getColor().toString());
 
         if (getSecondaryColor() != null)
-            data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "secondarycolor"), PersistentDataType.STRING, getSecondaryColor().toString());
+            data.set(new NamespacedKey(Zelandris.getMyPlugin(), "secondarycolor"), PersistentDataType.STRING, getSecondaryColor().toString());
 
         item.setItemMeta(meta);
 
@@ -209,13 +203,13 @@ public class Rune {
         Material secondarycolor = null;
         String secondcolorstring;
 
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "maincolor"), PersistentDataType.STRING))
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "maincolor"), PersistentDataType.STRING))
         {
             Rune newrune = new Rune(item.getType());
 
-            if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "secondarycolor"), PersistentDataType.STRING))
+            if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "secondarycolor"), PersistentDataType.STRING))
             {
-                secondcolorstring = data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "secondarycolor"), PersistentDataType.STRING);
+                secondcolorstring = data.get(new NamespacedKey(Zelandris.getMyPlugin(), "secondarycolor"), PersistentDataType.STRING);
                 if (secondcolorstring.equals("RED_DYE"))
                     secondarycolor = Material.RED_DYE;
                 if (secondcolorstring.equals("ORANGE_DYE"))
@@ -252,7 +246,7 @@ public class Rune {
 
     public static boolean isRune(ItemStack item)
     {
-        return item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "maincolor"), PersistentDataType.STRING);
+        return item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(Zelandris.getMyPlugin(), "maincolor"), PersistentDataType.STRING);
     }
 
 

@@ -10,7 +10,6 @@ import me.roupen.firstpluginthree.CraftingRecipes.BasicTools;
 import me.roupen.firstpluginthree.CraftingRecipes.SmithingRecipes;
 import me.roupen.firstpluginthree.PlayerInteractions.*;
 import me.roupen.firstpluginthree.PlayerInteractions.RuneForge;
-import me.roupen.firstpluginthree.artifacts.dreamerFriend;
 import me.roupen.firstpluginthree.artisan.Consumable;
 import me.roupen.firstpluginthree.artisan.CookingRecipes;
 import me.roupen.firstpluginthree.commandkit.*;
@@ -58,7 +57,7 @@ import java.util.*;
 
 import static org.bukkit.Bukkit.*;
 
-public final class FirstPluginThree extends JavaPlugin implements Listener {
+public final class Zelandris extends JavaPlugin implements Listener {
 
     //Attempt at fixing NoClassDefFoundError
     //=============================================================================
@@ -69,7 +68,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
     BukkitTask playeractionbar;
     BukkitTask Weather_Forecast;
     spellcasting NewSpell = new spellcasting();
-    private static FirstPluginThree myPlugin;
+    private static Zelandris myPlugin;
     public static ArrayList<String> bossIDNames = new ArrayList<String>(Arrays.asList(
             "MythicMob{AbyssWatcherTest}",
             "MythicMob{LarianLow}",
@@ -79,7 +78,7 @@ public final class FirstPluginThree extends JavaPlugin implements Listener {
             "MythicMob{Quakefish}",
             "MythicMob{LunarisStag}"));
     private static BukkitAPIHelper mmhelp = new BukkitAPIHelper();
-    public static FirstPluginThree getMyPlugin()
+    public static Zelandris getMyPlugin()
     {
         return myPlugin;
     }

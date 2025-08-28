@@ -1,22 +1,14 @@
 package me.roupen.firstpluginthree.artisan;
 
-import me.roupen.firstpluginthree.FirstPluginThree;
+import me.roupen.firstpluginthree.Zelandris;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.block.BrewingStand;
-import org.bukkit.block.Container;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Item;
-import org.bukkit.event.inventory.BrewingStandFuelEvent;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionData;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
@@ -79,7 +71,7 @@ public class CookingRecipes {
         ItemLevelLock.put(key, minLevel);
     }
     private NamespacedKey makeNameKey(String keyName) {
-        return new NamespacedKey(FirstPluginThree.getMyPlugin(), keyName);
+        return new NamespacedKey(Zelandris.getMyPlugin(), keyName);
     }
     private void addToMaps(String name, ItemStack item, Recipe recipe) {
         Items.put(name, item);
@@ -671,7 +663,7 @@ public class CookingRecipes {
 
         //Adding all the recipes defined above into the server
         for (Recipe recipe : ListOfRecipes) {
-            FirstPluginThree.getMyPlugin().getServer().addRecipe(recipe);
+            Zelandris.getMyPlugin().getServer().addRecipe(recipe);
         }
 
     }

@@ -1,6 +1,6 @@
 package me.roupen.firstpluginthree.wands;
 
-import me.roupen.firstpluginthree.FirstPluginThree;
+import me.roupen.firstpluginthree.Zelandris;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
@@ -105,10 +105,10 @@ public class wand {
         Style style;
         DecimalFormat df = new DecimalFormat("0");
 
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "discount"), PersistentDataType.DOUBLE, NewWand.getSpellCostModifier());
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "offenseaffinity"), PersistentDataType.DOUBLE, NewWand.getOffenseSpellPowerModifier());
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "defenseaffinity"), PersistentDataType.DOUBLE, NewWand.getDefenseSpellPowerModifier());
-        data.set(new NamespacedKey(FirstPluginThree.getMyPlugin(), "utilityaffinity"), PersistentDataType.DOUBLE, NewWand.getUtilitySpellPowerModifier());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "discount"), PersistentDataType.DOUBLE, NewWand.getSpellCostModifier());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "offenseaffinity"), PersistentDataType.DOUBLE, NewWand.getOffenseSpellPowerModifier());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "defenseaffinity"), PersistentDataType.DOUBLE, NewWand.getDefenseSpellPowerModifier());
+        data.set(new NamespacedKey(Zelandris.getMyPlugin(), "utilityaffinity"), PersistentDataType.DOUBLE, NewWand.getUtilitySpellPowerModifier());
 
         ArrayList<Component> LoreSegments = new ArrayList<>();
 
@@ -162,14 +162,14 @@ public class wand {
         wand Wand = new wand(item.getType(), item.getItemMeta().displayName().toString());
         PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
 
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "discount"), PersistentDataType.DOUBLE))
-            Wand.setSpellCostModifier(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "discount"), PersistentDataType.DOUBLE));
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "offenseaffinity"), PersistentDataType.DOUBLE))
-            Wand.setOffenseSpellPowerModifier(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "offenseaffinity"), PersistentDataType.DOUBLE));
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "defenseaffinity"), PersistentDataType.DOUBLE))
-            Wand.setDefenseSpellPowerModifier(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "defenseaffinity"), PersistentDataType.DOUBLE));
-        if (data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "utilityaffinity"), PersistentDataType.DOUBLE))
-            Wand.setUtilitySpellPowerModifier(data.get(new NamespacedKey(FirstPluginThree.getMyPlugin(), "utilityaffinity"), PersistentDataType.DOUBLE));
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "discount"), PersistentDataType.DOUBLE))
+            Wand.setSpellCostModifier(data.get(new NamespacedKey(Zelandris.getMyPlugin(), "discount"), PersistentDataType.DOUBLE));
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "offenseaffinity"), PersistentDataType.DOUBLE))
+            Wand.setOffenseSpellPowerModifier(data.get(new NamespacedKey(Zelandris.getMyPlugin(), "offenseaffinity"), PersistentDataType.DOUBLE));
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "defenseaffinity"), PersistentDataType.DOUBLE))
+            Wand.setDefenseSpellPowerModifier(data.get(new NamespacedKey(Zelandris.getMyPlugin(), "defenseaffinity"), PersistentDataType.DOUBLE));
+        if (data.has(new NamespacedKey(Zelandris.getMyPlugin(), "utilityaffinity"), PersistentDataType.DOUBLE))
+            Wand.setUtilitySpellPowerModifier(data.get(new NamespacedKey(Zelandris.getMyPlugin(), "utilityaffinity"), PersistentDataType.DOUBLE));
 
         return Wand;
     }
@@ -189,7 +189,7 @@ public class wand {
         {
             PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
 
-            return data.has(new NamespacedKey(FirstPluginThree.getMyPlugin(), "discount"), PersistentDataType.DOUBLE);
+            return data.has(new NamespacedKey(Zelandris.getMyPlugin(), "discount"), PersistentDataType.DOUBLE);
         }
 
     }
