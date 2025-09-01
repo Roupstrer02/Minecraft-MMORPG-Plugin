@@ -40,7 +40,7 @@ public class EliteFight {
     private static final ArrayList<Location> LarianInteracts = new ArrayList<>(Arrays.asList(ArenaInteractLoc5, ArenaInteractLoc6));
     private static final Location spawnLoc = new Location(Zelandris.getMyPlugin().getServer().getWorld("world"), -30, -41, 1167);
     private static final Location teleportLoc = new Location(Zelandris.getMyPlugin().getServer().getWorld("world"), -30, -41, 1185);
-    private static final Location BossEndLocation = new Location(Zelandris.getMyPlugin().getServer().getWorld("world"), -275,73,354);
+    private static final Location BossEndLocation = new Location(Zelandris.getMyPlugin().getServer().getWorld("world"), -58,64,1181);
     private static final ArrayList<String> eliteEntTypes = new ArrayList<String>() {{
         add("MythicMob{AbyssWatcherTest}");
         add("MythicMob{LarianLow}");
@@ -89,17 +89,17 @@ public class EliteFight {
             }
             if (buttonInteractCheck(InteractedLoc, LarianLowInteracts))
             {
-                player.sendMessage("ArenaButton1 pressed");
+
                 elite LarianLow = new elite("Larian the Night Hunter");
                 LarianLow.spawn(spawnLoc);
 
             } else if (buttonInteractCheck(InteractedLoc, LarianMidInteracts)) {
-                player.sendMessage("ArenaButton2 pressed");
+
                 elite LarianMid = new elite("Larian the Berserker");
                 LarianMid.spawn(spawnLoc);
 
             } else if (buttonInteractCheck(InteractedLoc, LarianInteracts)) {
-                player.sendMessage("ArenaButton3 pressed");
+
                 elite Larian = new elite("Larian the Nightmare");
                 Larian.spawn(spawnLoc);
             }

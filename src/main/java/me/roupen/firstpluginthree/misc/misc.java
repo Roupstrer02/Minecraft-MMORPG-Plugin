@@ -164,7 +164,7 @@ public class misc {
     public static void LongRangeBuild(PlayerInteractEvent event) {
         Player player = event.getPlayer();
 
-        if (player.getName().equals("Roupstrer02")) {
+        if (player.getName().equals("Roupstrer02") && player.getScoreboard().getObjective("mod").getScore(player).getScore() == 1) {
 
 
             if (player.getInventory().getItemInMainHand().getType() == Material.BLAZE_ROD) {

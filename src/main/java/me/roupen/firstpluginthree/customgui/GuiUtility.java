@@ -95,7 +95,7 @@ public class GuiUtility {
         gui.addGuiItem(Material.CYAN_STAINED_GLASS_PANE, "Wisdom ", 24, 0, Component.text("Lv ", Style.style(NamedTextColor.WHITE)).append(Component.text(stats.getWisdom(), NamedTextColor.AQUA)));
         gui.addGuiItem(Material.AMETHYST_BLOCK, "Spell Book", 35, 0, "Pick your spell Arsenal");
         gui.addGuiItem(Material.MAGENTA_STAINED_GLASS_PANE, "Artisan ", 39, 0, Component.text("Lv ", Style.style(NamedTextColor.WHITE)).append(Component.text(stats.getArtisan(), NamedTextColor.LIGHT_PURPLE)));
-        gui.addGuiItem(Material.WRITTEN_BOOK, "Tutorial", 44, 0, "W.I.P");
+        gui.addGuiItem(Material.WRITTEN_BOOK, "Tutorial", 44, 0, "");
 
         for (int slot : new int[]{7, 16, 25, 26, 34, 43}) {
             gui.addGuiItem(Material.GLASS_PANE, "", slot, 0, "");

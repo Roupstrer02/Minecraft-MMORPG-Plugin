@@ -91,7 +91,7 @@ public final class Zelandris extends JavaPlugin implements Listener {
     public static ArrayList<Player> PlayersInBossFight = new ArrayList<>();
 
     public static CookingRecipes getCookingrecipes() {return cookingrecipes;}
-    public static CookingRecipes getSmithingrecipes() {return cookingrecipes;}
+    public static SmithingRecipes getSmithingrecipes() {return smithingrecipes;}
 
     @Override
     public void onEnable() {
@@ -223,7 +223,7 @@ public final class Zelandris extends JavaPlugin implements Listener {
         PlayerStats pStats = PlayerUtility.getPlayerStats(p);
         pStats.setExperience((int) Math.round(pStats.getExperience() / 2.0));
         String[] FlavorTexts = new String[]
-                {"took an L", "is weak to damage", "involuntarily returned home"};
+                {"took an L", "is weak to damage", "involuntarily returned home", "was incompatible with life", "rolled a nat 1 on Constitution"};
         int index = rd.nextInt(FlavorTexts.length);
         event.deathMessage(Component.text(event.getPlayer().getName() + " " + FlavorTexts[index]));
 

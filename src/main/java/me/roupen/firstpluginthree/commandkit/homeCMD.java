@@ -39,7 +39,7 @@ public class homeCMD implements CommandExecutor {
                         player.teleport(new Location(player.getWorld(), HomeLocation.get(0), HomeLocation.get(1), HomeLocation.get(2)));
                         player.sendMessage(Component.text("Teleported Home!", Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)));
                     }else{
-                        player.sendMessage(Component.text("Cannot teleport home: Home is not set", Style.style(NamedTextColor.RED, TextDecoration.ITALIC)));
+                        player.sendMessage(Component.text("Cannot teleport home: Home in different dimension", Style.style(NamedTextColor.RED, TextDecoration.ITALIC)));
                         player.getWorld().playSound(player, Sound.ENTITY_BLAZE_HURT, 1.0f, 1.0f);
                     }
                 }

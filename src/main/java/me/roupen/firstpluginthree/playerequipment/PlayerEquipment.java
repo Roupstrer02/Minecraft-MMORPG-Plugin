@@ -355,7 +355,7 @@ public class PlayerEquipment {
 
             //for yellow runes
             EquipWithRunes.setMaxStamina(EquipWithRunes.getMaxStamina() + (1.0 * YellowCount));
-            EquipWithRunes.setStaminaRegen(EquipWithRunes.getStaminaRegen() + (0.25 * YellowCount));
+            EquipWithRunes.setStaminaRegen(EquipWithRunes.getStaminaRegen() + (0.0625 * YellowCount));
 
             //for green runes
             EquipWithRunes.setMaxHealth(EquipWithRunes.getMaxHealth() * (1 + (GreenCount * 0.10)));

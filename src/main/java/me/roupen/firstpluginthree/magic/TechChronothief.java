@@ -191,7 +191,7 @@ public class TechChronothief extends BukkitRunnable {
 
     }
     public double spellCooldownTextUpdate(double upperLimit, double currentProgress) {
-        double increment = 1.0/upperLimit;
+        double increment = 1.0 / upperLimit;
         return (upperLimit * 0.05) - ((upperLimit * 0.05) * (increment * currentProgress));
     }
     @Override

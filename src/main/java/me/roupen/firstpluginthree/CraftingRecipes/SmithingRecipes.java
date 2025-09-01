@@ -32,9 +32,9 @@ public class SmithingRecipes {
     private SmokingRecipe newSmokingRecipe;
     private ArrayList<Material> scrapMaterials;
 
-    private final ItemStack scrap = giveEnchantedLook(newCraftableItem(Material.BONE_MEAL, 1, "Scrap", "One person's trash,", "is another person's treasure!"));
-    private final ItemStack scrapB = giveEnchantedLook(newCraftableItem(Material.WHITE_DYE, 1, "Bunch of Scrap", "One person's treasure is...", "better treasure now?... I think?..."));
-    private final ItemStack scrapC = giveEnchantedLook(newCraftableItem(Material.PHANTOM_MEMBRANE, 1, "Loads of Scrap", "Ok so now the treasure was already good so...", "At this point this expression boils down to theft, no?..."));
+    public final ItemStack scrap = giveEnchantedLook(newCraftableItem(Material.BONE_MEAL, 1, "Scrap", "One person's trash,", "is another person's treasure!"));
+    public final ItemStack scrapB = giveEnchantedLook(newCraftableItem(Material.WHITE_DYE, 1, "Bunch of Scrap", "One person's treasure is...", "better treasure now?... I think?..."));
+    public final ItemStack scrapC = giveEnchantedLook(newCraftableItem(Material.PHANTOM_MEMBRANE, 1, "Loads of Scrap", "Ok so now the treasure was already good so...", "At this point this expression boils down to theft, no?..."));
     public final ItemStack scrapD = giveEnchantedLook(newCraftableItem(Material.PAPER, 1, "Skill Reallocation Ticket", "I don't want to think about it anymore...", "Look. You win. No more scrap. Here's your treasure...","","Redeem this at spawn to reallocate your skill points"));
 
     public SmithingRecipes() {
@@ -143,7 +143,7 @@ public class SmithingRecipes {
 
             newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
 
-            newShapelessRecipe.addIngredient(9, mat);
+            newShapelessRecipe.addIngredient(4, mat);
 
             addToMaps(newItem.toString(), newItem, newShapelessRecipe);
             ListOfRecipes.add(newShapelessRecipe);
@@ -186,7 +186,7 @@ public class SmithingRecipes {
 
         newShapelessRecipe = new ShapelessRecipe(nameKey, newItem);
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 9; i++)
             newShapelessRecipe.addIngredient(new RecipeChoice.ExactChoice(scrapC));
 
         addToMaps(newItem.toString(), newItem, newShapelessRecipe);

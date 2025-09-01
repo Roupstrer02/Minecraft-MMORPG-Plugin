@@ -11,11 +11,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffectType;
 
+import javax.inject.Named;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -83,6 +85,7 @@ public class PlayerStats {
     //consumable item related variables
     private boolean consumingItem = false;
     public int EquipmentLevelMinimum = 0;
+    public boolean equippedUselessGear = false;
 
     //stat multipliers
     public Map<String, Double> LinearStatChanges = new HashMap<String, Double>() {{
@@ -149,7 +152,11 @@ public class PlayerStats {
         Component message = Component.text("Party Members: \n", Style.style(NamedTextColor.GREEN));
         for (Player p : party) {
             PlayerStats pStats = PlayerUtility.getPlayerStats(p);
-            message = message.append(Component.text("- " + p.getName() + ": ", Style.style(NamedTextColor.GREEN)).append(Component.text("Level " + pStats.getLevel() + "\n", Style.style(NamedTextColor.YELLOW))));
+            Block pLoc = p.getLocation().getBlock();
+            message = message.append(
+                    Component.text("- " + p.getName() + ": ", Style.style(NamedTextColor.GREEN)).append(
+                            Component.text("Level " + pStats.getLevel() + "\n", Style.style(NamedTextColor.YELLOW)))).append(
+                                    Component.text("Location: " + "x: " + pLoc.getX() + " y: " + pLoc.getY() + " z: " + pLoc.getZ() + "\n\n", Style.style(NamedTextColor.AQUA)));
         }
         return message;
     }
@@ -331,6 +338,8 @@ public class PlayerStats {
         equipment = new PlayerEquipment(0, Material.AIR, "");
         PlayerEquipment TempEquipment;
 
+        equippedUselessGear = false;
+
         //updates this playerStats object with the armor of the inputted player (the player in question)
         PlayerInventory inventory = p.getInventory();
         ItemStack MainHand = inventory.getItemInMainHand();
@@ -347,8 +356,15 @@ public class PlayerStats {
         //Sum up relevant stats of all equipment, accounting for playstyles (dual blades, sword & shield, greatsword)
         for (int i = 0; i < AllItems.length; i++)
         {
+
+
             if (AllItems[i] != null && AllItems[i].getType() != Material.AIR) {
                 TempEquipment = PlayerEquipment.ItemToEquipment(AllItems[i]);
+
+                //check if player is equipping any gear that is too high level
+                if (TempEquipment.getLevel() > Level) {
+                    equippedUselessGear = true;
+                }
 
                 //Special use case for double daggers
                 if ((MainHand.getType() != Material.AIR && OffHand.getType() != Material.AIR) && TempEquipment.isDagger() && PlayerEquipment.ItemToEquipment(MainHand).isDagger() && PlayerEquipment.ItemToEquipment(OffHand).isDagger())
@@ -517,15 +533,20 @@ public class PlayerStats {
     }
 
     public double getActiveManaRegen() {
-        return ((BaseActiveManaRegen + equipment.getManaRegen()) + LinearStatChanges.get("Mana Regen")) * MultiplicativeStatChanges.get("Mana Regen");
+        return ((BaseActiveManaRegen + equipment.getManaRegen()) + LinearStatChanges.get("Mana Regen")) * MultiplicativeStatChanges.get("Mana Regen")   ;
     }
 
     public double getCasterSpellDamage() {
         return Balance.spellPowerCalc(this.Wisdom);
     }
+
+    public double getCasterSpellDamage(double wisdomDelta) {
+        return Balance.spellPowerCalc((int) Math.max(this.Wisdom + wisdomDelta, 1));
+    }
     //Stat calculator for each stat
     public void recalculateMaxHealth() {
-        setActiveMaxHealth(Double.parseDouble(df.format((1 + (0.01 * (getVitality() - 1))) * ((Balance.playerBaseHealthAtLevel(getLevel()) + equipment.getMaxHealth()) + LinearStatChanges.get("Max HP")) * MultiplicativeStatChanges.get("Max HP"))));
+        setActiveMaxHealth(Double.parseDouble(df.format((
+                Math.min(Double.MAX_VALUE, 1 + (0.01 * (getVitality() - 1))) * ((Balance.playerBaseHealthAtLevel(getLevel()) + equipment.getMaxHealth()) + LinearStatChanges.get("Max HP")) * MultiplicativeStatChanges.get("Max HP")))));
     }//Vitality
     public void recalculateHealth() {
         if (getActiveCurrentHealth() < getActiveMaxHealth()) {

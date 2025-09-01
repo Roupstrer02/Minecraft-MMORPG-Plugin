@@ -1,5 +1,6 @@
 package me.roupen.firstpluginthree.magic;
 
+import me.roupen.firstpluginthree.balance.Balance;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
 import me.roupen.firstpluginthree.utility.MobUtility;
@@ -35,8 +36,8 @@ public class TechFaultInArmor extends BukkitRunnable {
     private wand Wand;
     private boolean spellHit;
     private DecimalFormat NumberFormat = new DecimalFormat("0.0");
-    public static double baseManaCost = 60.0;
-
+    public static double baseManaCost = 120.0;
+    public static double spellCooldown = 80.0;
 
 
     public TechFaultInArmor(Player caster)
@@ -74,7 +75,7 @@ public class TechFaultInArmor extends BukkitRunnable {
                 ChannelTime.setVisible(true);
 
                 //makes sound
-                stats.getPlayer().getWorld().playSound(loc, Sound.BLOCK_AMETHYST_BLOCK_CHIME, 2, 0);
+                stats.getPlayer().getWorld().playSound(loc, Sound.BLOCK_AMETHYST_BLOCK_CHIME, 1f, 0.5f);
 
                 //initial effect of spell (none)
             }
@@ -85,12 +86,16 @@ public class TechFaultInArmor extends BukkitRunnable {
                 this.cancel();
             }
         }
-        else if (progress < 30)
+        else if (progress < spellCooldown)
         {
+            if (progress < 10 && !spellHit) {
+                Vector launchVector = origin.getLocation().getDirection().multiply(0.9 * Wand.getUtilitySpellPowerModifier());
+                launchVector.setY(0);
+                origin.setVelocity(launchVector);
+                world.spawnParticle(Particle.SMOKE_LARGE, origin.getLocation().add(0,1.2,0), 5, 0.1, 0.1, 0.1, 0, null, true);
+            }
 
-            world.spawnParticle(Particle.SMOKE_LARGE, origin.getLocation().add(0,1.2,0), 5, 0.1, 0.1, 0.1, 0, null, true);
-
-            Targets = origin.getLocation().getNearbyLivingEntities(1 * origin.getVelocity().length());
+            Targets = origin.getLocation().getNearbyLivingEntities(2 * origin.getVelocity().length());
 
             if (!Targets.isEmpty() && !(Targets.iterator().next() instanceof Player) && !spellHit) {
                 LivingEntity target = Targets.iterator().next();
@@ -113,26 +118,22 @@ public class TechFaultInArmor extends BukkitRunnable {
             }
         }
         //movement logic
-        if (progress < 10 && !spellHit) {
-            Vector launchVector = origin.getLocation().getDirection().multiply(0.9 * Wand.getUtilitySpellPowerModifier());
-            launchVector.setY(0);
-            origin.setVelocity(launchVector);
-        }
+
 
         //spell ending logic
-        if (progress >= 30) {
+        if (progress >= spellCooldown) {
             this.cancel();
         }
 
         //progress counter
         incrementProgress();
 
-        if (!this.isCancelled() && (progress < 30))
+        if (!this.isCancelled() && (progress < spellCooldown))
         {
-            ChannelTime.setProgress(1.0-((1.0 / 30.0) * progress));
-            ChannelTime.setTitle("Spell Cooldown " + NumberFormat.format(spellCooldownTextUpdate(30, progress)));
+            ChannelTime.setProgress(1.0-((1.0 / spellCooldown) * progress));
+            ChannelTime.setTitle("Spell Cooldown " + NumberFormat.format(spellCooldownTextUpdate(spellCooldown, progress)));
         }
-        else if (getProgress() == 30)
+        else if (getProgress() == spellCooldown)
         {
             if (ChannelTime != null)
                 ChannelTime.removeAll();
@@ -141,13 +142,13 @@ public class TechFaultInArmor extends BukkitRunnable {
     }
 
     public double CasterSpellDamage() {
-        return stats.getCasterSpellDamage() * Wand.getOffenseSpellPowerModifier();
+        return stats.getCasterSpellDamage(1.25 * Balance.levelDelta) * Wand.getOffenseSpellPowerModifier();
     }
 
     public double FaultInTheArmorDmgCalc(MobStats mobstats)
     {
         double loweredDefense = mobstats.getDefense() * 0.5;
-        return 10 * (CasterSpellDamage() - (CasterSpellDamage() * (loweredDefense / (loweredDefense + 100))));
+        return CasterSpellDamage() - (CasterSpellDamage() * (loweredDefense / (loweredDefense + 100)));
     }
 
     public double SpellAOE() {

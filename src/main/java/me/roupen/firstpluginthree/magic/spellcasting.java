@@ -88,7 +88,7 @@ public class spellcasting {
             System.out.println(Arrays.toString(e.getStackTrace()));
             caster.sendMessage(
                     Component.text(
-                            "If you're seeing this message, please contact me (Roupen) as a bug of interest just occured, just tell me that \"The bug happened again\", I'll get the idea, many thanks!",
+                            "If you're seeing this message, please contact me (Roupen) as a bug of interest just occured, just tell me that \"The magic bug happened again\", I'll get the idea, many thanks!",
                             Style.style(TextDecoration.BOLD)));
         }
 

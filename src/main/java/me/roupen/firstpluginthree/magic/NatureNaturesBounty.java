@@ -53,7 +53,7 @@ public class NatureNaturesBounty extends BukkitRunnable {
     private int timeOut = 21;
 
     //Base mana cost (without reduction from wand)
-    public static double baseManaCost = 25;
+    public static double baseManaCost = 20;
 
     //if you wish to use the standard damage calculation provided, this value is simply a factor towards how much damage the spell deals
     private double spellDamage = 5;
@@ -103,6 +103,7 @@ public class NatureNaturesBounty extends BukkitRunnable {
         exempt_blocks.add(Material.TALL_GRASS);
         exempt_blocks.add(Material.WATER);
         exempt_blocks.add(Material.CAVE_AIR);
+        exempt_blocks.add(Material.BUBBLE_COLUMN);
 
         mod_blocks.add(Material.BEDROCK);
         mod_blocks.add(Material.BARRIER);

@@ -28,6 +28,8 @@ public class actionbardisplay extends BukkitRunnable {
     private final Style styleConsumableIndicator;
     private String ConsumableIndicatorState;
     private String ConsumableIndicateSeparator;
+    private String uselessEquipmentIndicator;
+    private String uselessEquipmentSeparator;
 
     private PlayerStats stats;
 
@@ -95,6 +97,15 @@ public class actionbardisplay extends BukkitRunnable {
                     ConsumableIndicatorState = "";
                     ConsumableIndicateSeparator = "";
                 }
+
+                if (stats.equippedUselessGear) {
+                    uselessEquipmentIndicator = "!Equipment too high level!";
+                    uselessEquipmentSeparator = " | ";
+                }
+                else {
+                    uselessEquipmentIndicator = "";
+                    uselessEquipmentSeparator = "";
+                }
                 player.setSaturation(10);
 
                 String playerBiome = WeatherForecast.getPlayerBiome(player);
@@ -109,6 +120,7 @@ public class actionbardisplay extends BukkitRunnable {
                 }
 
                 player.sendActionBar(Component.text()
+                        .append(Component.text(uselessEquipmentIndicator + uselessEquipmentSeparator, Style.style(NamedTextColor.DARK_RED)))
                         .append(Component.text(misc.getplayerHPDisplay(stats.getActiveCurrentHealth())  + "/" + misc.getplayerHPDisplay(stats.getActiveMaxHealth()), styleHealth)
                         .append(Component.text(" | ", Style.style(NamedTextColor.GOLD, TextDecoration.BOLD)))
                         .append(Component.text(misc.round(stats.getActiveCurrentStamina()) + "/" + stats.getActiveMaxStamina(), styleStamina)))

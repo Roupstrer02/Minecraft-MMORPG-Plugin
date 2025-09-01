@@ -157,7 +157,25 @@ public class MobStats {
         }
         //=======================================================
         //Larian the Nightmare
-        if (bossType.equals("MythicMob{LarianLow}") || bossType.equals("MythicMob{LarianMid}") || bossType.equals("MythicMob{Larian}")) {
+        if (bossType.equals("MythicMob{LarianLow}")) {
+            this.Level = cfg.getInt("LarianLow.Level");
+            this.MaxHealthMod = cfg.getDouble("LarianLow.Modifiers.MaxHealth");
+            this.DefenseMod = cfg.getDouble("LarianLow.Modifiers.Defense");
+            this.AttackMod = cfg.getDouble("LarianLow.Modifiers.Attack");
+            this.isArenaBoss = true;
+        }
+        //=======================================================
+        //Larian the Nightmare
+        if (bossType.equals("MythicMob{LarianMid}")) {
+            this.Level = cfg.getInt("LarianMid.Level");
+            this.MaxHealthMod = cfg.getDouble("LarianMid.Modifiers.MaxHealth");
+            this.DefenseMod = cfg.getDouble("LarianMid.Modifiers.Defense");
+            this.AttackMod = cfg.getDouble("LarianMid.Modifiers.Attack");
+            this.isArenaBoss = true;
+        }
+        //=======================================================
+        //Larian the Nightmare
+        if (bossType.equals("MythicMob{Larian}")) {
             this.Level = cfg.getInt("Larian.Level");
             this.MaxHealthMod = cfg.getDouble("Larian.Modifiers.MaxHealth");
             this.DefenseMod = cfg.getDouble("Larian.Modifiers.Defense");

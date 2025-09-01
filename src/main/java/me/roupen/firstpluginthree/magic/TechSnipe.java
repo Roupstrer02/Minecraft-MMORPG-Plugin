@@ -1,5 +1,6 @@
 package me.roupen.firstpluginthree.magic;
 
+import me.roupen.firstpluginthree.balance.Balance;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
 import me.roupen.firstpluginthree.utility.MobUtility;
@@ -37,7 +38,8 @@ public class TechSnipe extends BukkitRunnable {
     private Material[] exempt_blocks = {Material.AIR, Material.GRASS, Material.TALL_GRASS, Material.WATER, Material.CAVE_AIR};
     private DecimalFormat NumberFormat = new DecimalFormat("0.0");
 
-    public static double baseManaCost = 80.0;
+    public static double baseManaCost = 150.0;
+    public static double spellCooldown = 150.0;
 
     public TechSnipe(Player caster)
     {
@@ -141,19 +143,19 @@ public class TechSnipe extends BukkitRunnable {
         }
 
         //spell ending logic
-        if (progress >= 50) {
+        if (progress >= spellCooldown) {
             this.cancel();
         }
 
         //progress counter
         incrementProgress();
 
-        if (!this.isCancelled() && (progress < 50))
+        if (!this.isCancelled() && (progress < spellCooldown))
         {
-            ChannelTime.setProgress(1.0-((1.0 / 50.0) * progress));
-            ChannelTime.setTitle("Spell Cooldown " + NumberFormat.format(spellCooldownTextUpdate(50, progress)));
+            ChannelTime.setProgress(1.0-((1.0 / spellCooldown) * progress));
+            ChannelTime.setTitle("Spell Cooldown " + NumberFormat.format(spellCooldownTextUpdate(spellCooldown, progress)));
         }
-        else if (getProgress() == 50)
+        else if (getProgress() == spellCooldown)
         {
             if (ChannelTime != null)
                 ChannelTime.removeAll();
@@ -165,11 +167,11 @@ public class TechSnipe extends BukkitRunnable {
         return 20 * Wand.getUtilitySpellPowerModifier();
     }
     public double CasterSpellDamage() {
-        return stats.getCasterSpellDamage() * Wand.getOffenseSpellPowerModifier();
+        return stats.getCasterSpellDamage(4 * Balance.levelDelta) * Wand.getOffenseSpellPowerModifier();
     }
     public double TechSnipeDmgCalc(MobStats mobstats)
     {
-        return 21 * CasterSpellDamage();
+        return CasterSpellDamage();
     }
     public double ManaCostCalc(PlayerStats playerstats)
     {

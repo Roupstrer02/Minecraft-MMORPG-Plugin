@@ -1,5 +1,6 @@
 package me.roupen.firstpluginthree.magic;
 
+import me.roupen.firstpluginthree.balance.Balance;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
 import me.roupen.firstpluginthree.utility.MobUtility;
@@ -31,7 +32,9 @@ public class PyroFlameBooster extends BukkitRunnable {
     private BossBar ChannelTime;
     private wand Wand;
     private DecimalFormat NumberFormat = new DecimalFormat("0.0");
-    public static double baseManaCost = 30.0;
+    public static double baseManaCost = 60.0;
+    public static double spellCooldown = 100.0;
+
 
     //Need a variable that holds the wand in order to easily apply the modifiers onto the spell (without coupling code)
 
@@ -104,7 +107,7 @@ public class PyroFlameBooster extends BukkitRunnable {
             loc.subtract(x, 0, z);
         }
 
-        if (progress >= 50)
+        if (progress >= spellCooldown)
         {
             this.cancel();
         }
@@ -112,12 +115,12 @@ public class PyroFlameBooster extends BukkitRunnable {
         //progress counter
         incrementProgress();
 
-        if (!this.isCancelled() && (progress < 50))
+        if (!this.isCancelled() && (progress < spellCooldown / 2))
         {
             ChannelTime.setProgress(1.0-(0.02 * getProgress()));
-            ChannelTime.setTitle("Spell Cooldown " + NumberFormat.format(spellCooldownTextUpdate(50, progress)));
+            ChannelTime.setTitle("Spell Cooldown " + NumberFormat.format(spellCooldownTextUpdate(spellCooldown, progress)));
         }
-        else if (getProgress() == 50)
+        else if (getProgress() == spellCooldown)
         {
             if (ChannelTime != null)
                 ChannelTime.removeAll();
@@ -130,13 +133,13 @@ public class PyroFlameBooster extends BukkitRunnable {
 
     public double FlameBoosterDamageCalc(MobStats mobstats)
     {
-        return 15 * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
+        return (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
     }
     public double SpellAOE() {
         return 2.5 * Wand.getUtilitySpellPowerModifier();
     }
     public double CasterSpellDamage() {
-        return stats.getCasterSpellDamage() * Wand.getOffenseSpellPowerModifier();
+        return stats.getCasterSpellDamage(Balance.levelDelta) * Wand.getOffenseSpellPowerModifier();
     }
 
     public double ManaCostCalc(PlayerStats playerstats)

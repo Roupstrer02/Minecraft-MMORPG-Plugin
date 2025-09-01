@@ -1,5 +1,6 @@
 package me.roupen.firstpluginthree.magic;
 
+import me.roupen.firstpluginthree.balance.Balance;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
 import me.roupen.firstpluginthree.utility.MobUtility;
@@ -34,7 +35,9 @@ public class PyroFlameDash extends BukkitRunnable {
     private BossBar ChannelTime;
     private wand Wand;
     private DecimalFormat NumberFormat = new DecimalFormat("0.0");
-    public static double baseManaCost = 40.0;
+    public static double baseManaCost = 70.0;
+    public static double spellCooldown = 60.0;
+    private double spellUpTimeRatio = 0.5;
 
     //Need a variable that holds the wand in order to easily apply the modifiers onto the spell (without coupling code)
 
@@ -72,10 +75,10 @@ public class PyroFlameDash extends BukkitRunnable {
                 this.cancel();
             }
         }
-        else if ((getProgress() < 60))
+        else if ((getProgress() < spellCooldown))
         {
             loc = origin.getLocation();
-
+            world = loc.getWorld();
             //make this a circle particle effect instead
             ParticleCircle(loc.add(0,0.2,0), SpellAOE(), Particle.FLAME, true);
 
@@ -95,7 +98,7 @@ public class PyroFlameDash extends BukkitRunnable {
                 }
             }
         }
-        if (getProgress() >= 60)
+        if (getProgress() >= spellCooldown)
         {
             for (LivingEntity target : ArrayOfTargets)
             {
@@ -114,12 +117,12 @@ public class PyroFlameDash extends BukkitRunnable {
 
         incrementProgress();
 
-        if (!this.isCancelled() && (getProgress() < 40))
+        if (!this.isCancelled() && (getProgress() < spellCooldown))
         {
             ChannelTime.setProgress(1.0-(0.025 * getProgress()));
-            ChannelTime.setTitle("Spell Cooldown " + NumberFormat.format(spellCooldownTextUpdate(40, progress)));
+            ChannelTime.setTitle("Spell Cooldown " + NumberFormat.format(spellCooldownTextUpdate(spellCooldown, progress)));
         }
-        else if (getProgress() == 40)
+        else if (getProgress() == spellCooldown)
         {
             if (ChannelTime != null)
                 ChannelTime.removeAll();
@@ -133,12 +136,12 @@ public class PyroFlameDash extends BukkitRunnable {
     public void incrementProgress() {this.progress = getProgress() + 1;}
 
     public double FlameDashDamageCalc(MobStats mobstats) {
-        return 1 * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
+        return 1 / (spellCooldown * spellUpTimeRatio) * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
     }
 
     public double CasterSpellDamage()
     {
-        return stats.getCasterSpellDamage() * Wand.getOffenseSpellPowerModifier();
+        return stats.getCasterSpellDamage(1.25 * Balance.levelDelta) * Wand.getOffenseSpellPowerModifier();
     }
     public double SpellAOE() {
         return 2.5 * Wand.getUtilitySpellPowerModifier();
