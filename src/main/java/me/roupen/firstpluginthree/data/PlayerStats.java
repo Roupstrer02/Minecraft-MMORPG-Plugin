@@ -155,7 +155,7 @@ public class PlayerStats {
             Block pLoc = p.getLocation().getBlock();
             message = message.append(
                     Component.text("- " + p.getName() + ": ", Style.style(NamedTextColor.GREEN)).append(
-                            Component.text("Level " + pStats.getLevel() + "\n", Style.style(NamedTextColor.YELLOW)))).append(
+                            Component.text("Level " + pStats.getLevel() + " ", Style.style(NamedTextColor.YELLOW)))).append(
                                     Component.text("Location: " + "x: " + pLoc.getX() + " y: " + pLoc.getY() + " z: " + pLoc.getZ() + "\n\n", Style.style(NamedTextColor.AQUA)));
         }
         return message;

@@ -99,7 +99,7 @@ public class actionbardisplay extends BukkitRunnable {
                 }
 
                 if (stats.equippedUselessGear) {
-                    uselessEquipmentIndicator = "!Equipment too high level!";
+                    uselessEquipmentIndicator = "!Over-leveled equipment in use!";
                     uselessEquipmentSeparator = " | ";
                 }
                 else {

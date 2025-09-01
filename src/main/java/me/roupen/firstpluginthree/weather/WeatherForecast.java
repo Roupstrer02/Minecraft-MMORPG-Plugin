@@ -18,10 +18,7 @@ import javax.inject.Named;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 
 public class WeatherForecast {
 /*
@@ -149,31 +146,31 @@ public class WeatherForecast {
         {
             player.sendMessage(Component.text("Today's Weather Forecast\n", Style.style(NamedTextColor.WHITE, TextDecoration.BOLD))
                     .append(Component.text("In the plains: "))
-                    .append(Component.text(WeatherDesigns[(int) cfg.get("plains")] + '\n', styles.get( (int) (cfg.get("plains")))))
+                    .append(Component.text(WeatherDesigns[(int) cfg.get("plains")], styles.get( (int) (cfg.get("plains"))))).append(Component.text(getLevelRangeDisplayName("plains") + '\n'))
                     .append(Component.text("In the sands: "))
-                    .append(Component.text(WeatherDesigns[(int) cfg.get("sand")] + '\n', styles.get( (int) (cfg.get("sand")))))
+                    .append(Component.text(WeatherDesigns[(int) cfg.get("sand")], styles.get( (int) (cfg.get("sand"))))).append(Component.text(getLevelRangeDisplayName("sand") + '\n'))
                     .append(Component.text("In the forests: "))
-                    .append(Component.text(WeatherDesigns[(int) cfg.get("forest")] + '\n', styles.get( (int) (cfg.get("forest")))))
+                    .append(Component.text(WeatherDesigns[(int) cfg.get("forest")], styles.get( (int) (cfg.get("forest"))))).append(Component.text(getLevelRangeDisplayName("forest") + '\n'))
                     .append(Component.text("In the tundra: "))
-                    .append(Component.text(WeatherDesigns[(int) cfg.get("tundra")] + '\n', styles.get( (int) (cfg.get("tundra")))))
+                    .append(Component.text(WeatherDesigns[(int) cfg.get("tundra")], styles.get( (int) (cfg.get("tundra"))))).append(Component.text(getLevelRangeDisplayName("tundra") + '\n'))
                     .append(Component.text("In the swamps: "))
-                    .append(Component.text(WeatherDesigns[(int) cfg.get("swamp")] + '\n', styles.get( (int) (cfg.get("swamp")))))
+                    .append(Component.text(WeatherDesigns[(int) cfg.get("swamp")], styles.get( (int) (cfg.get("swamp"))))).append(Component.text(getLevelRangeDisplayName("swamp") + '\n'))
                     .append(Component.text("In the oceans: "))
-                    .append(Component.text(WeatherDesigns[(int) cfg.get("ocean")] + '\n', styles.get( (int) (cfg.get("ocean")))))
+                    .append(Component.text(WeatherDesigns[(int) cfg.get("ocean")], styles.get( (int) (cfg.get("ocean"))))).append(Component.text(getLevelRangeDisplayName("ocean") + '\n'))
                     .append(Component.text("In the jungle: "))
-                    .append(Component.text(WeatherDesigns[(int) cfg.get("jungle")] + '\n', styles.get( (int) (cfg.get("jungle")))))
+                    .append(Component.text(WeatherDesigns[(int) cfg.get("jungle")], styles.get( (int) (cfg.get("jungle"))))).append(Component.text(getLevelRangeDisplayName("jungle") + '\n'))
                     .append(Component.text("In the caves: "))
-                    .append(Component.text(WeatherDesigns[(int) cfg.get("caves")] + '\n', styles.get( (int) (cfg.get("caves")))))
+                    .append(Component.text(WeatherDesigns[(int) cfg.get("caves")], styles.get( (int) (cfg.get("caves"))))).append(Component.text(getLevelRangeDisplayName("caves") + '\n'))
                     .append(Component.text("In the savanna: "))
-                    .append(Component.text(WeatherDesigns[(int) cfg.get("savanna")] + '\n', styles.get( (int) (cfg.get("savanna")))))
+                    .append(Component.text(WeatherDesigns[(int) cfg.get("savanna")], styles.get( (int) (cfg.get("savanna"))))).append(Component.text(getLevelRangeDisplayName("savanna") + '\n'))
                     .append(Component.text("In the mountainous: "))
-                    .append(Component.text(WeatherDesigns[(int) cfg.get("mountainous")] + '\n', styles.get( (int) (cfg.get("mountainous")))))
+                    .append(Component.text(WeatherDesigns[(int) cfg.get("mountainous")], styles.get( (int) (cfg.get("mountainous"))))).append(Component.text(getLevelRangeDisplayName("mountainous") + '\n'))
                     .append(Component.text("In the rocky shores: "))
-                    .append(Component.text(WeatherDesigns[(int) cfg.get("stony")] + '\n', styles.get( (int) (cfg.get("stony")))))
+                    .append(Component.text(WeatherDesigns[(int) cfg.get("stony")], styles.get( (int) (cfg.get("stony"))))).append(Component.text(getLevelRangeDisplayName("stony") + '\n'))
                     .append(Component.text("In the end: "))
-                    .append(Component.text(WeatherDesigns[(int) cfg.get("end")] + '\n', styles.get( (int) (cfg.get("end")))))
+                    .append(Component.text(WeatherDesigns[(int) cfg.get("end")], styles.get( (int) (cfg.get("end"))))).append(Component.text(getLevelRangeDisplayName("end") + '\n'))
                     .append(Component.text("In the nether: "))
-                    .append(Component.text(WeatherDesigns[(int) cfg.get("nether")] + '\n', styles.get( (int) (cfg.get("nether")))))
+                    .append(Component.text(WeatherDesigns[(int) cfg.get("nether")], styles.get( (int) (cfg.get("nether"))))).append(Component.text(getLevelRangeDisplayName("nether") + '\n'))
             );
         }
     }
@@ -202,12 +199,19 @@ public class WeatherForecast {
     public static String getLevelRangeDisplayName(String biome) {
         File f = new File(getFolderPath() + "/WeatherForecast.yml");
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(f);
-        double attenuation = WeatherForecast.getBiomeModifier(biome);
+        String biomeToCheck = "";
+        for (String[] bG : AllBiomesList) {
+            if (BiomeGroupContains(bG, biome)) {
+                biomeToCheck = bG[0];
+            }
+        }
+
+        double attenuation = WeatherForecast.getBiomeModifier(biome.toUpperCase());
 
         return " Lv" + (
-                (int) Math.ceil(((((cfg.getInt(biome)) + 1) * Balance.BiomeLevelRange) - (Balance.BiomeLevelRange - 1)) * attenuation)) +
+                (int) Math.ceil(((((cfg.getInt(biomeToCheck)) + 1) * Balance.BiomeLevelRange) - (Balance.BiomeLevelRange - 1)) * attenuation)) +
                 "-" +
-                ((int) Math.ceil(((cfg.getInt(biome)) + 1) * Balance.BiomeLevelRange * attenuation));
+                ((int) Math.ceil(((cfg.getInt(biomeToCheck)) + 1) * Balance.BiomeLevelRange * attenuation));
 
     }
 
