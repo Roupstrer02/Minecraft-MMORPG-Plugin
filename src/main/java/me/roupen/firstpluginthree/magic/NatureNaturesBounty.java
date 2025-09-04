@@ -47,7 +47,7 @@ public class NatureNaturesBounty extends BukkitRunnable {
     private int progress = 0;
 
     //the cooldown (or in-game terminology "Arcane Overheat" for reasons explained some other time) given to the player where they can no longer cast ANY spell
-    private double spellCooldown = 20;
+    private double spellCooldown = 10;
 
     //for the sake of preventing ghost spells from sticking around, this value auto-ends the spell subprocess when progress reaches this count
     private int timeOut = 21;
@@ -171,7 +171,7 @@ public class NatureNaturesBounty extends BukkitRunnable {
                                 world.dropItem(loc.getBlock().getLocation(), new ItemStack(Material.FLINT));
                                 origin.playSound(origin.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1.0f, 1.0f);
                             }
-                            stats.gainExperience((int) Math.round(0.005 * stats.getLevelCap()));
+                            stats.gainExperience((int) Math.round(0.001 * stats.getLevelCap()));
                             break;
                         case COPPER_ORE:
                         case DEEPSLATE_COPPER_ORE:
@@ -179,7 +179,7 @@ public class NatureNaturesBounty extends BukkitRunnable {
                                 world.dropItem(loc.getBlock().getLocation(), new ItemStack(Material.GOLD_NUGGET, 3));
                                 origin.playSound(origin.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1.0f, 1.0f);
                             }
-                            stats.gainExperience((int) Math.round(0.005 * stats.getLevelCap()));
+                            stats.gainExperience((int) Math.round(0.001 * stats.getLevelCap()));
                             break;
                         case IRON_ORE:
                         case DEEPSLATE_IRON_ORE:
@@ -187,7 +187,7 @@ public class NatureNaturesBounty extends BukkitRunnable {
                                 world.dropItem(loc.getBlock().getLocation(), new ItemStack(Material.COAL));
                                 origin.playSound(origin.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1.0f, 1.0f);
                             }
-                            stats.gainExperience((int) Math.round(0.01 * stats.getLevelCap()));
+                            stats.gainExperience((int) Math.round(0.002 * stats.getLevelCap()));
                             break;
                         case REDSTONE_ORE:
                         case DEEPSLATE_REDSTONE_ORE:
@@ -195,7 +195,7 @@ public class NatureNaturesBounty extends BukkitRunnable {
                                 world.dropItem(loc.getBlock().getLocation(), new ItemStack(Material.GLOWSTONE_DUST, 4));
                                 origin.playSound(origin.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1.0f, 1.0f);
                             }
-                            stats.gainExperience((int) Math.round(0.03 * stats.getLevelCap()));
+                            stats.gainExperience((int) Math.round(0.005 * stats.getLevelCap()));
                             break;
                         case GOLD_ORE:
                         case DEEPSLATE_GOLD_ORE:
@@ -203,7 +203,7 @@ public class NatureNaturesBounty extends BukkitRunnable {
                                 world.dropItem(loc.getBlock().getLocation(), new ItemStack(Material.RAW_IRON, 1));
                                 origin.playSound(origin.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1.0f, 1.0f);
                             }
-                            stats.gainExperience((int) Math.round(0.07 * stats.getLevelCap()));
+                            stats.gainExperience((int) Math.round(0.006 * stats.getLevelCap()));
                             break;
                         case DIAMOND_ORE:
                         case DEEPSLATE_DIAMOND_ORE:
@@ -211,7 +211,7 @@ public class NatureNaturesBounty extends BukkitRunnable {
                                 world.dropItem(loc.getBlock().getLocation(), new ItemStack(Material.EMERALD));
                                 origin.playSound(origin.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1.0f, 1.0f);
                             }
-                            stats.gainExperience((int) Math.round(0.12 * stats.getLevelCap()));
+                            stats.gainExperience((int) Math.round(0.03 * stats.getLevelCap()));
                             break;
                         case EMERALD_ORE:
                         case DEEPSLATE_EMERALD_ORE:
@@ -219,7 +219,7 @@ public class NatureNaturesBounty extends BukkitRunnable {
                                 world.dropItem(loc.getBlock().getLocation(), new ItemStack(Material.DIAMOND));
                                 origin.playSound(origin.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1.0f, 1.0f);
                             }
-                            stats.gainExperience((int) Math.round(0.2 * stats.getLevelCap()));
+                            stats.gainExperience((int) Math.round(0.06 * stats.getLevelCap()));
                             break;
                         case LAPIS_ORE:
                         case DEEPSLATE_LAPIS_ORE:
@@ -227,7 +227,7 @@ public class NatureNaturesBounty extends BukkitRunnable {
                                 world.dropItem(loc.getBlock().getLocation(), new ItemStack(Material.AMETHYST_SHARD));
                                 origin.playSound(origin.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1.0f, 1.0f);
                             }
-                            stats.gainExperience((int) Math.round(0.02 * stats.getLevelCap()));
+                            stats.gainExperience((int) Math.round(0.015 * stats.getLevelCap()));
                             break;
                         case NETHER_QUARTZ_ORE:
                             if (giveExtraDrops) {
@@ -241,14 +241,14 @@ public class NatureNaturesBounty extends BukkitRunnable {
                                 world.dropItem(loc.getBlock().getLocation(), new ItemStack(Material.GOLD_INGOT));
                                 origin.playSound(origin.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1.0f, 1.0f);
                             }
-                            stats.gainExperience((int) Math.round(0.0025 * stats.getLevelCap()));
+                            stats.gainExperience((int) Math.round(0.0015 * stats.getLevelCap()));
                             break;
                         case ANCIENT_DEBRIS:
                             if (giveExtraDrops) {
                                 world.dropItem(loc.getBlock().getLocation(), new ItemStack(Material.NETHERITE_SCRAP));
                                 origin.playSound(origin.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1.0f, 1.0f);
                             }
-                            stats.gainExperience((int) Math.round(0.2 * stats.getLevelCap()));
+                            stats.gainExperience((int) Math.round(0.08 * stats.getLevelCap()));
                             break;
                     }
                     SpellHit = true;

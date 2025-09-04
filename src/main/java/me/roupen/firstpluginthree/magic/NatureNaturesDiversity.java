@@ -45,7 +45,7 @@ public class NatureNaturesDiversity extends BukkitRunnable {
     private int progress = 0;
 
     //the cooldown (or in-game terminology "Arcane Overheat" for reasons explained some other time) given to the player where they can no longer cast ANY spell
-    private double spellCooldown = 20;
+    private double spellCooldown = 10;
 
     //for the sake of preventing ghost spells from sticking around, this value auto-ends the spell subprocess when progress reaches this count
     private int timeOut = 21;

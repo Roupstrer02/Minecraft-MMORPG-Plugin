@@ -16,28 +16,7 @@ import java.text.DecimalFormat;
 import java.util.Collection;
 
 public class spellTemplate extends BukkitRunnable {
-    /*
-    * Welcome to Zelandris!
-    * I probably asked you to code this as to lower my workload by a tiny bit and have some fun with people
-    * But most importantly, it's as "they" say: Zelandris was not made in a day, nor by one man.
-    *
-    * Below you'll find everything you need to create a new addition to the grimoire of spells in the arcane compendium of Zelandris
-    *
-    * 1. Spell relevant variables
-    *   1.1 - Spell Parameters
-    *   1.2 - General spell variables
-    * 2. Spell Methods
-    *   2.1 - Calculation Methods
-    *   2.2 - Logic Methods
-    * */
 
-    // 1. Spell relevant variables
-
-    //general note, if any of the variables are highlighted in yellow in their definitions, you can ignore it. It's there because I'm being organized for the sake of the template
-    //rather than optimally organized
-
-    // 1.1 - Spell Parameters
-    //========================================================================================================================================================
     //Progress dictates what stage of the spell has been reached, measured in ticks (20/s -> 20 == 1s)
     private int progress = 0;
 
@@ -54,8 +33,6 @@ public class spellTemplate extends BukkitRunnable {
     private double spellDamage = 5;
 
     //========================================================================================================================================================
-
-    // 1.2 - General spell variables
 
     //player casting the spell <-> if other sources of damage or effects come of this spell, the origin may need to change (or there may be more origins, add them)
     private Player origin;

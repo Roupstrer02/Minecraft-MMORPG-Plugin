@@ -5,6 +5,7 @@ import io.lumine.mythic.bukkit.events.MythicMobDeathEvent;
 import io.lumine.mythic.core.mobs.ActiveMob;
 import me.roupen.firstpluginthree.Zelandris;
 import me.roupen.firstpluginthree.playerequipment.Rune;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -126,12 +127,13 @@ public class elite {
                 ent.getWorld().dropItem(entLoc, new ItemStack(Material.NETHER_STAR));
             }
         }
-
-
     }
 
 
     public void spawn(Location spawnLoc) throws InvalidMobTypeException {
+        Zelandris.getMyPlugin().getServer().dispatchCommand(Bukkit.getConsoleSender(), "mm m kill " + "LarianLow");
+        Zelandris.getMyPlugin().getServer().dispatchCommand(Bukkit.getConsoleSender(), "mm m kill " + "LarianMid");
+        Zelandris.getMyPlugin().getServer().dispatchCommand(Bukkit.getConsoleSender(), "mm m kill " + "Larian");
         switch (BossName) {
             case "Abyss Watcher":
                 Zelandris.getMMHelper().spawnMythicMob("AbyssWatcherTest", spawnLoc);

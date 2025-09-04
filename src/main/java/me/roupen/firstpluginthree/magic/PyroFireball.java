@@ -33,7 +33,7 @@ public class PyroFireball extends BukkitRunnable {
     public static double baseManaCost = 50.0;
     private DecimalFormat NumberFormat = new DecimalFormat("0.0");
 
-    private Material[] exempt_blocks = {Material.AIR, Material.GRASS, Material.TALL_GRASS};
+    private Material[] exempt_blocks = {Material.AIR, Material.GRASS, Material.TALL_GRASS, Material.FERN, Material.DEAD_BUSH};
 
     public PyroFireball(Player caster)
     {
@@ -99,7 +99,7 @@ public class PyroFireball extends BukkitRunnable {
             this.cancel();
         }
 
-        if (!(this.SpellHit) && (FireballLoc != null) && (FireballLoc.getBlock().getType() != Material.AIR || ((FireballLoc.getNearbyLivingEntities(0.2).size() > 0) && !(FireballLoc.getNearbyLivingEntities(0.2).iterator().next() instanceof Player)))) //Once the fireball hits the ground, or a target
+        if (!(this.SpellHit) && (FireballLoc != null) && (FireballLoc.getBlock().getType() != Material.AIR || ((FireballLoc.getNearbyLivingEntities(0.5).size() > 0) && !(FireballLoc.getNearbyLivingEntities(0.5).iterator().next() instanceof Player)))) //Once the fireball hits the ground, or a target
         {//EXPLOOOOOOOOSION
             SpellHit = true;
 
@@ -147,7 +147,7 @@ public class PyroFireball extends BukkitRunnable {
     }
 
     public double SpellAOE() {
-        return Wand.getUtilitySpellPowerModifier();
+        return 2.5 * Wand.getUtilitySpellPowerModifier();
     }
 
     public double ManaCostCalc(PlayerStats playerstats)

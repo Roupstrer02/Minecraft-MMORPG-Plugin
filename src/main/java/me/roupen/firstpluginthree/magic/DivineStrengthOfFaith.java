@@ -23,10 +23,10 @@ public class DivineStrengthOfFaith extends BukkitRunnable {
     private int progress = 0;
 
     //the cooldown (or in-game terminology "Arcane Overheat" for reasons explained some other time) given to the player where they can no longer cast ANY spell
-    private double spellCooldown = 40;
+    private double spellCooldown = 200;
 
     //for the sake of preventing ghost spells from sticking around, this value auto-ends the spell subprocess when progress reaches this count
-    private int timeOut = 41;
+    private int timeOut = (int) spellCooldown + 1;
 
     //Base mana cost (without reduction from wand)
     public static double baseManaCost = 40;
@@ -92,9 +92,9 @@ public class DivineStrengthOfFaith extends BukkitRunnable {
 
     //the standard "player spell damage" or "arcane damage potential" is their wisdom level * wand offense affinity --> intended to be used IN the damage calculation, not standalone
     public double CasterSpellPower() {
-        return stats.getCasterSpellDamage() * Wand.getDefenseSpellPowerModifier();
+        return stats.getWisdom() * Wand.getDefenseSpellPowerModifier();
     }
-    public double DamageIncreaseFactor() { return 1.05 + (CasterSpellPower() / 200 );}
+    public double DamageIncreaseFactor() { return 1.1 + (CasterSpellPower() / 200 );}
 
     //used for determining the radius of circular AOE targeting (this considers the wand's properties)
     public double SpellAOE(int baseRadius) {
@@ -114,27 +114,22 @@ public class DivineStrengthOfFaith extends BukkitRunnable {
 
     public void spellStartup() {
         //Any code written here will happen immediately upon casting the spell (progress == 0) ------- (if the player is able to cast it)
-        Targets = loc.getNearbyPlayers(SpellAOE(3));
-        spells.ParticleCircle(loc, SpellAOE(3), Particle.GLOW_SQUID_INK, false);
+        Targets = loc.getNearbyPlayers(SpellAOE(5));
+        spells.ParticleCircle(loc, SpellAOE(5), Particle.GLOW_SQUID_INK, false);
         for (Player player: Targets) {
-            if (!player.getName().equals(origin.getName())) {
-                TargetStats = PlayerUtility.getPlayerStats(player);
-                TargetStats.changeMultiplicativeStats("Damage", DamageIncreaseFactor());
-            }
-
+            TargetStats = PlayerUtility.getPlayerStats(player);
+            TargetStats.changeMultiplicativeStats("Damage", DamageIncreaseFactor());
         }
     }
 
     public void spellPerTick() {
         //any code written here will **attempt** to run every tick
         for (Player player: Targets) {
-            if (!player.getName().equals(origin.getName())) {
                 loc = player.getLocation();
                 origin.getWorld().spawnParticle(Particle.REDSTONE, loc, 100, 0.25, 0, 0.25, 0, dust, false);
-                if (progress == spellCooldown - 1) {
+                if (progress == Math.floor(spellCooldown * 2/3)) {
                     TargetStats.changeMultiplicativeStats("Damage", 1 / DamageIncreaseFactor());
                 }
-            }
         }
     }
 

@@ -100,6 +100,7 @@ public class ProfileMenu {
         {
             Style spellSelectMessageStyle = Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC);
             String itemName = event.getCurrentItem().getItemMeta().getDisplayName();
+            stats.getSpellbook();
             if (event.getCurrentItem().getType() == Material.GRAY_DYE) {
                 GuiUtility.CreateProfileGui(player);
             }
@@ -121,6 +122,7 @@ public class ProfileMenu {
                     stats.updateSpellBook(3,"Meteor Fall");
                     player.sendMessage(Component.text("Ultimate spell set: ", Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)).append(Component.text(itemName, spellSelectMessageStyle)));
                 }
+
             }
 
             else if (event.getCurrentItem().getType() == Material.REDSTONE) {
@@ -142,7 +144,7 @@ public class ProfileMenu {
                 }
             }
 
-            else if (event.getCurrentItem().getType() == Material.NETHER_STAR) {
+            else if (event.getCurrentItem().getType() == Material.GLOWSTONE_DUST) {
                 if (event.getSlot() < 18) {
                     stats.updateSpellBook(0,"Healing Orb");
                     player.sendMessage(Component.text("Standard spell set: ", Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)).append(Component.text(itemName, spellSelectMessageStyle)));
@@ -179,7 +181,7 @@ public class ProfileMenu {
                     player.sendMessage(Component.text("Ultimate spell set: ", Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)).append(Component.text(itemName, spellSelectMessageStyle)));
                 }
             }
-
+            GuiUtility.CreateSpellBookGui(player);
             event.setCancelled(true);
 
         }

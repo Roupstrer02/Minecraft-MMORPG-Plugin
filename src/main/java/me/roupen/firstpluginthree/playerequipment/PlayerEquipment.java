@@ -148,14 +148,31 @@ public class PlayerEquipment {
     public void setStaminaCost(double staminaCost) {
         StaminaCost = staminaCost;
     }
-    public String getName() {
+
+    public Component getName() {
+        Style style;
         if (getRunes() != null && getRunes().length > 0)
         {
-            return "Lv" + getLevel() + " " + getRunes()[0].getPrefix() + " " + Name + " " + getRunes()[0].getSuffix();
+            Rune r = getRunes()[0];
+
+            if (r.level == 1) {
+                style = r.style;
+                return Component.text("Lv" + getLevel() + " " + r.getPrefix() + " " + Name + " of " + getRunes()[0].getSuffix(), style);
+            } else {
+                style = r.style;
+                Style style2 = r.secondStyle;
+                return Component.text("Lv" + getLevel() + " ")
+                        .append(Component.text(r.getPrefix() + " ", style))
+                        .append(Component.text(Name + " of "))
+                        .append(Component.text(r.getSuffix(), style2));
+            }
+
+
         }
         else
         {
-            return "Lv" + getLevel() + " " + Name;
+            style = Style.style(NamedTextColor.WHITE);
+            return Component.text("Lv" + getLevel() + " " + Name, style);
         }
     }
     public void setName(String name) {
@@ -358,13 +375,13 @@ public class PlayerEquipment {
             EquipWithRunes.setStaminaRegen(EquipWithRunes.getStaminaRegen() + (0.0625 * YellowCount));
 
             //for green runes
-            EquipWithRunes.setMaxHealth(EquipWithRunes.getMaxHealth() * (1 + (GreenCount * 0.10)));
-            EquipWithRunes.setHealthRegen(EquipWithRunes.getHealthRegen() * (1 + (GreenCount * 0.25)));
-            EquipWithRunes.setDefense(EquipWithRunes.getDefense() * (1 + (GreenCount * 0.05)));
+            EquipWithRunes.setMaxHealth(EquipWithRunes.getMaxHealth() * (1 + (GreenCount * 0.2)));
+            EquipWithRunes.setHealthRegen(EquipWithRunes.getHealthRegen() * (1 + (GreenCount * 0.1)));
+            EquipWithRunes.setDefense(EquipWithRunes.getDefense() * (1 + (GreenCount * 0.1)));
 
             //for blue runes
             EquipWithRunes.setMaxMana(EquipWithRunes.getMaxMana() * (1 + (BlueCount * 0.20)));
-            EquipWithRunes.setManaRegen(EquipWithRunes.getManaRegen() + (BlueCount * 0.25));
+            EquipWithRunes.setManaRegen(EquipWithRunes.getManaRegen() + (BlueCount * 0.125));
 
             //for purple runes
             EquipWithRunes.setMovementSpeed(EquipWithRunes.getMovementSpeed() * (1 + PurpleCount));
@@ -378,7 +395,7 @@ public class PlayerEquipment {
         ItemStack item = new ItemStack(e.getItemType(), 1);
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer data = meta.getPersistentDataContainer();
-        Style style;
+
         DecimalFormat df = new DecimalFormat("0.00");
 
         PlayerEquipment e_WithRunes;
@@ -448,10 +465,9 @@ public class PlayerEquipment {
 
         List<Component> lore = LoreSegments;
 
-        if (e_WithRunes.getRunes() != null) {style = e_WithRunes.getRunes()[0].style;}
-        else {style = Style.style(NamedTextColor.WHITE);}
 
-        meta.displayName(Component.text(e_WithRunes.getName(), style));
+
+        meta.displayName(e_WithRunes.getName());
         meta.setCustomModelData(e_WithRunes.model);
         meta.lore(lore);
 

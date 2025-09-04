@@ -61,6 +61,7 @@ public class PlayerUtility {
         cfg.set("stats.HomeLocation", stats.getHomeLocation());
 
         cfg.set("stats.SpellBook", stats.getSpellbook());
+        cfg.set("stats.MinLootLevel", stats.EquipmentLevelMinimum);
         
 
         try { cfg.save(f); } catch (IOException e){ e.printStackTrace(); }
@@ -86,6 +87,9 @@ public class PlayerUtility {
 
     public static String getFolderPath(Player p){
         return Bukkit.getPluginsFolder().getAbsolutePath() + "/FirstPluginThree/player/" + p.getUniqueId();
+    }
+    public static String getPlayersFolder(){
+        return Bukkit.getPluginsFolder().getAbsolutePath() + "/FirstPluginThree/player/";
     }
 
 }

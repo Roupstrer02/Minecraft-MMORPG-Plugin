@@ -17,7 +17,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffectType;
 
-import javax.inject.Named;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -289,7 +288,6 @@ public class PlayerStats {
     public void setActiveStaminaRegen(double activeStaminaRegen) {
         ActiveStaminaRegen = activeStaminaRegen;
     }
-
     public double getBaseActiveManaRegen() {
         return BaseActiveManaRegen;
     }
@@ -434,7 +432,6 @@ public class PlayerStats {
         //stat modifications from potion effects
         applyPotionEquipmentModifiers(p);
     }
-
     public void applyPotionEquipmentModifiers(Player p) {
         //can it scale off of the level of the effect easily?
         p.getActivePotionEffects();
@@ -453,7 +450,7 @@ public class PlayerStats {
         }
         if (p.hasPotionEffect(PotionEffectType.WEAKNESS)) {
             equipment.setDefense(equipment.getDefense() * 0.8);
-            equipment.setDamage(equipment.getDamage() * 0.7);
+            equipment.setCritChance(0);
         }
 
     }
@@ -529,7 +526,7 @@ public class PlayerStats {
     }
 
     public double getActiveHealthRegen() {
-        return (((((ActiveMaxHealth / 80.0) + (Resilience - 1) * (ActiveMaxHealth / 11200.0)) + equipment.getHealthRegen()) + LinearStatChanges.get("HP Regen")) * MultiplicativeStatChanges.get("HP Regen"));
+        return (((((ActiveMaxHealth / 320.0) + (Resilience - 1) * (ActiveMaxHealth / 11200.0)) + equipment.getHealthRegen()) + LinearStatChanges.get("HP Regen")) * MultiplicativeStatChanges.get("HP Regen"));
     }
 
     public double getActiveManaRegen() {

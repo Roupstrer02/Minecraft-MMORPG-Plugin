@@ -184,6 +184,8 @@ public class WandCrafting {
                         NewWand.setOffenseSpellPowerModifier(NewWand.getOffenseSpellPowerModifier() + (0.10 * (NewWand.getTier() * 0.5)));
                         break;
                     case PRISMARINE_SHARD:
+                        NewWand.setOffenseSpellPowerModifier(NewWand.getOffenseSpellPowerModifier() + (0.09 * (NewWand.getTier() * 0.5)));
+                        NewWand.setDefenseSpellPowerModifier(NewWand.getDefenseSpellPowerModifier() + (0.06 * (NewWand.getTier() * 0.5)));
                         break;
                     case GLOWSTONE:
                         NewWand.setSpellCostModifier(NewWand.getSpellCostModifier() - (0.05  * (NewWand.getTier() * 0.5)));

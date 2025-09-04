@@ -83,13 +83,13 @@ public class TechSnipe extends BukkitRunnable {
                 ParticleVerticalCircle(loc, 1.0, 50, Particle.SOUL_FIRE_FLAME);
                 loc.subtract(0, origin.getEyeHeight(), 0).add(loc.getDirection().multiply(2.0));
 
-                loc.add(0, origin.getEyeHeight(), 0).add(loc.getDirection().multiply(5.0));
+                loc.add(0, origin.getEyeHeight(), 0).add(loc.getDirection().multiply(3.0));
                 ParticleVerticalCircle(loc, 0.75, 50, Particle.SOUL_FIRE_FLAME);
-                loc.subtract(0, origin.getEyeHeight(), 0).add(loc.getDirection().multiply(5.0));
+                loc.subtract(0, origin.getEyeHeight(), 0).add(loc.getDirection().multiply(3.0));
 
-                loc.add(0, origin.getEyeHeight(), 0).add(loc.getDirection().multiply(8.0));
+                loc.add(0, origin.getEyeHeight(), 0).add(loc.getDirection().multiply(4.0));
                 ParticleVerticalCircle(loc, 0.5, 50, Particle.SOUL_FIRE_FLAME);
-                loc.subtract(0, origin.getEyeHeight(), 0).add(loc.getDirection().multiply(8.0));
+                loc.subtract(0, origin.getEyeHeight(), 0).add(loc.getDirection().multiply(4.0));
 
                 //effect of spell
                 bulletLoc = origin.getLocation().add(0,1.5,0).add(loc.getDirection().multiply(0.5));
@@ -171,7 +171,7 @@ public class TechSnipe extends BukkitRunnable {
     }
     public double TechSnipeDmgCalc(MobStats mobstats)
     {
-        return CasterSpellDamage();
+        return (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
     }
     public double ManaCostCalc(PlayerStats playerstats)
     {

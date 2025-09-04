@@ -115,9 +115,9 @@ public class PyroFlameBooster extends BukkitRunnable {
         //progress counter
         incrementProgress();
 
-        if (!this.isCancelled() && (progress < spellCooldown / 2))
+        if (!this.isCancelled() && (progress < spellCooldown))
         {
-            ChannelTime.setProgress(1.0-(0.02 * getProgress()));
+            ChannelTime.setProgress(1.0-(1 / spellCooldown * getProgress()));
             ChannelTime.setTitle("Spell Cooldown " + NumberFormat.format(spellCooldownTextUpdate(spellCooldown, progress)));
         }
         else if (getProgress() == spellCooldown)
@@ -136,7 +136,7 @@ public class PyroFlameBooster extends BukkitRunnable {
         return (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
     }
     public double SpellAOE() {
-        return 2.5 * Wand.getUtilitySpellPowerModifier();
+        return 3.5 * Wand.getUtilitySpellPowerModifier();
     }
     public double CasterSpellDamage() {
         return stats.getCasterSpellDamage(Balance.levelDelta) * Wand.getOffenseSpellPowerModifier();

@@ -77,6 +77,7 @@ public final class Zelandris extends JavaPlugin implements Listener {
             "MythicMob{ArcaneGolem}",
             "MythicMob{Quakefish}",
             "MythicMob{LunarisStag}"));
+
     private static BukkitAPIHelper mmhelp = new BukkitAPIHelper();
     public static Zelandris getMyPlugin()
     {
@@ -109,6 +110,8 @@ public final class Zelandris extends JavaPlugin implements Listener {
         this.getCommand("item_create").setExecutor(new itemCreateCMD());
         this.getCommand("player_reset").setExecutor(new playerLevelResetCMD());
         this.getCommand("player_set_level").setExecutor(new playerSetLevelCMD());
+        this.getCommand("leaderboard").setExecutor(new leaderboardCMD());
+        this.getCommand("spawn").setExecutor(new spawnCMD());
 
         myPlugin = this;
 
@@ -138,7 +141,11 @@ public final class Zelandris extends JavaPlugin implements Listener {
 
         //Handles giving back the player their stats
         PlayerStats stats = new PlayerStats();
-        File f =new File(PlayerUtility.getFolderPath(event.getPlayer()) + "/general.yml");
+        Player p = event.getPlayer();
+        File f =new File(PlayerUtility.getFolderPath(p) + "/general.yml");
+
+        //set player damage very high to make sure despite any potion effects, they can still trigger the onEntityDamageByEntity() event
+        p.getServer().dispatchCommand(Bukkit.getConsoleSender(),"/attribute " + p.getName() + "minecraft:generic.attack_damage base set 50.0");
 
         if(f.exists()) //the player's config file exists
         {
@@ -163,6 +170,7 @@ public final class Zelandris extends JavaPlugin implements Listener {
 
             stats.setHomeLocation(cfg.getDoubleList("stats.HomeLocation"));
             stats.setSpellbook(cfg.getStringList("stats.SpellBook").toArray(new String[4]));
+            stats.EquipmentLevelMinimum = (cfg.getInt("stats.MinLootLevel"));
         }
         else //player's file does not exist
         {
@@ -212,6 +220,12 @@ public final class Zelandris extends JavaPlugin implements Listener {
                 PartyMemberStats.removeMemberFromParty(player);
                 p.sendMessage(Component.text(player.getName() + " has left the party\n", Style.style(NamedTextColor.LIGHT_PURPLE, TextDecoration.ITALIC)));
             }
+        }
+
+        if (PlayersInBossFight.contains(player)) {
+            PlayersInBossFight.remove(player);
+
+            player.teleport(new Location(player.getWorld(), -60.5, 64.0, 1180.5));
         }
         PlayerUtility.SavePlayerStats(player);
     }
@@ -584,6 +598,12 @@ public final class Zelandris extends JavaPlugin implements Listener {
             }
         }
     }
+
+    @EventHandler
+    public void onEntityPortalEnter(EntityPortalEnterEvent event) {
+//        event.getEntity().setPortalCooldown(0);
+    }
+
     @EventHandler
     public void onEntityUnload(EntitiesUnloadEvent event) {
         List<Entity> ents = event.getEntities();

@@ -75,7 +75,7 @@ public class PyroFlameDash extends BukkitRunnable {
                 this.cancel();
             }
         }
-        else if ((getProgress() < spellCooldown))
+        else if ((getProgress() < spellCooldown * spellUpTimeRatio))
         {
             loc = origin.getLocation();
             world = loc.getWorld();
@@ -98,7 +98,7 @@ public class PyroFlameDash extends BukkitRunnable {
                 }
             }
         }
-        if (getProgress() >= spellCooldown)
+        if (getProgress() == spellCooldown * spellUpTimeRatio)
         {
             for (LivingEntity target : ArrayOfTargets)
             {
@@ -107,11 +107,14 @@ public class PyroFlameDash extends BukkitRunnable {
                     MobStats mobstats = MobUtility.getMobStats(target);
                     mobstats.spell_damage(15 * FlameDashDamageCalc(mobstats), origin);
                     target.damage(0);
-                    world.spawnParticle(Particle.SMALL_FLAME, target.getLocation().add(0,1,0), 200, 1, 1, 1, 0, null, true);
+                    world.spawnParticle(Particle.SOUL_FIRE_FLAME, target.getLocation().add(0,1,0), 200, 0.5, target.getHeight() / 2, 0.5, 0, null, true);
 
                 }
 
             }
+
+        }
+        if (getProgress() >= spellCooldown) {
             this.cancel();
         }
 
@@ -119,7 +122,7 @@ public class PyroFlameDash extends BukkitRunnable {
 
         if (!this.isCancelled() && (getProgress() < spellCooldown))
         {
-            ChannelTime.setProgress(1.0-(0.025 * getProgress()));
+            ChannelTime.setProgress(1.0-(1 / spellCooldown * getProgress()));
             ChannelTime.setTitle("Spell Cooldown " + NumberFormat.format(spellCooldownTextUpdate(spellCooldown, progress)));
         }
         else if (getProgress() == spellCooldown)

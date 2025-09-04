@@ -48,7 +48,7 @@ public class Balance {
 
     public static double wisdomFactor = 1; //Adjust this to tweak magic damage
 
-    public static double wisdomSkillPointFraction = 0.4; //Fraction of skill points avg player will put into wisdom
+    public static double wisdomSkillPointFraction = 0.75; //Fraction of skill points avg player will put into wisdom
     public static double avgWandWisMult = 2; //Wis multiplier from avg wand
     public static double XPFactor = 2026.355132762;
     public static double numOfMobsOfSameLevelToSlayForLvlUp = 20;
@@ -59,7 +59,7 @@ public class Balance {
     // player modifiers
 
     public static double playerBaseHealthAtLevel(int level) {
-        return 3.4 * Math.pow(diffMultiplierAtLevelDelta, ((double) level) / levelDelta) * mobDmgFactor - 1;
+        return 3.4 * Math.pow(diffMultiplierAtLevelDelta, ((double) level) / levelDelta) * mobDmgFactor - 1 + 10;
     }
 
     public static double mobDmg(int level) {

@@ -79,6 +79,8 @@ public class spellcasting {
                 case "Nature's Storage":
                     castedSpell = new NatureNaturesStorage(caster).runTaskTimer(Zelandris.getMyPlugin(), delay, period);
                     break;
+
+
             }
         } catch (NoClassDefFoundError e) {
             if (castedSpell != null) {

@@ -11,6 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import javax.inject.Named;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -19,6 +20,9 @@ public class Rune {
     Material color;
     Material secondary_color;
     Style style;
+    Style secondStyle;
+
+
     int level;
     String name;
     String savename;
@@ -136,6 +140,13 @@ public class Rune {
     public void setStyle(Style style) {
         this.style = style;
     }
+    public Style getSecondStyle() {
+        return secondStyle;
+    }
+    public void setSecondStyle(Style secondStyle) {
+        this.secondStyle = secondStyle;
+    }
+
     public String getSavename() {
         return savename;
     }
@@ -147,17 +158,17 @@ public class Rune {
     }
     public void setSuffix(Material color) {
         if (color == Material.RED_DYE)
-            this.suffix = "of Fury";
+            this.suffix = "Fury";
         if (color == Material.ORANGE_DYE)
-            this.suffix = "of Order";
+            this.suffix = "Order";
         if (color == Material.YELLOW_DYE)
-            this.suffix = "of Excitement";
+            this.suffix = "Excitement";
         if (color == Material.GREEN_DYE)
-            this.suffix = "of Joy";
+            this.suffix = "Joy";
         if (color == Material.BLUE_DYE)
-            this.suffix = "of Patience";
+            this.suffix = "Patience";
         if (color == Material.PURPLE_DYE)
-            this.suffix = "of Insight";
+            this.suffix = "Insight";
     }
 
     public ItemStack BuildItem()
@@ -165,12 +176,19 @@ public class Rune {
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer data = meta.getPersistentDataContainer();
 
-        meta.displayName(Component.text(name, style));
+
         meta.setCustomModelData(ModelIDMap.get(item.getType()));
         data.set(new NamespacedKey(Zelandris.getMyPlugin(), "maincolor"), PersistentDataType.STRING, getColor().toString());
 
         if (getSecondaryColor() != null)
             data.set(new NamespacedKey(Zelandris.getMyPlugin(), "secondarycolor"), PersistentDataType.STRING, getSecondaryColor().toString());
+
+        if (level == 1) {
+            meta.displayName(Component.text(name, style));
+        }
+        else if (level == 2) {
+            meta.displayName(Component.text(prefix, style).append(Component.text(" rune of ", Style.style(NamedTextColor.WHITE)).append(Component.text(suffix, secondStyle))));
+        }
 
         item.setItemMeta(meta);
 
@@ -237,6 +255,7 @@ public class Rune {
             a.setName(b.getPrefix() + " " + a.getName());
             a.setSecondaryColor(b.getColor());
             a.setSuffix(b.getColor());
+            a.setSecondStyle(b.getStyle());
             a.setSavename(a.getSavename() + "&" + b.getSavename());
             a.setLevel(2);
             return a;

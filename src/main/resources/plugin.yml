@@ -46,6 +46,18 @@ commands:
     #permission: FirstPluginThree.minimum_loot_level
     permission-message: Sorry! You don't have permission to execute that command.
 
+  leaderboard:
+    description: Shows a list of the top 10 highest leveled players on the server
+    usage: /<command>
+    #permission: FirstPluginThree.minimum_loot_level
+    permission-message: Sorry! You don't have permission to execute that command.
+
+  spawn:
+    description: teleports the player to the world spawn point
+    usage: /<command>
+    #permission: FirstPluginThree.minimum_loot_level
+    permission-message: Sorry! You don't have permission to execute that command.
+
   enemy_create:
     description: Debug command for use by admins only
     usage: /<command> <level> <mobCount>
@@ -61,7 +73,7 @@ commands:
   player_reset:
     description: Debug command for use by admins only
     usage: /<command> <player>
-    permission: Zelandris.player_reset
+#    permission: Zelandris.player_reset
     permission-message: Sorry! You don't have permission to execute that command.
 
   player_set_level:

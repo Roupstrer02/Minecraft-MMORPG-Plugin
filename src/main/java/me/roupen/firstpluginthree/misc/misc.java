@@ -1,5 +1,7 @@
 package me.roupen.firstpluginthree.misc;
 
+import me.roupen.firstpluginthree.Zelandris;
+import me.roupen.firstpluginthree.utility.MobUtility;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -49,7 +51,8 @@ public class misc {
 
         for (LivingEntity mob : mobs) {
             if ((mob instanceof Monster) && mob.getWorld().getEnvironment() == World.Environment.NORMAL) {
-                mob.remove();
+                if (!MobUtility.getMobStats(mob).isArenaBoss)
+                    mob.remove();
             }
         }
     }
@@ -110,6 +113,7 @@ public class misc {
             case OAK_FENCE:
             case PUMPKIN:
             case REDSTONE_ORE:
+            case DEEPSLATE_REDSTONE_ORE:
             case REDSTONE_WIRE:
             case SPRUCE_FENCE:
             case WARPED_FENCE:

@@ -413,6 +413,10 @@ public class MobStats {
 
         EXPtoGive = EXPtoGive(stats.getLevel());
 
+        if (getMob() instanceof PigZombie)
+            EXPtoGive *= 0.1;
+
+
 
         for (Player p : stats.getParty()) {
             PlayerStats PMemberStats = PlayerUtility.getPlayerStats(p);
