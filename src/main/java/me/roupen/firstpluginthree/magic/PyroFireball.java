@@ -33,7 +33,7 @@ public class PyroFireball extends BukkitRunnable {
     public static double baseManaCost = 50.0;
     private DecimalFormat NumberFormat = new DecimalFormat("0.0");
 
-    private Material[] exempt_blocks = {Material.AIR, Material.GRASS, Material.TALL_GRASS, Material.FERN, Material.DEAD_BUSH};
+    private Material[] exempt_blocks = {Material.AIR, Material.GRASS, Material.TALL_GRASS, Material.FERN, Material.DEAD_BUSH, Material.VINE, Material.CAVE_VINES};
 
     public PyroFireball(Player caster)
     {

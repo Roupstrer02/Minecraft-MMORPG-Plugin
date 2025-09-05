@@ -120,7 +120,7 @@ public class DivineWeYieldToNone extends BukkitRunnable {
             TargetStats.changeMultiplicativeStats("Stamina Cap", StatIncreaseFactor());
             TargetStats.changeLinearStats("Stamina Regen", StatIncreaseFactor());
             TargetStats.changeLinearStats("Mana Regen", StatIncreaseFactor());
-            TargetStats.changeMultiplicativeStats("Movement Speed", StatIncreaseFactor());
+            TargetStats.changeMultiplicativeStats("Movement Speed", StatIncreaseFactor() * 0.1);
 
 
         }
@@ -134,9 +134,9 @@ public class DivineWeYieldToNone extends BukkitRunnable {
             origin.getWorld().spawnParticle(Particle.WAX_ON, loc, 100, 0.4, 0, 0.4, 0);
             if (progress == Math.floor(spellCooldown * 2/3)) {
                 TargetStats.changeMultiplicativeStats("Stamina Cap", 1 / StatIncreaseFactor());
-                TargetStats.changeLinearStats("Stamina Regen", StatIncreaseFactor());
+                TargetStats.changeLinearStats("Stamina Regen", 1 / StatIncreaseFactor());
                 TargetStats.changeLinearStats("Mana Regen", 1 / StatIncreaseFactor());
-                TargetStats.changeMultiplicativeStats("Movement Speed", 1 / StatIncreaseFactor());
+                TargetStats.changeMultiplicativeStats("Movement Speed", 1 / StatIncreaseFactor() * 0.1);
             }
 
         }

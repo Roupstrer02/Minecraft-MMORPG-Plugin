@@ -697,7 +697,6 @@ public class PlayerStats {
         }
 
         //HomeLocation = Arrays.asList(location.getX(), location.getY(), location.getZ());
-        player.sendMessage(dimension);
         HomeLocation = Arrays.asList(location.getX(), location.getY(), location.getZ(), dimension_id);
     }
 

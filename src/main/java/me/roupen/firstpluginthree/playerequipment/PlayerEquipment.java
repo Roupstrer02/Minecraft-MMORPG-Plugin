@@ -157,7 +157,7 @@ public class PlayerEquipment {
 
             if (r.level == 1) {
                 style = r.style;
-                return Component.text("Lv" + getLevel() + " " + r.getPrefix() + " " + Name + " of " + getRunes()[0].getSuffix(), style);
+                return Component.text("Lv" + getLevel() + " " + r.getPrefix() + " " + Name, style);
             } else {
                 style = r.style;
                 Style style2 = r.secondStyle;

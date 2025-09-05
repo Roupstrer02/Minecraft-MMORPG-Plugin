@@ -100,8 +100,9 @@ public class ProfileMenu {
         {
             Style spellSelectMessageStyle = Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC);
             String itemName = event.getCurrentItem().getItemMeta().getDisplayName();
-            stats.getSpellbook();
-            if (event.getCurrentItem().getType() == Material.GRAY_DYE) {
+            //stats.getSpellbook();
+
+            if ((event.getCurrentItem() != null) && (event.getCurrentItem().getType() == Material.GRAY_DYE)) {
                 GuiUtility.CreateProfileGui(player);
             }
 
