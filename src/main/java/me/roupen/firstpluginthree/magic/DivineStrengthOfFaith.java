@@ -128,6 +128,7 @@ public class DivineStrengthOfFaith extends BukkitRunnable {
                 loc = player.getLocation();
                 origin.getWorld().spawnParticle(Particle.REDSTONE, loc, 100, 0.25, 0, 0.25, 0, dust, false);
                 if (progress == Math.floor(spellCooldown * 2/3)) {
+                    TargetStats = PlayerUtility.getPlayerStats(player);
                     TargetStats.changeMultiplicativeStats("Damage", 1 / DamageIncreaseFactor());
                 }
         }

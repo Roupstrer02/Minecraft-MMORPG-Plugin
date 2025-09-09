@@ -28,7 +28,7 @@ public class VoidRealitySplit extends BukkitRunnable {
 
     //the cooldown (or in-game terminology "Arcane Overheat" for reasons explained some other time) given to the player where they can no longer cast ANY spell
     private final int blinkStepDuration = 20;
-    private final double spellCooldown = blinkStepDuration + 80;
+    private final double spellCooldown = blinkStepDuration + 100;
 
     //for the sake of preventing ghost spells from sticking around, this value auto-ends the spell subprocess when progress reaches this count
     private final int timeOut = (int) spellCooldown + 1;
@@ -37,7 +37,7 @@ public class VoidRealitySplit extends BukkitRunnable {
     public final int baseManaCost = 100;
 
     //if you wish to use the standard damage calculation provided, this value is simply a factor towards how much damage the spell deals
-    private final double spellDamage = 2;
+    private final double spellDamage = 6;
 
     //========================================================================================================================================================
 
@@ -53,7 +53,7 @@ public class VoidRealitySplit extends BukkitRunnable {
 
     //if you need an AOE target selection, this is how it's stored commonly
     private Iterator<LivingEntity> Targets;
-    private Set<LivingEntity> MobsHit = new TreeSet<>();
+    private Set<LivingEntity> MobsHit = new HashSet<>();
 
     //This is being handled for you
     private BossBar ChannelTime;
@@ -120,12 +120,13 @@ public class VoidRealitySplit extends BukkitRunnable {
 
     public void spellStartup() {
         //Any code written here will happen immediately upon casting the spell (progress == 0) ------- (if the player is able to cast it)
-        origin.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, blinkStepDuration * 3, 5));
+        origin.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, blinkStepDuration * 2, 5));
 
-        Location spellLoc = loc;
+        Location spellLoc = loc.clone();
+        spellLoc.add(0,origin.getEyeHeight(),0);
 
         //targets are found during the for loop of the blink
-        //character blinks to furthest possible air block within range
+        //character blinks to the furthest possible air block within range
         for (int i = 0; i < SpellRange(10); i++) {
             if (!Arrays.asList(exempt_blocks).contains(spellLoc.getBlock().getType())) {
                 SpellHit = true;
@@ -140,14 +141,13 @@ public class VoidRealitySplit extends BukkitRunnable {
                 //target hit
                 if (Targets.hasNext()) {
                     //get entity hit
-                    LivingEntity Target = Targets.next();
                     for (Iterator<LivingEntity> it = Targets; it.hasNext(); ) {
                         LivingEntity t = it.next();
 
-                        if (!(Target instanceof Player) && !(Target instanceof Tameable && ((Tameable) Target).isTamed()))
+                        if (!(t instanceof Player)) {
                             MobsHit.add(t);
-
-
+                            t.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, blinkStepDuration * 2, 5));
+                        }
                     }
                 }
             }
@@ -175,6 +175,7 @@ public class VoidRealitySplit extends BukkitRunnable {
                 MobStats mStats = MobUtility.getMobStats(t);
 
                 mStats.spell_damage(DamageCalc(mStats), origin);
+                world.spawnParticle(Particle.SONIC_BOOM, t.getLocation(), 1, 0, 0, 0, 0, null, true);
                 world.playSound(origin, Sound.ENTITY_LIGHTNING_BOLT_IMPACT, 0.3f, 0);
             }
         }

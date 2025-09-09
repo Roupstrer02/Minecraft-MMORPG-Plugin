@@ -6,6 +6,7 @@ import me.roupen.firstpluginthree.data.PlayerStats;
 import me.roupen.firstpluginthree.utility.MobUtility;
 import me.roupen.firstpluginthree.utility.PlayerUtility;
 import me.roupen.firstpluginthree.wands.wand;
+import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -116,7 +117,7 @@ public class VoidCunningSubstitute extends BukkitRunnable {
     public void spellStartup() {
         //Any code written here will happen immediately upon casting the spell (progress == 0) ------- (if the player is able to cast it)
 
-        Location spellLoc = loc;
+        Location spellLoc = loc.clone();
         spellLoc.add(0,origin.getEyeHeight(),0);
 
         for (int i = 0; i < SpellRange(30); i++) {
@@ -135,22 +136,25 @@ public class VoidCunningSubstitute extends BukkitRunnable {
                     //get entity hit
                     LivingEntity Target = Targets.next();
 
+                    if (Target.getUniqueId() != origin.getUniqueId()) {
                         //Mark spell as having hit
                         SpellHit = true;
 
                         //get entity hit
                         Location TargetLoc = Target.getLocation();
+                        TargetLoc.setYaw(loc.getYaw());
+                        TargetLoc.setPitch(loc.getPitch());
                         MobStats mStats = MobUtility.getMobStats(Target);
                         if (!mStats.isArenaBoss) {
                             //swap entity positions
-                            Location tempLoc = Target.getLocation();
-                            Target.teleport(new Location(origin.getWorld(), loc.getX(), loc.getY(), loc.getZ()));
-                            origin.teleport(tempLoc);
 
+                            Location tempLoc = loc.clone();
+                            origin.teleport(TargetLoc);
+                            Target.teleport(tempLoc);
                             spells.ParticleCircle(loc, 1, Particle.SOUL, false);
                             spells.ParticleCircle(TargetLoc, 1, Particle.SOUL, false);
                         }
-
+                    }
                         if (Target instanceof Tameable && ((Tameable) Target).isTamed()) {
                             SpellHit = false;
                         }
