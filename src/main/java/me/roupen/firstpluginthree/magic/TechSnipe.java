@@ -29,13 +29,14 @@ public class TechSnipe extends BukkitRunnable {
     private Location loc;
     private Entity spellblock;
     private Iterator<LivingEntity> Targets;
+    private final double spellDamage = 20;
     private BossBar ChannelTime;
     private HashMap<MobStats, Double> defenseRemoved;
     private MobStats mobstats;
     private wand Wand;
     private boolean spellHit;
     private Location bulletLoc;
-    private Material[] exempt_blocks = {Material.AIR, Material.GRASS, Material.TALL_GRASS, Material.WATER, Material.CAVE_AIR, Material.VINE, Material.CAVE_VINES};
+    private Material[] exempt_blocks = {Material.AIR, Material.GRASS, Material.TALL_GRASS, Material.WATER, Material.CAVE_AIR, Material.VINE, Material.CAVE_VINES, Material.SNOW};
     private DecimalFormat NumberFormat = new DecimalFormat("0.0");
 
     public static double baseManaCost = 150.0;
@@ -63,11 +64,11 @@ public class TechSnipe extends BukkitRunnable {
         {
 
             //If the player has the mana for the spell
-            if (stats.getActiveCurrentMana() >= ManaCostCalc(stats))
+            if (stats.getActiveCurrentMana() >= ManaCostCalc())
             {
 
                 //spend the mana for the spell
-                stats.spendMana(ManaCostCalc(stats));
+                stats.spendMana(ManaCostCalc());
 
                 //creates BossBar for player's cooldown timer and shows it to player
                 ChannelTime = Bukkit.createBossBar("Spell Cooldown", BarColor.PINK, BarStyle.SOLID);
@@ -164,16 +165,16 @@ public class TechSnipe extends BukkitRunnable {
     }
 
     public double spellRange() {
-        return 20 * Wand.getUtilitySpellPowerModifier();
+        return 30 * Wand.getUtilitySpellPowerModifier();
     }
     public double CasterSpellDamage() {
-        return stats.getCasterSpellDamage(4 * Balance.levelDelta) * Wand.getOffenseSpellPowerModifier();
+        return Balance.spellPowerCalc(stats.getLevel(), stats.getWisdom()) * Wand.getOffenseSpellPowerModifier();
     }
     public double TechSnipeDmgCalc(MobStats mobstats)
     {
-        return (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
+        return spellDamage * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
     }
-    public double ManaCostCalc(PlayerStats playerstats)
+    public double ManaCostCalc()
     {
         return baseManaCost * Wand.getSpellCostModifier();
     }

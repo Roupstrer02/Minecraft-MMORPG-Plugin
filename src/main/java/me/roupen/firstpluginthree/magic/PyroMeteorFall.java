@@ -31,6 +31,7 @@ public class PyroMeteorFall extends BukkitRunnable {
     private Location meteor;
     private MobStats mobstats;
     private Collection<LivingEntity> Targets;
+    private final double spellDamage = 8;
     private Random rand;
     private BossBar ChannelTime;
     private boolean SpellHit = false;
@@ -63,11 +64,11 @@ public class PyroMeteorFall extends BukkitRunnable {
         if (getProgress() == 0) //ikwym
         {
             //If the player has the mana for the spell
-            if (stats.getActiveCurrentMana() >= ManaCostCalc(stats))
+            if (stats.getActiveCurrentMana() >= ManaCostCalc())
             {
 
                 //spend the mana for the spell
-                stats.spendMana(ManaCostCalc(stats));
+                stats.spendMana(ManaCostCalc());
 
                 //creates BossBar for player's cooldown timer and shows it to player
                 ChannelTime = Bukkit.createBossBar("Spell Cooldown: ", BarColor.RED, BarStyle.SOLID);
@@ -169,7 +170,7 @@ public class PyroMeteorFall extends BukkitRunnable {
 
     public double MeteorDmgCalc(MobStats mobstats)
     {
-        return 5 * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
+        return spellDamage * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
     }
     public double CasterSpellDamage() {
         return stats.getCasterSpellDamage() * Wand.getOffenseSpellPowerModifier();
@@ -179,7 +180,7 @@ public class PyroMeteorFall extends BukkitRunnable {
         return 2 * Wand.getUtilitySpellPowerModifier();
     }
 
-    public double ManaCostCalc(PlayerStats playerstats)
+    public double ManaCostCalc()
     {
         return baseManaCost * Wand.getSpellCostModifier();
     }

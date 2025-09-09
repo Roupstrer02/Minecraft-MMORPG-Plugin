@@ -1,5 +1,6 @@
 package me.roupen.firstpluginthree.magic;
 
+import me.roupen.firstpluginthree.balance.Balance;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
 import me.roupen.firstpluginthree.utility.MobUtility;
@@ -21,16 +22,16 @@ public class spellTemplate extends BukkitRunnable {
     private int progress = 0;
 
     //the cooldown (or in-game terminology "Arcane Overheat" for reasons explained some other time) given to the player where they can no longer cast ANY spell
-    private double spellCooldown = 40;
+    private final double spellCooldown = 40;
 
     //for the sake of preventing ghost spells from sticking around, this value auto-ends the spell subprocess when progress reaches this count
-    private int timeOut = 100;
+    private final int timeOut = 100;
 
     //Base mana cost (without reduction from wand)
-    private int baseManaCost = 40;
+    public final int baseManaCost = 40;
 
     //if you wish to use the standard damage calculation provided, this value is simply a factor towards how much damage the spell deals
-    private double spellDamage = 5;
+    private final double spellDamage = 1;
 
     //========================================================================================================================================================
 
@@ -83,7 +84,7 @@ public class spellTemplate extends BukkitRunnable {
 
     //the standard "player spell damage" or "arcane damage potential" is their wisdom level * wand offense affinity --> intended to be used IN the damage calculation, not standalone
     public double CasterSpellDamage() {
-        return stats.getWisdom() * Wand.getOffenseSpellPowerModifier();
+        return Balance.spellPowerCalc(stats.getLevel(), stats.getWisdom()) * Wand.getOffenseSpellPowerModifier();
     }
 
     //used for determining the radius of circular AOE targeting (this considers the wand's properties)

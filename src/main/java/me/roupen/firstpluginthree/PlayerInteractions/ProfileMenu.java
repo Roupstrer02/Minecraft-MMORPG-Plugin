@@ -14,8 +14,21 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
+import java.util.ArrayList;
+
 public class ProfileMenu {
 
+
+    public static ArrayList<Material> SpellBookIcons1 = new ArrayList<Material>() {{
+       add(Material.FIRE_CHARGE);
+       add(Material.REDSTONE);
+       add(Material.GLOWSTONE_DUST);
+       add(Material.OAK_WOOD);
+    }};
+    public static ArrayList<Material> SpellBookIcons2 = new ArrayList<Material>() {{
+        add(Material.AMETHYST_SHARD);
+        add(Material.ENDER_PEARL);
+    }};
     public static void ClickMenu(InventoryClickEvent event)
     {
 
@@ -44,7 +57,7 @@ public class ProfileMenu {
                     player.playSound(player.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1.0f, 0.8f);
                 }else {
                     player.closeInventory();
-                    GuiUtility.CreateSpellBookGui(player);
+                    GuiUtility.CreateSpellBookGui(player, 1);
                     event.setCancelled(true);
                 }
             }
@@ -100,13 +113,27 @@ public class ProfileMenu {
         {
             Style spellSelectMessageStyle = Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC);
             String itemName = event.getCurrentItem().getItemMeta().getDisplayName();
-            //stats.getSpellbook();
 
-            if ((event.getCurrentItem() != null) && (event.getCurrentItem().getType() == Material.GRAY_DYE)) {
-                GuiUtility.CreateProfileGui(player);
+            if (event.getCurrentItem() == null) {
+                event.setCancelled(true);
+                return;
             }
 
-            if (event.getCurrentItem().getType() == Material.FIRE_CHARGE) {
+            Material clickedItemType = event.getCurrentItem().getType();
+
+            if ((event.getCurrentItem() != null) && (clickedItemType == Material.GRAY_DYE)) {
+                player.closeInventory();
+                GuiUtility.CreateProfileGui(player);
+            } else if ((event.getCurrentItem() != null) && (clickedItemType == Material.REDSTONE_TORCH) && event.getSlot() == 50) {
+                player.closeInventory();
+                GuiUtility.CreateSpellBookGui(player, 2);
+            }
+            else if ((event.getCurrentItem() != null) && (clickedItemType == Material.REDSTONE_TORCH) && event.getSlot() == 48) {
+                player.closeInventory();
+                GuiUtility.CreateSpellBookGui(player, 1);
+            }
+
+            if (clickedItemType == SpellBookIcons1.get(0)) {
                 if (event.getSlot() < 18) {
                     stats.updateSpellBook(0,"Fireball");
                     player.sendMessage(Component.text("Standard spell set: ", spellSelectMessageStyle).append(Component.text(itemName, spellSelectMessageStyle)));
@@ -126,7 +153,7 @@ public class ProfileMenu {
 
             }
 
-            else if (event.getCurrentItem().getType() == Material.REDSTONE) {
+            else if (clickedItemType == SpellBookIcons1.get(1)) {
                 if (event.getSlot() < 18) {
                     stats.updateSpellBook(0,"Snipe");
                     player.sendMessage(Component.text("Standard spell set: ", Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)).append(Component.text(itemName, spellSelectMessageStyle)));
@@ -145,7 +172,7 @@ public class ProfileMenu {
                 }
             }
 
-            else if (event.getCurrentItem().getType() == Material.GLOWSTONE_DUST) {
+            else if (clickedItemType == SpellBookIcons1.get(2)) {
                 if (event.getSlot() < 18) {
                     stats.updateSpellBook(0,"Healing Orb");
                     player.sendMessage(Component.text("Standard spell set: ", Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)).append(Component.text(itemName, spellSelectMessageStyle)));
@@ -164,7 +191,7 @@ public class ProfileMenu {
                 }
             }
 
-            else if (event.getCurrentItem().getType() == Material.OAK_WOOD) {
+            else if (clickedItemType == SpellBookIcons1.get(3)) {
                 if (event.getSlot() < 18) {
                     stats.updateSpellBook(0,"Nature's Bounty");
                     player.sendMessage(Component.text("Standard spell set: ", Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)).append(Component.text(itemName, spellSelectMessageStyle)));
@@ -182,7 +209,50 @@ public class ProfileMenu {
                     player.sendMessage(Component.text("Ultimate spell set: ", Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)).append(Component.text(itemName, spellSelectMessageStyle)));
                 }
             }
-            GuiUtility.CreateSpellBookGui(player);
+
+            else if (clickedItemType == SpellBookIcons2.get(0)) {
+                if (event.getSlot() < 18) {
+                    stats.updateSpellBook(0,"Shooting Star");
+                    player.sendMessage(Component.text("Standard spell set: ", Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)).append(Component.text(itemName, spellSelectMessageStyle)));
+                }
+                else if (event.getSlot() < 27) {
+                    stats.updateSpellBook(1,"Insert Spell Name Here");
+                    player.sendMessage(Component.text("Dash spell set: ", Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)).append(Component.text(itemName, spellSelectMessageStyle)));
+                }
+                else if (event.getSlot() < 36) {
+                    stats.updateSpellBook(2,"Insert Spell Name Here");
+                    player.sendMessage(Component.text("Aerial spell set: ", Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)).append(Component.text(itemName, spellSelectMessageStyle)));
+                }
+                else if (event.getSlot() < 45) {
+                    stats.updateSpellBook(3,"Insert Spell Name Here");
+                    player.sendMessage(Component.text("Ultimate spell set: ", Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)).append(Component.text(itemName, spellSelectMessageStyle)));
+                }
+            }
+
+            else if (clickedItemType == SpellBookIcons2.get(1)) {
+                if (event.getSlot() < 18) {
+                    stats.updateSpellBook(0,"Cunning Substitute");
+                    player.sendMessage(Component.text("Standard spell set: ", Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)).append(Component.text(itemName, spellSelectMessageStyle)));
+                }
+                else if (event.getSlot() < 27) {
+                    stats.updateSpellBook(1,"Reality Split");
+                    player.sendMessage(Component.text("Dash spell set: ", Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)).append(Component.text(itemName, spellSelectMessageStyle)));
+                }
+                else if (event.getSlot() < 36) {
+                    stats.updateSpellBook(2,"Insert Spell Name Here");
+                    player.sendMessage(Component.text("Aerial spell set: ", Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)).append(Component.text(itemName, spellSelectMessageStyle)));
+                }
+                else if (event.getSlot() < 45) {
+                    stats.updateSpellBook(3,"Insert Spell Name Here");
+                    player.sendMessage(Component.text("Ultimate spell set: ", Style.style(NamedTextColor.GREEN, TextDecoration.ITALIC)).append(Component.text(itemName, spellSelectMessageStyle)));
+                }
+            }
+
+            if (SpellBookIcons1.contains(clickedItemType))
+                GuiUtility.CreateSpellBookGui(player, 1);
+            else if (SpellBookIcons2.contains(clickedItemType))
+                GuiUtility.CreateSpellBookGui(player, 2);
+
             event.setCancelled(true);
 
         }

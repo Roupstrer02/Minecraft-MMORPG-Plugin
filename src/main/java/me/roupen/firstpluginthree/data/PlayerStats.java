@@ -534,16 +534,16 @@ public class PlayerStats {
     }
 
     public double getCasterSpellDamage() {
-        return Balance.spellPowerCalc(this.Wisdom);
+        return Balance.spellPowerCalc(Level, this.Wisdom);
     }
 
-    public double getCasterSpellDamage(double wisdomDelta) {
-        return Balance.spellPowerCalc((int) Math.max(this.Wisdom + wisdomDelta, 1));
+    public double getCasterSpellDamage(double levelDelta) {
+        return Balance.spellPowerCalc((int) Math.max(this.Level + levelDelta, 1), this.Wisdom);
     }
     //Stat calculator for each stat
     public void recalculateMaxHealth() {
         setActiveMaxHealth(Double.parseDouble(df.format((
-                Math.min(Double.MAX_VALUE, 1 + (0.01 * (getVitality() - 1))) * ((Balance.playerBaseHealthAtLevel(getLevel()) + equipment.getMaxHealth()) + LinearStatChanges.get("Max HP")) * MultiplicativeStatChanges.get("Max HP")))));
+                Math.min(Double.MAX_VALUE, 1 +(0.01 * getVitality())) * ((Balance.playerBaseHealthAtLevel(getLevel()) + equipment.getMaxHealth()) + LinearStatChanges.get("Max HP")) * MultiplicativeStatChanges.get("Max HP")))));
     }//Vitality
     public void recalculateHealth() {
         if (getActiveCurrentHealth() < getActiveMaxHealth()) {

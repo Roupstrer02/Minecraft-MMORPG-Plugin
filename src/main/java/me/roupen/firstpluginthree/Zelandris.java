@@ -43,6 +43,8 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.world.EntitiesUnloadEvent;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionEffect;
@@ -634,6 +636,25 @@ public final class Zelandris extends JavaPlugin implements Listener {
            }
            event.setCancelled(true);
        }
+    }
+
+    @EventHandler
+    public void onPlayerToggleElytra(EntityToggleGlideEvent event) {
+        if (event.getEntity() instanceof Player) {
+            Player p = (Player) event.getEntity();
+
+            ItemStack i = p.getInventory().getChestplate();
+
+            if (i != null) {
+                ItemMeta m = i.getItemMeta();
+                if (m instanceof Damageable) {
+                    m.setUnbreakable(true);
+                    Damageable d = (Damageable) m;
+                    d.setDamage(0);
+                    i.setItemMeta(m);
+                }
+            }
+        }
     }
 
 

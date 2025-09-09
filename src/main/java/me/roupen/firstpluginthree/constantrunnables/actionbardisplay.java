@@ -78,6 +78,9 @@ public class actionbardisplay extends BukkitRunnable {
                 player.setExp(0F);
                 player.setExp(stats.getExperience() / (float) stats.getLevelCap());
 
+                if (player.getLocation().getY() < -500)
+                    stats.setActiveCurrentHealth(-100);
+
                 if (stats.getActiveCurrentHealth() <= 0 || player.isDead())
                 {
                     stats.setActiveCurrentHealth(0);

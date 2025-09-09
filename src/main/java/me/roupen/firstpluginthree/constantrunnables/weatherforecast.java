@@ -13,8 +13,6 @@ import java.util.Collection;
 public class weatherforecast extends BukkitRunnable {
     public void run() {
 
-        Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-
 
         World w = Zelandris.getMyPlugin().getServer().getWorld("world");
         long time = w.getTime();

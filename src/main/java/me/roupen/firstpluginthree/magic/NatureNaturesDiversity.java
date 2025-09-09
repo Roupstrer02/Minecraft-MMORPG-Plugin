@@ -45,10 +45,10 @@ public class NatureNaturesDiversity extends BukkitRunnable {
     private int progress = 0;
 
     //the cooldown (or in-game terminology "Arcane Overheat" for reasons explained some other time) given to the player where they can no longer cast ANY spell
-    private double spellCooldown = 10;
+    private double spellCooldown = 5;
 
     //for the sake of preventing ghost spells from sticking around, this value auto-ends the spell subprocess when progress reaches this count
-    private int timeOut = 21;
+    private int timeOut = 6;
 
     //Base mana cost (without reduction from wand)
     public static double baseManaCost = 10;
@@ -117,6 +117,8 @@ public class NatureNaturesDiversity extends BukkitRunnable {
         logsList.add(Material.JUNGLE_LOG);
         logsList.add(Material.ACACIA_LOG);
         logsList.add(Material.DARK_OAK_LOG);
+        logsList.add(Material.CRIMSON_STEM);
+        logsList.add(Material.WARPED_STEM);
 
         woodsList.add(Material.OAK_WOOD);
         woodsList.add(Material.BIRCH_WOOD);
@@ -124,6 +126,8 @@ public class NatureNaturesDiversity extends BukkitRunnable {
         woodsList.add(Material.JUNGLE_WOOD);
         woodsList.add(Material.ACACIA_WOOD);
         woodsList.add(Material.DARK_OAK_WOOD);
+        woodsList.add(Material.CRIMSON_HYPHAE);
+        woodsList.add(Material.WARPED_HYPHAE);
 
         planksList.add(Material.OAK_PLANKS);
         planksList.add(Material.BIRCH_PLANKS);
@@ -131,6 +135,8 @@ public class NatureNaturesDiversity extends BukkitRunnable {
         planksList.add(Material.JUNGLE_PLANKS);
         planksList.add(Material.ACACIA_PLANKS);
         planksList.add(Material.DARK_OAK_PLANKS);
+        planksList.add(Material.CRIMSON_PLANKS);
+        planksList.add(Material.WARPED_PLANKS);
 
         this.Wand = (wand.ItemToWand(origin.getInventory().getItemInOffHand()));
 
@@ -150,7 +156,7 @@ public class NatureNaturesDiversity extends BukkitRunnable {
 
 
     //determines the mana cost of the spell, considering the mana efficiency of the wand that casted it
-    public double ManaCostCalc(PlayerStats playerstats)
+    public double ManaCostCalc()
     {
         return baseManaCost * Wand.getSpellCostModifier();
     }
@@ -174,14 +180,14 @@ public class NatureNaturesDiversity extends BukkitRunnable {
 
                 if (!exempt_blocks.contains(targetMat)) {
                     if (saplingsList.contains(targetMat)) {
-                        if (saplingsList.indexOf(targetMat) == 5)
+                        if (saplingsList.indexOf(targetMat) == saplingsList.size() - 1)
                             targetBlock.setType(saplingsList.get(0));
                         else
                             targetBlock.setType(NextMatInList(saplingsList, targetMat));
 
                     } else if (logsList.contains(targetMat)) {
                         if (logsList.contains(targetMat)) {
-                            if (logsList.indexOf(targetMat) == 5)
+                            if (logsList.indexOf(targetMat) == logsList.size() - 1)
                                 targetBlock.setType(logsList.get(0));
                             else
                                 targetBlock.setType(NextMatInList(logsList, targetMat));
@@ -189,14 +195,14 @@ public class NatureNaturesDiversity extends BukkitRunnable {
 
                     } else if (woodsList.contains(targetMat)) {
                         if (woodsList.contains(targetMat)) {
-                            if (woodsList.indexOf(targetMat) == 5)
+                            if (woodsList.indexOf(targetMat) == woodsList.size() - 1)
                                 targetBlock.setType(woodsList.get(0));
                             else
                                 targetBlock.setType(NextMatInList(woodsList, targetMat));
                         }
                     } else if (planksList.contains(targetMat)) {
                         if (planksList.contains(targetMat)) {
-                            if (planksList.indexOf(targetMat) == 5)
+                            if (planksList.indexOf(targetMat) == planksList.size() - 1)
                                 targetBlock.setType(planksList.get(0));
                             else
                                 targetBlock.setType(NextMatInList(planksList, targetMat));
@@ -225,11 +231,11 @@ public class NatureNaturesDiversity extends BukkitRunnable {
         if (progress == 0)
         {
             //If the player has the mana for the spell
-            if (stats.getActiveCurrentMana() >= ManaCostCalc(stats))
+            if (stats.getActiveCurrentMana() >= ManaCostCalc())
             {
 
                 //spend the mana for the spell
-                stats.spendMana(ManaCostCalc(stats));
+                stats.spendMana(ManaCostCalc());
 
                 //creates BossBar for player's cooldown timer and shows it to player
                 ChannelTime = Bukkit.createBossBar("Spell Cooldown: ", BarColor.RED, BarStyle.SOLID);

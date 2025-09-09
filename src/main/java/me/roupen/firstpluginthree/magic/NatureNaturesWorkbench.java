@@ -119,7 +119,7 @@ public class NatureNaturesWorkbench extends BukkitRunnable {
     }
 
     //determines the mana cost of the spell, considering the mana efficiency of the wand that casted it
-    public double ManaCostCalc(PlayerStats playerstats)
+    public double ManaCostCalc()
     {
         return baseManaCost * Wand.getSpellCostModifier();
     }
@@ -151,11 +151,11 @@ public class NatureNaturesWorkbench extends BukkitRunnable {
         if (progress == 0)
         {
             //If the player has the mana for the spell
-            if (stats.getActiveCurrentMana() >= ManaCostCalc(stats))
+            if (stats.getActiveCurrentMana() >= ManaCostCalc())
             {
 
                 //spend the mana for the spell
-                stats.spendMana(ManaCostCalc(stats));
+                stats.spendMana(ManaCostCalc());
 
                 //creates BossBar for player's cooldown timer and shows it to player
                 ChannelTime = Bukkit.createBossBar("Spell Cooldown: ", BarColor.WHITE, BarStyle.SOLID);

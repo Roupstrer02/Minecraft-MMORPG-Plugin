@@ -80,7 +80,18 @@ public class spellcasting {
                     castedSpell = new NatureNaturesStorage(caster).runTaskTimer(Zelandris.getMyPlugin(), delay, period);
                     break;
 
+                //Astromancy
+                case "Shooting Star":
+                    castedSpell = new AstroShootingStar(caster).runTaskTimer(Zelandris.getMyPlugin(), delay, period);
+                    break;
 
+                //Voidmancy
+                case "Cunning Substitute":
+                    castedSpell = new VoidCunningSubstitute(caster).runTaskTimer(Zelandris.getMyPlugin(), delay, period);
+                    break;
+                case "Reality Split":
+                    castedSpell = new VoidRealitySplit(caster).runTaskTimer(Zelandris.getMyPlugin(), delay, period);
+                    break;
             }
         } catch (NoClassDefFoundError e) {
             if (castedSpell != null) {

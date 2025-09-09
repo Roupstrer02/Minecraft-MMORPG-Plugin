@@ -30,6 +30,7 @@ public class TechFaultInArmor extends BukkitRunnable {
     private Location loc;
     private Entity spellblock;
     private Collection<LivingEntity> Targets;
+    private final double spellDamage = 9;
     private BossBar ChannelTime;
     private HashMap<MobStats, Double> defenseRemoved;
     private MobStats mobstats;
@@ -63,11 +64,11 @@ public class TechFaultInArmor extends BukkitRunnable {
         {
 
             //If the player has the mana for the spell
-            if (stats.getActiveCurrentMana() >= ManaCostCalc(stats))
+            if (stats.getActiveCurrentMana() >= ManaCostCalc())
             {
 
                 //spend the mana for the spell
-                stats.spendMana(ManaCostCalc(stats));
+                stats.spendMana(ManaCostCalc());
 
                 //creates BossBar for player's cooldown timer and shows it to player
                 ChannelTime = Bukkit.createBossBar("Spell Cooldown", BarColor.PINK, BarStyle.SOLID);
@@ -142,19 +143,19 @@ public class TechFaultInArmor extends BukkitRunnable {
     }
 
     public double CasterSpellDamage() {
-        return stats.getCasterSpellDamage(1.25 * Balance.levelDelta) * Wand.getOffenseSpellPowerModifier();
+        return Balance.spellPowerCalc(stats.getLevel(), stats.getWisdom()) * Wand.getOffenseSpellPowerModifier();
     }
 
     public double FaultInTheArmorDmgCalc(MobStats mobstats)
     {
         double loweredDefense = mobstats.getDefense() * 0.5;
-        return CasterSpellDamage() - (CasterSpellDamage() * (loweredDefense / (loweredDefense + 100)));
+        return spellDamage * CasterSpellDamage() - (CasterSpellDamage() * (loweredDefense / (loweredDefense + 100)));
     }
 
     public double SpellAOE() {
         return 5 * Wand.getUtilitySpellPowerModifier();
     }
-    public double ManaCostCalc(PlayerStats playerstats)
+    public double ManaCostCalc()
     {
         return baseManaCost * Wand.getSpellCostModifier();
     }

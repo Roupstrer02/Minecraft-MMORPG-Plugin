@@ -27,7 +27,7 @@ public class DivineWeYieldToNone extends BukkitRunnable {
     private int timeOut = (int) spellCooldown + 1;
 
     //Base mana cost (without reduction from wand)
-    public static double baseManaCost = 200;
+    public static double baseManaCost = 300;
 
     //if you wish to use the standard damage calculation provided, this value is simply a factor towards how much damage the spell deals
     private double spellDamage = 5;
@@ -100,7 +100,7 @@ public class DivineWeYieldToNone extends BukkitRunnable {
     }
 
     //determines the mana cost of the spell, considering the mana efficiency of the wand that casted it
-    public double ManaCostCalc(PlayerStats playerstats)
+    public double ManaCostCalc()
     {
         return baseManaCost * Wand.getSpellCostModifier();
     }
@@ -118,9 +118,9 @@ public class DivineWeYieldToNone extends BukkitRunnable {
 
             TargetStats = PlayerUtility.getPlayerStats(player);
             TargetStats.changeMultiplicativeStats("Stamina Cap", StatIncreaseFactor());
-            TargetStats.changeLinearStats("Stamina Regen", StatIncreaseFactor());
-            TargetStats.changeLinearStats("Mana Regen", StatIncreaseFactor());
-            TargetStats.changeMultiplicativeStats("Movement Speed", StatIncreaseFactor() * 0.1);
+            TargetStats.changeLinearStats("Stamina Regen", StatIncreaseFactor() * 0.5);
+            TargetStats.changeLinearStats("Mana Regen", StatIncreaseFactor() * 0.5);
+            TargetStats.changeMultiplicativeStats("Movement Speed", 1 + (StatIncreaseFactor() * 0.1));
 
 
         }
@@ -134,9 +134,9 @@ public class DivineWeYieldToNone extends BukkitRunnable {
             origin.getWorld().spawnParticle(Particle.WAX_ON, loc, 100, 0.4, 0, 0.4, 0);
             if (progress == Math.floor(spellCooldown * 2/3)) {
                 TargetStats.changeMultiplicativeStats("Stamina Cap", 1 / StatIncreaseFactor());
-                TargetStats.changeLinearStats("Stamina Regen", 1 / StatIncreaseFactor());
-                TargetStats.changeLinearStats("Mana Regen", 1 / StatIncreaseFactor());
-                TargetStats.changeMultiplicativeStats("Movement Speed", 1 / StatIncreaseFactor() * 0.1);
+                TargetStats.changeLinearStats("Stamina Regen", -1 * StatIncreaseFactor() * 0.5);
+                TargetStats.changeLinearStats("Mana Regen", -1 * StatIncreaseFactor() * 0.5);
+                TargetStats.changeMultiplicativeStats("Movement Speed", 1 / (1 + (StatIncreaseFactor() * 0.1)));
             }
 
         }
@@ -153,11 +153,11 @@ public class DivineWeYieldToNone extends BukkitRunnable {
         if (progress == 0)
         {
             //If the player has the mana for the spell
-            if (stats.getActiveCurrentMana() >= ManaCostCalc(stats))
+            if (stats.getActiveCurrentMana() >= ManaCostCalc())
             {
 
                 //spend the mana for the spell
-                stats.spendMana(ManaCostCalc(stats));
+                stats.spendMana(ManaCostCalc());
 
                 //creates BossBar for player's cooldown timer and shows it to player
                 ChannelTime = Bukkit.createBossBar("Spell Cooldown: ", BarColor.WHITE, BarStyle.SOLID);

@@ -1,5 +1,6 @@
 package me.roupen.firstpluginthree.magic;
 
+import me.roupen.firstpluginthree.balance.Balance;
 import me.roupen.firstpluginthree.data.MobStats;
 import me.roupen.firstpluginthree.data.PlayerStats;
 import me.roupen.firstpluginthree.utility.MobUtility;
@@ -13,9 +14,11 @@ import org.bukkit.entity.*;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Random;
 
-public class AstromancyStandardSpell extends BukkitRunnable {
+public class AstroShootingStar extends BukkitRunnable {
 
     //Progress dictates what stage of the spell has been reached, measured in ticks (20/s -> 20 == 1s)
     private int progress = 0;
@@ -24,13 +27,13 @@ public class AstromancyStandardSpell extends BukkitRunnable {
     private double spellCooldown = 40;
 
     //for the sake of preventing ghost spells from sticking around, this value auto-ends the spell subprocess when progress reaches this count
-    private int timeOut = 100;
+    private int timeOut = 200;
 
     //Base mana cost (without reduction from wand)
-    private int baseManaCost = 40;
+    public static int baseManaCost = 40;
 
     //if you wish to use the standard damage calculation provided, this value is simply a factor towards how much damage the spell deals
-    private double spellDamage = 5;
+    private double spellDamage = 3;
 
     //========================================================================================================================================================
 
@@ -43,8 +46,10 @@ public class AstromancyStandardSpell extends BukkitRunnable {
 
     //originally set as the location of the player/caster/origin
     private Location loc;
+    private Location starLoc;
 
     //if you need an AOE target selection, this is how it's stored commonly
+    Collection<LivingEntity> possibleTargets;
     private Collection<LivingEntity> Targets;
 
     //This is being handled for you
@@ -52,9 +57,19 @@ public class AstromancyStandardSpell extends BukkitRunnable {
 
     //any attributes about the wand's stats can be obtained here
     private wand Wand;
+    private final ArrayList<Material> exempt_blocks = new ArrayList<Material>(){{
+        add(Material.AIR);
+        add(Material.GRASS);
+        add(Material.TALL_GRASS);
+        add(Material.FERN);
+        add(Material.DEAD_BUSH);
+        add(Material.VINE);
+        add(Material.CAVE_VINES);
+        add(Material.WATER);
+        add(Material.BUBBLE_COLUMN);
+    }};
     private int PhaseOfTheMoon;
     private boolean isNightTime;
-
 
     //If your spell requires to damage the target(s) only once, set this flag in your logic
     private boolean SpellHit = false;
@@ -62,7 +77,7 @@ public class AstromancyStandardSpell extends BukkitRunnable {
 
     //Constructor
     //Should any of the initial values for the spell variables mentioned below need to change, this is where you'd change them
-    public AstromancyStandardSpell(Player caster)
+    public AstroShootingStar(Player caster)
     {
         origin = caster;
         this.stats = PlayerUtility.getPlayerStats(this.origin);
@@ -77,7 +92,7 @@ public class AstromancyStandardSpell extends BukkitRunnable {
 
     //the standard "player spell damage" or "arcane damage potential" is their wisdom level * wand offense affinity --> intended to be used IN the damage calculation, not standalone
     public double CasterSpellDamage() {
-        return stats.getWisdom() * Wand.getOffenseSpellPowerModifier();
+        return Balance.spellPowerCalc(stats.getLevel(), stats.getWisdom()) * Wand.getOffenseSpellPowerModifier();
     }
 
     //used for determining the radius of circular AOE targeting (this considers the wand's properties)
@@ -86,7 +101,7 @@ public class AstromancyStandardSpell extends BukkitRunnable {
     }
 
     //determines the mana cost of the spell, considering the mana efficiency of the wand that casted it
-    public double ManaCostCalc(PlayerStats playerstats)
+    public double ManaCostCalc()
     {
         return baseManaCost * Wand.getSpellCostModifier();
     }
@@ -102,11 +117,47 @@ public class AstromancyStandardSpell extends BukkitRunnable {
 
     public void spellStartup() {
         //Any code written here will happen immediately upon casting the spell (progress == 0) ------- (if the player is able to cast it)
+        starLoc = loc;
+        starLoc.add(0,origin.getEyeHeight(),0).add(loc.getDirection().multiply(0.5));
+
+        world.spawnParticle(Particle.WAX_OFF, starLoc, 3, 0.15, 0.15, 0.15, 0, null, true);
+        possibleTargets = starLoc.getNearbyLivingEntities(SpellAOE(1));
 
     }
 
     public void spellPerTick() {
         //any code written here will **attempt** to run every tick
+
+        if (!SpellHit) {
+            starLoc.add(origin.getLocation().getDirection().multiply(0.25 * Wand.getUtilitySpellPowerModifier()));
+            possibleTargets = starLoc.getNearbyLivingEntities(SpellAOE(1));
+            world.spawnParticle(Particle.WAX_OFF, starLoc, 3, 0.15, 0.15, 0.15, 0, null, true);
+        }
+
+        if (!SpellHit && (!exempt_blocks.contains(starLoc.getBlock().getType()) || (!possibleTargets.isEmpty() && !(possibleTargets.iterator().next() instanceof Player)))) {
+            SpellHit = true;
+            MobStats mobstats;
+            Location animationLoc = starLoc;
+            ParticleSphere(animationLoc, SpellAOE(1), Particle.WAX_OFF);
+
+            Targets = world.getNearbyLivingEntities(starLoc, SpellAOE(1));
+
+            stats.getPlayer().getWorld().playSound(starLoc, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 0);
+            stats.getPlayer().getWorld().playSound(origin, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 0);
+
+            for (LivingEntity target : Targets)
+            {
+                if (!(target instanceof Player))
+                {
+                    mobstats = MobUtility.getMobStats(target);
+                    mobstats.spell_damage(DamageCalc(mobstats), origin);
+                    target.damage(0);
+
+                }
+            }
+
+        }
+
     }
     //======================================================================================================================================================
     //This method combines all previous methods and variables into a logic structure that fits a basic spell (initial startup, maybe does something over time, and ends)
@@ -118,11 +169,11 @@ public class AstromancyStandardSpell extends BukkitRunnable {
         if (progress == 0)
         {
             //If the player has the mana for the spell
-            if (stats.getActiveCurrentMana() >= ManaCostCalc(stats))
+            if (stats.getActiveCurrentMana() >= ManaCostCalc())
             {
 
                 //spend the mana for the spell
-                stats.spendMana(ManaCostCalc(stats));
+                stats.spendMana(ManaCostCalc());
 
                 //creates BossBar for player's cooldown timer and shows it to player
                 ChannelTime = Bukkit.createBossBar("Spell Cooldown: ", BarColor.RED, BarStyle.SOLID);
@@ -172,6 +223,30 @@ public class AstromancyStandardSpell extends BukkitRunnable {
     }
     public void setProgress(int progress) {
         this.progress = progress;
+    }
+    public void ParticleSphere(Location loc, double radius, Particle particletype) {
+        Random rd = new Random();
+        double a, b, c, noise;
+
+        for (int i = 0; i <= 100 * radius * radius; i++) {
+
+            do {
+                a = (rd.nextDouble() - 0.5) * 2;
+                b = (rd.nextDouble() - 0.5) * 2;
+                c = (rd.nextDouble() - 0.5) * 2;
+            } while ((a*a)+(b*b)+(c*c) == 0);
+
+            double denom = Math.sqrt((a*a)+(b*b)+(c*c));
+            noise = (rd.nextDouble() / 10) + 1;
+            double X = (a / denom) * radius * noise;
+            double Y = (b / denom) * radius * noise;
+            double Z = (c / denom) * radius * noise;
+
+            loc.add(X, Y, Z);
+            loc.getWorld().spawnParticle(particletype, loc, 1, 0F, 0F, 0F, 0.001);
+            loc.subtract(X, Y, Z);
+        }
+
     }
     public void incrementProgress() {this.progress = getProgress() + 1;}
     public double spellCooldownTextUpdate(double upperLimit, double currentProgress) {

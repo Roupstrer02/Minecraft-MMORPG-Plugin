@@ -26,6 +26,7 @@ public class PyroFireball extends BukkitRunnable {
     private World world;
     private Location loc;
     private Location FireballLoc;
+    private final double spellDamage = 3;
     private Collection<LivingEntity> Targets;
     private BossBar ChannelTime;
     private wand Wand;
@@ -33,7 +34,7 @@ public class PyroFireball extends BukkitRunnable {
     public static double baseManaCost = 50.0;
     private DecimalFormat NumberFormat = new DecimalFormat("0.0");
 
-    private Material[] exempt_blocks = {Material.AIR, Material.GRASS, Material.TALL_GRASS, Material.FERN, Material.DEAD_BUSH, Material.VINE, Material.CAVE_VINES};
+    private Material[] exempt_blocks = {Material.AIR, Material.GRASS, Material.TALL_GRASS, Material.FERN, Material.DEAD_BUSH, Material.VINE, Material.CAVE_VINES, Material.SNOW};
 
     public PyroFireball(Player caster)
     {
@@ -62,11 +63,11 @@ public class PyroFireball extends BukkitRunnable {
         if (getProgress() == 0) //ikwym
         {
             //If the player has the mana for the spell
-            if (stats.getActiveCurrentMana() >= ManaCostCalc(stats))
+            if (stats.getActiveCurrentMana() >= ManaCostCalc())
             {
 
                 //spend the mana for the spell
-                stats.spendMana(ManaCostCalc(stats));
+                stats.spendMana(ManaCostCalc());
 
                 //set starting point of fireball
                 loc = loc.add(0,1.5,0).add(origin.getLocation().getDirection().multiply(0.5));
@@ -139,18 +140,18 @@ public class PyroFireball extends BukkitRunnable {
 
     public double FireballDmgCalc(MobStats mobstats)
     {
-        return (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
+        return spellDamage * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
     }
 
     public double CasterSpellDamage() {
-        return stats.getCasterSpellDamage(Balance.levelDelta) * Wand.getOffenseSpellPowerModifier();
+        return Balance.spellPowerCalc(stats.getLevel(), stats.getWisdom()) * Wand.getOffenseSpellPowerModifier();
     }
 
     public double SpellAOE() {
         return 2.5 * Wand.getUtilitySpellPowerModifier();
     }
 
-    public double ManaCostCalc(PlayerStats playerstats)
+    public double ManaCostCalc()
     {
         return baseManaCost * Wand.getSpellCostModifier();
     }

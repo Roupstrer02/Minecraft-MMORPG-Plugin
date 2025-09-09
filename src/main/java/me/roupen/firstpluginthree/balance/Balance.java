@@ -114,8 +114,8 @@ public class Balance {
     public static double shieldDef(int level) {
         return ((double) level) * shieldDefMod * armourDefScale;
     }
-    public static double spellPowerCalc(int wisdom) {
-        return Math.pow(diffMultiplierAtLevelDelta,((double) wisdom)/levelDelta) * wisdomFactor / (avgWandWisMult * wisdomSkillPointFraction);
+    public static double spellPowerCalc(int level, int wisdom) {
+        return Math.pow(diffMultiplierAtLevelDelta,(((double) level * 0.25) + (wisdom * 0.75))/levelDelta) * wisdomFactor / (avgWandWisMult / wisdomSkillPointFraction);
     }
     public static int PlayerLevelCapEXPCalc(int level){
         return (int) Math.round((Math.pow(diffMultiplierAtLevelDelta,((double) level+1)/levelDelta) - Math.pow(diffMultiplierAtLevelDelta,((double) level)/levelDelta)) * XPFactor);

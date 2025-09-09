@@ -29,6 +29,7 @@ public class PyroFlameBooster extends BukkitRunnable {
     private World world;
     private Location loc;
     private Collection<LivingEntity> Targets;
+    private final double spellDamage = 20;
     private BossBar ChannelTime;
     private wand Wand;
     private DecimalFormat NumberFormat = new DecimalFormat("0.0");
@@ -56,11 +57,11 @@ public class PyroFlameBooster extends BukkitRunnable {
         if (progress == 0)
         {
             //If the player has the mana for the spell
-            if (stats.getActiveCurrentMana() >= ManaCostCalc(stats))
+            if (stats.getActiveCurrentMana() >= ManaCostCalc())
             {
 
                 //spend the mana for the spell
-                stats.spendMana(ManaCostCalc(stats));
+                stats.spendMana(ManaCostCalc());
 
                 //creates BossBar for player's cooldown timer and shows it to player
                 ChannelTime = Bukkit.createBossBar("Spell Cooldown: ", BarColor.RED, BarStyle.SOLID);
@@ -133,7 +134,7 @@ public class PyroFlameBooster extends BukkitRunnable {
 
     public double FlameBoosterDamageCalc(MobStats mobstats)
     {
-        return (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
+        return spellDamage * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
     }
     public double SpellAOE() {
         return 3.5 * Wand.getUtilitySpellPowerModifier();
@@ -142,7 +143,7 @@ public class PyroFlameBooster extends BukkitRunnable {
         return stats.getCasterSpellDamage(Balance.levelDelta) * Wand.getOffenseSpellPowerModifier();
     }
 
-    public double ManaCostCalc(PlayerStats playerstats)
+    public double ManaCostCalc()
     {
         return baseManaCost * Wand.getSpellCostModifier();
     }

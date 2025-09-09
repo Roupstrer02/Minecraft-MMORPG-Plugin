@@ -32,6 +32,7 @@ public class PyroFlameDash extends BukkitRunnable {
     private Collection<LivingEntity> Targets;
     private HashSet<LivingEntity> SavedTargets = new HashSet<LivingEntity>();
     private LivingEntity[] ArrayOfTargets;
+    private final double spellDamage = 18;
     private BossBar ChannelTime;
     private wand Wand;
     private DecimalFormat NumberFormat = new DecimalFormat("0.0");
@@ -54,11 +55,11 @@ public class PyroFlameDash extends BukkitRunnable {
         if (getProgress() == 0)
         {
             //If the player has the mana for the spell
-            if (stats.getActiveCurrentMana() >= ManaCostCalc(stats))
+            if (stats.getActiveCurrentMana() >= ManaCostCalc())
             {
 
                 //spend the mana for the spell
-                stats.spendMana(ManaCostCalc(stats));
+                stats.spendMana(ManaCostCalc());
 
                 //creates BossBar for player's cooldown timer and shows it to player
                 ChannelTime = Bukkit.createBossBar("Spell Cooldown: ", BarColor.RED, BarStyle.SOLID);
@@ -139,7 +140,7 @@ public class PyroFlameDash extends BukkitRunnable {
     public void incrementProgress() {this.progress = getProgress() + 1;}
 
     public double FlameDashDamageCalc(MobStats mobstats) {
-        return 1 / (spellCooldown * spellUpTimeRatio) * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
+        return spellDamage * 1 / (spellCooldown * spellUpTimeRatio) * (CasterSpellDamage() - (CasterSpellDamage() * (mobstats.getDefense() / (mobstats.getDefense() + 100))));
     }
 
     public double CasterSpellDamage()
@@ -150,7 +151,7 @@ public class PyroFlameDash extends BukkitRunnable {
         return 2.5 * Wand.getUtilitySpellPowerModifier();
     }
 
-    public double ManaCostCalc(PlayerStats stats) {
+    public double ManaCostCalc() {
         return baseManaCost * Wand.getSpellCostModifier();
     }
     public double spellCooldownTextUpdate(double upperLimit, double currentProgress) {
